@@ -11,6 +11,7 @@
 import json
 import logging
 import os
+from collections.abc import Callable
 from typing import Any
 
 import boto3
@@ -184,7 +185,7 @@ class EventEmitter:
 # ============================================
 # Event Callback for Simulator
 # ============================================
-def create_event_callback(emitter: EventEmitter) -> callable:
+def create_event_callback(emitter: EventEmitter) -> Callable[[EventEnvelope], None]:
     """Create a callback function for the simulator to emit events.
 
     Args:

@@ -10,6 +10,7 @@
 
 import logging
 import random
+from collections.abc import Callable
 from datetime import datetime
 
 from .models import (
@@ -98,10 +99,10 @@ class SimulatorAPI:
         """Initialize the simulator with empty case storage."""
         self._cases: dict[str, Case] = {}
         self._events: list[EventEnvelope] = []
-        self._event_callback: callable | None = None
+        self._event_callback: Callable[..., None] | None = None
         logger.info("TrackWise Simulator initialized")
 
-    def set_event_callback(self, callback: callable) -> None:
+    def set_event_callback(self, callback: Callable[..., None]) -> None:
         """Set callback function to be called when events are emitted."""
         self._event_callback = callback
 

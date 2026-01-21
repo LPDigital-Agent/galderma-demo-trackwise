@@ -116,7 +116,7 @@ resource "aws_bedrockagentcore_memory_strategy" "recurring_patterns" {
   memory_id   = aws_bedrockagentcore_memory.main.id
   type        = "SEMANTIC"
   description = "Recurring complaint patterns for auto-classification"
-  namespaces  = ["recurring", "patterns"]
+  namespaces  = ["recurring-patterns"]
 }
 
 # ResolutionTemplates - Semantic memory for successful resolutions
@@ -125,7 +125,7 @@ resource "aws_bedrockagentcore_memory_strategy" "resolution_templates" {
   memory_id   = aws_bedrockagentcore_memory.main.id
   type        = "SEMANTIC"
   description = "Successful resolution templates for reuse"
-  namespaces  = ["resolutions", "templates"]
+  namespaces  = ["resolution-templates"]
 }
 
 # PolicyKnowledge - Semantic memory for compliance policies
@@ -134,7 +134,7 @@ resource "aws_bedrockagentcore_memory_strategy" "policy_knowledge" {
   memory_id   = aws_bedrockagentcore_memory.main.id
   type        = "SEMANTIC"
   description = "Compliance policy rules and guidelines"
-  namespaces  = ["policies", "compliance"]
+  namespaces  = ["policy-knowledge"]
 }
 
 # ============================================

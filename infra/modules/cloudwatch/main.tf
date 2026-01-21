@@ -74,8 +74,7 @@ resource "aws_cloudwatch_log_group" "agentcore_vended" {
   retention_in_days = var.log_retention_days
 
   tags = {
-    Name        = "${var.name_prefix}-agentcore-vended"
-    Description = "AgentCore-vended-logs-aggregated"
+    Name = "${var.name_prefix}-agentcore-vended"
   }
 }
 
@@ -121,15 +120,15 @@ resource "aws_cloudwatch_dashboard" "main" {
           height = 6
           properties = {
             title  = "Agent Invocations per minute"
-            region = data.aws_region.current.name
-            metrics = flatten([
-              for agent in var.agent_names : [[
+            region = data.aws_region.current.id
+            metrics = [
+              for agent in var.agent_names : [
                 "AgentCore",
                 "InvocationCount",
                 "AgentName", agent,
                 { stat = "Sum", period = 60 }
-              ]]
-            ])
+              ]
+            ]
             view   = "timeSeries"
             stacked = false
           }
@@ -145,13 +144,13 @@ resource "aws_cloudwatch_dashboard" "main" {
           height = 6
           properties = {
             title  = "Agent Latency (P50/P99)"
-            region = data.aws_region.current.name
-            metrics = flatten([
-              for agent in ["compliance-guardian", "resolution-composer"] : [
-                ["AgentCore", "Latency", "AgentName", agent, { stat = "p50", period = 60 }],
-                ["AgentCore", "Latency", "AgentName", agent, { stat = "p99", period = 60 }]
-              ]
-            ])
+            region = data.aws_region.current.id
+            metrics = [
+              ["AgentCore", "Latency", "AgentName", "compliance-guardian", { stat = "p50", period = 60 }],
+              ["AgentCore", "Latency", "AgentName", "compliance-guardian", { stat = "p99", period = 60 }],
+              ["AgentCore", "Latency", "AgentName", "resolution-composer", { stat = "p50", period = 60 }],
+              ["AgentCore", "Latency", "AgentName", "resolution-composer", { stat = "p99", period = 60 }]
+            ]
             view = "timeSeries"
           }
         }
@@ -166,15 +165,15 @@ resource "aws_cloudwatch_dashboard" "main" {
           height = 6
           properties = {
             title  = "Error Rate"
-            region = data.aws_region.current.name
-            metrics = flatten([
-              for agent in var.agent_names : [[
+            region = data.aws_region.current.id
+            metrics = [
+              for agent in var.agent_names : [
                 "AgentCore",
                 "ErrorCount",
                 "AgentName", agent,
                 { stat = "Sum", period = 300 }
-              ]]
-            ])
+              ]
+            ]
             view = "singleValue"
           }
         }
@@ -189,7 +188,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           height = 6
           properties = {
             title  = "Tool Calls by Type"
-            region = data.aws_region.current.name
+            region = data.aws_region.current.id
             metrics = [
               ["AgentCore", "ToolCallCount", "ToolName", "memory_query", { stat = "Sum", period = 300 }],
               ["AgentCore", "ToolCallCount", "ToolName", "memory_write", { stat = "Sum", period = 300 }],
@@ -210,7 +209,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           height = 6
           properties = {
             title  = "A2A Calls Between Agents"
-            region = data.aws_region.current.name
+            region = data.aws_region.current.id
             metrics = [
               ["AgentCore", "A2ACallCount", "SourceAgent", "observer", { stat = "Sum", period = 60 }],
               ["AgentCore", "A2ACallCount", "SourceAgent", "case-understanding", { stat = "Sum", period = 60 }],
@@ -230,7 +229,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           height = 6
           properties = {
             title  = "AgentCore Memory Operations"
-            region = data.aws_region.current.name
+            region = data.aws_region.current.id
             metrics = [
               ["AgentCore", "MemoryReadCount", "Strategy", "RecurringPatterns", { stat = "Sum", period = 60 }],
               ["AgentCore", "MemoryReadCount", "Strategy", "ResolutionTemplates", { stat = "Sum", period = 60 }],
@@ -251,7 +250,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           height = 6
           properties = {
             title  = "Human-in-the-Loop Events"
-            region = data.aws_region.current.name
+            region = data.aws_region.current.id
             metrics = [
               ["AgentCore", "HumanReviewRequired", "Reason", "low_confidence", { stat = "Sum", period = 300 }],
               ["AgentCore", "HumanReviewRequired", "Reason", "high_severity", { stat = "Sum", period = 300 }],

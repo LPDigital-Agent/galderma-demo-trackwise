@@ -56,12 +56,21 @@ variable "agent_names" {
 }
 
 # ============================================
+# Local Values
+# ============================================
+locals {
+  # AgentCore names must match ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ - no hyphens allowed
+  safe_name_prefix = replace(var.name_prefix, "-", "_")
+}
+
+# ============================================
 # Workload Identities for Agents
 # ============================================
 resource "aws_bedrockagentcore_workload_identity" "agents" {
   for_each = toset(var.agent_names)
 
-  name = "${var.name_prefix}-${each.value}-workload"
+  # AgentCore names must use underscores, not hyphens
+  name = "${local.safe_name_prefix}_${replace(each.value, "-", "_")}_workload"
 
   # Empty for A2A-only agents (no OAuth callbacks needed)
   allowed_resource_oauth2_return_urls = []
@@ -71,7 +80,8 @@ resource "aws_bedrockagentcore_workload_identity" "agents" {
 # Workload Identity for TrackWise Simulator
 # ============================================
 resource "aws_bedrockagentcore_workload_identity" "simulator" {
-  name = "${var.name_prefix}-simulator-workload"
+  # AgentCore names must use underscores, not hyphens
+  name = "${local.safe_name_prefix}_simulator_workload"
 
   allowed_resource_oauth2_return_urls = []
 }

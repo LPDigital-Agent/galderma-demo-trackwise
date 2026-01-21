@@ -47,6 +47,14 @@ variable "event_expiry_days" {
 }
 
 # ============================================
+# Local Values
+# ============================================
+locals {
+  # AgentCore names must match ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ - no hyphens allowed
+  safe_name_prefix = replace(var.name_prefix, "-", "_")
+}
+
+# ============================================
 # Data Sources
 # ============================================
 data "aws_caller_identity" "current" {}
@@ -85,7 +93,7 @@ resource "aws_iam_role_policy_attachment" "memory_bedrock" {
 # AgentCore Memory Resource
 # ============================================
 resource "aws_bedrockagentcore_memory" "main" {
-  name                      = "${var.name_prefix}-memory"
+  name                      = "${local.safe_name_prefix}_memory"
   description               = "Unified memory for TrackWise AI Autopilot agents"
   event_expiry_duration     = var.event_expiry_days
   memory_execution_role_arn = aws_iam_role.memory_execution.arn

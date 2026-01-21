@@ -40,6 +40,14 @@ variable "aws_region" {
 }
 
 # ============================================
+# Local Values
+# ============================================
+locals {
+  # AgentCore names must match ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ - no hyphens allowed
+  safe_name_prefix = replace(var.name_prefix, "-", "_")
+}
+
+# ============================================
 # Data Sources
 # ============================================
 data "aws_caller_identity" "current" {}
@@ -102,7 +110,7 @@ resource "aws_iam_role_policy" "gateway_operations" {
 # AgentCore Gateway Resource
 # ============================================
 resource "aws_bedrockagentcore_gateway" "main" {
-  name        = "${var.name_prefix}-gateway"
+  name        = "${local.safe_name_prefix}_gateway"
   description = "MCP Gateway for TrackWise AI Autopilot"
   role_arn    = aws_iam_role.gateway_execution.arn
 

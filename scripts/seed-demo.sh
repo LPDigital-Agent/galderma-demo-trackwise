@@ -18,7 +18,6 @@ set -e
 
 # Configuration
 API_URL="${1:-http://localhost:8080}"
-BATCH_SIZE=10
 
 echo "╔════════════════════════════════════════════════════════════════╗"
 echo "║   Galderma TrackWise AI Autopilot - Demo Data Seeding          ║"
@@ -53,8 +52,7 @@ curl -s -X POST "$API_URL/api/batch" \
   -H "Content-Type: application/json" \
   -d '{
     "count": 5,
-    "use_recurring_patterns": true,
-    "product_filter": ["CETAPHIL", "EPIDUO"]
+    "include_recurring": true
   }' | jq .
 echo "✅ Recurring pattern cases created"
 echo ""
@@ -68,36 +66,39 @@ echo "Step 3: Creating multi-language test cases..."
 curl -s -X POST "$API_URL/api/cases" \
   -H "Content-Type: application/json" \
   -d '{
-    "description": "Cetaphil Gentle Skin Cleanser - embalagem danificada na entrega",
-    "product": "CETAPHIL",
-    "source_type": "EMAIL",
-    "reporter_name": "Maria Silva",
-    "reporter_email": "maria.silva@email.com.br",
-    "reporter_country": "BR"
+    "product_brand": "CETAPHIL",
+    "product_name": "Gentle Skin Cleanser",
+    "complaint_text": "Embalagem danificada na entrega. Produto vazou durante o transporte.",
+    "customer_name": "Maria Silva",
+    "customer_email": "maria.silva@email.com.br",
+    "case_type": "COMPLAINT",
+    "category": "PACKAGING"
   }' | jq .
 
 # Spanish case
 curl -s -X POST "$API_URL/api/cases" \
   -H "Content-Type: application/json" \
   -d '{
-    "description": "Epiduo Forte - irritación severa después del uso",
-    "product": "EPIDUO",
-    "source_type": "PHONE",
-    "reporter_name": "Carlos Rodríguez",
-    "reporter_email": "carlos.rodriguez@email.es",
-    "reporter_country": "ES"
+    "product_brand": "EPIDUO",
+    "product_name": "Epiduo Forte Gel",
+    "complaint_text": "Irritación severa después del uso. Enrojecimiento y picazón.",
+    "customer_name": "Carlos Rodríguez",
+    "customer_email": "carlos.rodriguez@email.es",
+    "case_type": "COMPLAINT",
+    "category": "SAFETY"
   }' | jq .
 
 # French case
 curl -s -X POST "$API_URL/api/cases" \
   -H "Content-Type: application/json" \
   -d '{
-    "description": "Differin Gel - tube vide à la réception",
-    "product": "DIFFERIN",
-    "source_type": "WEB_FORM",
-    "reporter_name": "Pierre Dupont",
-    "reporter_email": "pierre.dupont@email.fr",
-    "reporter_country": "FR"
+    "product_brand": "DIFFERIN",
+    "product_name": "Adapalene Gel 0.1%",
+    "complaint_text": "Tube vide à la réception. Pas de produit à lintérieur.",
+    "customer_name": "Pierre Dupont",
+    "customer_email": "pierre.dupont@email.fr",
+    "case_type": "COMPLAINT",
+    "category": "QUALITY"
   }' | jq .
 
 echo "✅ Multi-language cases created"
@@ -112,16 +113,13 @@ echo "Step 4: Creating cases for memory learning demo..."
 curl -s -X POST "$API_URL/api/cases" \
   -H "Content-Type: application/json" \
   -d '{
-    "description": "CETAPHIL Moisturizing Cream - product quality issue, texture changed",
-    "product": "CETAPHIL",
-    "source_type": "EMAIL",
-    "reporter_name": "Demo User",
-    "reporter_email": "demo@galderma.com",
-    "reporter_country": "US",
-    "metadata": {
-      "demo_purpose": "memory_learning",
-      "initial_confidence": 0.75
-    }
+    "product_brand": "CETAPHIL",
+    "product_name": "Moisturizing Lotion",
+    "complaint_text": "Product quality issue - texture has changed from previous purchase.",
+    "customer_name": "Demo User",
+    "customer_email": "demo@galderma.com",
+    "case_type": "COMPLAINT",
+    "category": "QUALITY"
   }' | jq .
 
 echo "✅ Memory learning demo cases created"
@@ -135,9 +133,8 @@ curl -s -X POST "$API_URL/api/batch" \
   -H "Content-Type: application/json" \
   -d '{
     "count": 20,
-    "use_recurring_patterns": true,
-    "include_resolved": true,
-    "date_range_days": 30
+    "include_recurring": true,
+    "include_linked_inquiries": true
   }' | jq .
 echo "✅ Historical cases created"
 echo ""
@@ -151,34 +148,51 @@ echo "Step 6: Creating edge cases for Compliance Guardian demo..."
 curl -s -X POST "$API_URL/api/cases" \
   -H "Content-Type: application/json" \
   -d '{
-    "description": "EPIDUO FORTE - severe allergic reaction, hospitalization required",
-    "product": "EPIDUO",
-    "source_type": "PHONE",
-    "reporter_name": "Emergency Contact",
-    "reporter_email": "emergency@hospital.com",
-    "reporter_country": "US",
-    "severity": "HIGH",
-    "metadata": {
-      "demo_purpose": "guardian_block",
-      "expected_action": "HUMAN_REVIEW"
-    }
+    "product_brand": "EPIDUO",
+    "product_name": "Epiduo Forte Gel",
+    "complaint_text": "Severe allergic reaction after applying product. Patient was hospitalized for observation.",
+    "customer_name": "Emergency Contact",
+    "customer_email": "emergency@hospital.com",
+    "case_type": "ADVERSE_EVENT",
+    "category": "SAFETY"
   }' | jq .
 
 # CRITICAL severity case (should escalate immediately)
 curl -s -X POST "$API_URL/api/cases" \
   -H "Content-Type: application/json" \
   -d '{
-    "description": "RESTYLANE - adverse event post-injection, patient requires medical attention",
-    "product": "RESTYLANE",
-    "source_type": "HCP_REPORT",
-    "reporter_name": "Dr. Smith",
-    "reporter_email": "dr.smith@clinic.com",
-    "reporter_country": "US",
-    "severity": "CRITICAL",
-    "metadata": {
-      "demo_purpose": "guardian_escalate",
-      "expected_action": "ESCALATE"
-    }
+    "product_brand": "RESTYLANE",
+    "product_name": "Restylane Lyft",
+    "complaint_text": "Adverse event post-injection. Patient requires immediate medical attention.",
+    "customer_name": "Dr. Smith",
+    "customer_email": "dr.smith@clinic.com",
+    "case_type": "ADVERSE_EVENT",
+    "category": "SAFETY"
+  }' | jq .
+
+# Additional LOW severity cases for auto-close demo
+curl -s -X POST "$API_URL/api/cases" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "product_brand": "CETAPHIL",
+    "product_name": "Daily Facial Moisturizer SPF 15",
+    "complaint_text": "Missing instruction leaflet inside the box.",
+    "customer_name": "John Smith",
+    "customer_email": "john.smith@email.com",
+    "case_type": "COMPLAINT",
+    "category": "DOCUMENTATION"
+  }' | jq .
+
+curl -s -X POST "$API_URL/api/cases" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "product_brand": "BENZAC",
+    "product_name": "Benzac AC Gel 5%",
+    "complaint_text": "Box arrived slightly dented but product is fine.",
+    "customer_name": "Jane Doe",
+    "customer_email": "jane.doe@email.com",
+    "case_type": "COMPLAINT",
+    "category": "PACKAGING"
   }' | jq .
 
 echo "✅ Edge cases created"

@@ -40,8 +40,7 @@ dependencies = [
     "anyio>=4.3.0",
     # Date/time handling
     "python-dateutil>=2.9.0",
-    # UUID generation
-    "ulid-py>=1.1.0",
+    # Note: Using built-in uuid module for ID generation
 ]
 
 [project.optional-dependencies]

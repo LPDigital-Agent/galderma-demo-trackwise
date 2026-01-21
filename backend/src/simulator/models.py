@@ -11,9 +11,15 @@
 from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
+import uuid
 
 from pydantic import BaseModel, Field
-from ulid import ULID
+
+
+def generate_ulid() -> str:
+    """Generate a ULID-like ID using UUID for compatibility."""
+    # Use UUID4 and format it similar to ULID (26 chars, uppercase alphanumeric)
+    return uuid.uuid4().hex[:26].upper()
 
 
 # ============================================
@@ -160,7 +166,7 @@ class CaseUpdate(BaseModel):
 
 class Case(CaseBase):
     """Full case model with all fields."""
-    case_id: str = Field(default_factory=lambda: f"TW-{str(ULID())[-8:].upper()}")
+    case_id: str = Field(default_factory=lambda: f"TW-{generate_ulid()[-8:].upper()}")
     status: CaseStatus = Field(default=CaseStatus.OPEN)
     severity: CaseSeverity = Field(default=CaseSeverity.MEDIUM)
 
@@ -191,7 +197,7 @@ class Case(CaseBase):
 # ============================================
 class EventEnvelope(BaseModel):
     """Event envelope for A2A communication."""
-    event_id: str = Field(default_factory=lambda: str(ULID()))
+    event_id: str = Field(default_factory=lambda: generate_ulid())
     event_type: EventType
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     source: str = Field(default="trackwise-simulator")

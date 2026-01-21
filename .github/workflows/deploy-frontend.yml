@@ -106,7 +106,7 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          BUCKET_NAME="galderma-trackwise-frontend-${{ inputs.environment || 'dev' }}"
+          BUCKET_NAME="galderma-trackwise-${{ inputs.environment || 'dev' }}-frontend-${{ env.AWS_ACCOUNT_ID }}"
 
           echo "Deploying to s3://${BUCKET_NAME}..."
 
@@ -141,7 +141,7 @@ jobs:
         run: |
           echo "## Frontend Deployment" >> $GITHUB_STEP_SUMMARY
           echo "- **Environment**: ${{ inputs.environment || 'dev' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **S3 Bucket**: galderma-trackwise-frontend-${{ inputs.environment || 'dev' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 Bucket**: galderma-trackwise-${{ inputs.environment || 'dev' }}-frontend-${{ env.AWS_ACCOUNT_ID }}" >> $GITHUB_STEP_SUMMARY
           if [[ -n "${{ vars.CLOUDFRONT_URL }}" ]]; then
             echo "- **URL**: ${{ vars.CLOUDFRONT_URL }}" >> $GITHUB_STEP_SUMMARY
           fi

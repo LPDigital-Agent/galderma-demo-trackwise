@@ -4,19 +4,21 @@
 # ============================================
 #
 # This module deploys all 9 agents to AWS Bedrock AgentCore Runtime.
-# Uses AWS Provider v6.28.0+ which includes full AgentCore support.
 #
 # Architecture:
 #   - Observer (Orchestrator) with A2A permissions to invoke specialists
 #   - 8 Specialist agents with individual IAM roles
 #   - Multi-Agent Orchestrator Pattern via IAM-based A2A
+#   - Code deployed via S3 ZIP files (NOT containers!)
+#
+# Docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagentcore_agent_runtime
 # ============================================
 
 terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.28.0"
+      version = ">= 5.80.0"
     }
   }
 }
@@ -40,15 +42,9 @@ variable "aws_region" {
   default     = "us-east-2"
 }
 
-variable "ecr_repository_urls" {
-  description = "Map of agent names to ECR repository URLs"
-  type        = map(string)
-}
-
-variable "image_tag" {
-  description = "Docker image tag to deploy"
+variable "artifacts_bucket_name" {
+  description = "S3 bucket name for agent code artifacts (ZIP files)"
   type        = string
-  default     = "latest"
 }
 
 variable "memory_id" {
@@ -56,8 +52,8 @@ variable "memory_id" {
   type        = string
 }
 
-variable "gateway_endpoint" {
-  description = "AgentCore Gateway endpoint URL"
+variable "gateway_url" {
+  description = "AgentCore Gateway URL"
   type        = string
 }
 
@@ -76,12 +72,19 @@ variable "log_group_arns" {
   type        = list(string)
 }
 
+variable "python_runtime" {
+  description = "Python runtime version for agents"
+  type        = string
+  default     = "PYTHON_3_12"
+}
+
 # Agent configurations
 variable "agents" {
   description = "Configuration for each agent"
   type = map(object({
     model_id        = string
     description     = string
+    entry_point     = list(string)
     memory_access   = list(string) # READ, WRITE, or both
     is_orchestrator = bool
   }))
@@ -89,54 +92,63 @@ variable "agents" {
     "observer" = {
       model_id        = "anthropic.claude-haiku-4-5-20251101"
       description     = "Orchestrator agent - routes events to specialists"
+      entry_point     = ["main.py"]
       memory_access   = []
       is_orchestrator = true
     }
     "case-understanding" = {
       model_id        = "anthropic.claude-haiku-4-5-20251101"
       description     = "Analyzes and classifies TrackWise cases"
+      entry_point     = ["main.py"]
       memory_access   = ["READ"]
       is_orchestrator = false
     }
     "recurring-detector" = {
       model_id        = "anthropic.claude-haiku-4-5-20251101"
       description     = "Detects recurring patterns in complaints"
+      entry_point     = ["main.py"]
       memory_access   = ["READ", "WRITE"]
       is_orchestrator = false
     }
     "compliance-guardian" = {
       model_id        = "anthropic.claude-opus-4-5-20251101"
       description     = "Validates compliance with 5 policy rules"
+      entry_point     = ["main.py"]
       memory_access   = ["READ"]
       is_orchestrator = false
     }
     "resolution-composer" = {
       model_id        = "anthropic.claude-opus-4-5-20251101"
       description     = "Composes multilingual resolutions"
+      entry_point     = ["main.py"]
       memory_access   = ["READ"]
       is_orchestrator = false
     }
     "inquiry-bridge" = {
       model_id        = "anthropic.claude-haiku-4-5-20251101"
       description     = "Handles inquiry-linked complaints"
+      entry_point     = ["main.py"]
       memory_access   = ["READ"]
       is_orchestrator = false
     }
     "writeback" = {
       model_id        = "anthropic.claude-haiku-4-5-20251101"
       description     = "Executes writeback to TrackWise Simulator"
+      entry_point     = ["main.py"]
       memory_access   = ["WRITE"]
       is_orchestrator = false
     }
     "memory-curator" = {
       model_id        = "anthropic.claude-haiku-4-5-20251101"
       description     = "Manages memory updates from feedback"
+      entry_point     = ["main.py"]
       memory_access   = ["READ", "WRITE"]
       is_orchestrator = false
     }
     "csv-pack" = {
       model_id        = "anthropic.claude-haiku-4-5-20251101"
       description     = "Generates CSV compliance packs"
+      entry_point     = ["main.py"]
       memory_access   = ["READ"]
       is_orchestrator = false
     }
@@ -152,33 +164,53 @@ data "aws_region" "current" {}
 # ============================================
 # IAM Role for Agent Execution
 # ============================================
+data "aws_iam_policy_document" "agent_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["bedrock-agentcore.amazonaws.com"]
+    }
+  }
+}
+
 resource "aws_iam_role" "agent_execution" {
   for_each = var.agents
 
-  name = "${var.name_prefix}-${each.key}-execution-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "bedrock-agentcore.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-        Condition = {
-          StringEquals = {
-            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-          }
-        }
-      }
-    ]
-  })
+  name               = "${var.name_prefix}-${each.key}-execution-role"
+  assume_role_policy = data.aws_iam_policy_document.agent_assume_role.json
 
   tags = {
-    Name  = "${var.name_prefix}-${each.key}-execution-role"
-    Agent = each.key
+    Name        = "${var.name_prefix}-${each.key}-execution-role"
+    Agent       = each.key
+    Environment = var.environment
   }
+}
+
+# ============================================
+# IAM Policy - S3 Artifacts Access (for code deployment)
+# ============================================
+data "aws_iam_policy_document" "s3_artifacts_access" {
+  statement {
+    sid    = "S3ArtifactsRead"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.artifacts_bucket_name}/*"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "s3_artifacts_access" {
+  for_each = var.agents
+
+  name   = "${each.key}-s3-artifacts-access"
+  role   = aws_iam_role.agent_execution[each.key].id
+  policy = data.aws_iam_policy_document.s3_artifacts_access.json
 }
 
 # ============================================
@@ -250,7 +282,6 @@ resource "aws_iam_role_policy" "memory_access" {
 # ============================================
 # IAM Policy - A2A Orchestrator Access
 # ============================================
-# Observer (orchestrator) can invoke all specialist agents
 resource "aws_iam_role_policy" "a2a_orchestrator" {
   for_each = { for k, v in var.agents : k => v if v.is_orchestrator }
 
@@ -305,7 +336,7 @@ resource "aws_iam_role_policy" "dynamodb_access" {
 }
 
 # ============================================
-# IAM Policy - S3 Access
+# IAM Policy - S3 Access (for data, not artifacts)
 # ============================================
 resource "aws_iam_role_policy" "s3_access" {
   for_each = var.agents
@@ -359,40 +390,48 @@ resource "aws_iam_role_policy" "logs_access" {
 }
 
 # ============================================
-# AgentCore Agent Runtimes
+# AgentCore Agent Runtimes (Code Configuration)
 # ============================================
-# Note: This uses the aws_bedrockagentcore_agent_runtime resource
-# available in AWS Provider v6.28.0+
-#
 resource "aws_bedrockagentcore_agent_runtime" "agents" {
   for_each = var.agents
 
   agent_runtime_name = "${var.name_prefix}-${each.key}"
   description        = each.value.description
+  role_arn           = aws_iam_role.agent_execution[each.key].arn
 
-  # Container configuration
-  runtime_artifact {
-    container_configuration {
-      container_uri = "${var.ecr_repository_urls[each.key]}:${var.image_tag}"
+  # Code configuration - using S3 ZIP files (NOT containers!)
+  agent_runtime_artifact {
+    code_configuration {
+      entry_point = each.value.entry_point
+      runtime     = var.python_runtime
+
+      code {
+        s3 {
+          bucket = var.artifacts_bucket_name
+          prefix = "agents/${each.key}/agent.zip"
+        }
+      }
     }
   }
 
-  # IAM role for execution
-  role_arn = aws_iam_role.agent_execution[each.key].arn
-
-  # Network configuration (use default VPC for demo)
+  # Network configuration (use PUBLIC for demo)
   network_configuration {
     network_mode = "PUBLIC"
+  }
+
+  # Protocol configuration - use HTTP for standard agents
+  protocol_configuration {
+    server_protocol = "HTTP"
   }
 
   # Environment variables for A2A discovery
   environment_variables = merge(
     {
-      AGENT_NAME       = each.key
-      ENVIRONMENT      = var.environment
-      MEMORY_ID        = var.memory_id
-      GATEWAY_ENDPOINT = var.gateway_endpoint
-      AWS_REGION       = var.aws_region
+      AGENT_NAME  = each.key
+      ENVIRONMENT = var.environment
+      MEMORY_ID   = var.memory_id
+      GATEWAY_URL = var.gateway_url
+      AWS_REGION  = var.aws_region
     },
     # Add specialist agent ARNs for orchestrator
     each.value.is_orchestrator ? {
@@ -404,10 +443,28 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
   )
 
   tags = {
-    Name        = "${var.name_prefix}-${each.key}"
-    Agent       = each.key
-    Model       = each.value.model_id
+    Name         = "${var.name_prefix}-${each.key}"
+    Agent        = each.key
+    Model        = each.value.model_id
     Orchestrator = each.value.is_orchestrator ? "true" : "false"
+    Environment  = var.environment
+  }
+}
+
+# ============================================
+# AgentCore Agent Runtime Endpoints
+# ============================================
+resource "aws_bedrockagentcore_agent_runtime_endpoint" "agents" {
+  for_each = var.agents
+
+  name             = "${var.name_prefix}-${each.key}-endpoint"
+  agent_runtime_id = aws_bedrockagentcore_agent_runtime.agents[each.key].agent_runtime_id
+  description      = "Endpoint for ${each.key} agent"
+
+  tags = {
+    Name        = "${var.name_prefix}-${each.key}-endpoint"
+    Agent       = each.key
+    Environment = var.environment
   }
 }
 
@@ -416,12 +473,17 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
 # ============================================
 output "agent_runtime_arns" {
   description = "Map of agent names to AgentCore Runtime ARNs"
-  value       = { for k, v in aws_bedrockagentcore_agent_runtime.agents : k => v.arn }
+  value       = { for k, v in aws_bedrockagentcore_agent_runtime.agents : k => v.agent_runtime_arn }
 }
 
-output "agent_runtime_endpoints" {
-  description = "Map of agent names to AgentCore Runtime endpoints"
-  value       = { for k, v in aws_bedrockagentcore_agent_runtime.agents : k => v.agent_runtime_endpoint }
+output "agent_runtime_ids" {
+  description = "Map of agent names to AgentCore Runtime IDs"
+  value       = { for k, v in aws_bedrockagentcore_agent_runtime.agents : k => v.agent_runtime_id }
+}
+
+output "agent_endpoint_arns" {
+  description = "Map of agent names to AgentCore Runtime Endpoint ARNs"
+  value       = { for k, v in aws_bedrockagentcore_agent_runtime_endpoint.agents : k => v.agent_runtime_endpoint_arn }
 }
 
 output "agent_execution_role_arns" {
@@ -431,10 +493,10 @@ output "agent_execution_role_arns" {
 
 output "orchestrator_arn" {
   description = "ARN of the Observer (orchestrator) agent"
-  value       = aws_bedrockagentcore_agent_runtime.agents["observer"].arn
+  value       = aws_bedrockagentcore_agent_runtime.agents["observer"].agent_runtime_arn
 }
 
-output "orchestrator_endpoint" {
-  description = "Endpoint of the Observer (orchestrator) agent"
-  value       = aws_bedrockagentcore_agent_runtime.agents["observer"].agent_runtime_endpoint
+output "orchestrator_endpoint_arn" {
+  description = "ARN of the Observer (orchestrator) agent endpoint"
+  value       = aws_bedrockagentcore_agent_runtime_endpoint.agents["observer"].agent_runtime_endpoint_arn
 }

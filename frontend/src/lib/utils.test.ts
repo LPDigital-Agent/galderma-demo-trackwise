@@ -12,7 +12,8 @@ describe('cn utility function', () => {
   })
 
   it('should handle conditional classes', () => {
-    expect(cn('foo', false && 'bar', 'baz')).toBe('foo baz')
+    const showBar = false
+    expect(cn('foo', showBar && 'bar', 'baz')).toBe('foo baz')
   })
 
   it('should resolve Tailwind conflicts', () => {

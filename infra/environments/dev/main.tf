@@ -33,14 +33,13 @@ terraform {
   }
 
   # Backend configuration for state storage
-  # Uncomment for remote state management
-  # backend "s3" {
-  #   bucket         = "galderma-trackwise-terraform-state"
-  #   key            = "dev/terraform.tfstate"
-  #   region         = "us-east-2"
-  #   encrypt        = true
-  #   dynamodb_table = "galderma-trackwise-terraform-locks"
-  # }
+  backend "s3" {
+    bucket         = "galderma-trackwise-terraform-state-176545286005"
+    key            = "dev/terraform.tfstate"
+    region         = "us-east-2"
+    encrypt        = true
+    dynamodb_table = "galderma-trackwise-terraform-locks"
+  }
 }
 
 # ============================================

@@ -88,6 +88,9 @@ pnpm-debug.log*
 # Build output
 frontend/dist/
 frontend/build/
+
+# TypeScript build info
+*.tsbuildinfo
 .next/
 out/
 

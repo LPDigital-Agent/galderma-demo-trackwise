@@ -1,0 +1,1 @@
+/Users/fabio.santos/LPD Repos/lpd-faiston-allinone/.claude/hooks/post_turn_update.py

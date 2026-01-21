@@ -1,0 +1,130 @@
+# ============================================
+# Galderma TrackWise AI Autopilot Demo
+# Infrastructure Deployment Workflow
+# ============================================
+
+name: Deploy Infrastructure
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infra/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+
+env:
+  AWS_REGION: us-east-2
+  AWS_ACCOUNT_ID: "176545286005"
+
+jobs:
+  # ─────────────────────────────────────────────
+  # Deploy Terraform Infrastructure
+  # ─────────────────────────────────────────────
+  deploy-terraform:
+    name: Deploy Terraform
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'dev' }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Verify AWS Identity
+        run: |
+          aws sts get-caller-identity
+          echo "Deploying to account ${{ env.AWS_ACCOUNT_ID }} in region ${{ env.AWS_REGION }}"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.0
+
+      - name: Terraform Init
+        working-directory: infra/environments/${{ inputs.environment || 'dev' }}
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: infra/environments/${{ inputs.environment || 'dev' }}
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: infra/environments/${{ inputs.environment || 'dev' }}
+        run: terraform apply -auto-approve tfplan
+
+      - name: Output Infrastructure Details
+        working-directory: infra/environments/${{ inputs.environment || 'dev' }}
+        run: |
+          echo "## Infrastructure Outputs" >> $GITHUB_STEP_SUMMARY
+          terraform output -json | jq -r 'to_entries[] | "- **\(.key)**: \(.value.value)"' >> $GITHUB_STEP_SUMMARY
+
+  # ─────────────────────────────────────────────
+  # Setup AgentCore Memory (Post-Terraform)
+  # ─────────────────────────────────────────────
+  setup-agentcore-memory:
+    name: Setup AgentCore Memory
+    runs-on: ubuntu-latest
+    needs: deploy-terraform
+    environment: ${{ inputs.environment || 'dev' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install AgentCore CLI
+        run: pip install bedrock-agentcore-starter-toolkit
+
+      - name: Create Memory Strategies
+        run: |
+          # Create RecurringPatterns strategy
+          echo "Creating RecurringPatterns memory strategy..."
+          aws bedrock-agentcore create-memory \
+            --name "galderma-recurring-patterns" \
+            --strategy-type "semantic" \
+            --description "Recurring complaint patterns for auto-resolution" \
+            --region ${{ env.AWS_REGION }} || true
+
+          # Create ResolutionTemplates strategy
+          echo "Creating ResolutionTemplates memory strategy..."
+          aws bedrock-agentcore create-memory \
+            --name "galderma-resolution-templates" \
+            --strategy-type "episodic" \
+            --description "Successful resolution templates" \
+            --region ${{ env.AWS_REGION }} || true
+
+          # Create PolicyKnowledge strategy
+          echo "Creating PolicyKnowledge memory strategy..."
+          aws bedrock-agentcore create-memory \
+            --name "galderma-policy-knowledge" \
+            --strategy-type "semantic" \
+            --description "Compliance policies and rules" \
+            --region ${{ env.AWS_REGION }} || true
+
+      - name: Verify Memory Strategies
+        run: |
+          echo "## AgentCore Memory Strategies" >> $GITHUB_STEP_SUMMARY
+          aws bedrock-agentcore list-memories --region ${{ env.AWS_REGION }} | jq -r '.memories[] | "- \(.name): \(.status)"' >> $GITHUB_STEP_SUMMARY

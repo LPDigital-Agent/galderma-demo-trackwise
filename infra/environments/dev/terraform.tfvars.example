@@ -1,0 +1,26 @@
+# ============================================
+# Galderma TrackWise AI Autopilot Demo
+# Development Environment - Variables Example
+# ============================================
+#
+# Copy this file to terraform.tfvars and update with your values.
+# Do NOT commit terraform.tfvars to version control!
+#
+# Usage:
+#   cp terraform.tfvars.example terraform.tfvars
+#   # Edit terraform.tfvars with your values
+#   terraform init
+#   terraform plan
+#   terraform apply
+# ============================================
+
+# AWS Configuration
+aws_region  = "us-east-2"
+aws_profile = "fabio-dev-lpd"  # Leave empty for CI/CD (uses environment variables)
+
+# Environment
+environment  = "dev"
+project_name = "galderma-trackwise"
+
+# Deployment
+image_tag = "latest"  # Docker image tag to deploy

@@ -1,0 +1,100 @@
+# ============================================
+# Galderma TrackWise AI Autopilot Demo
+# Docker Compose for Local Development
+# ============================================
+#
+# Usage:
+#   docker-compose up -d        # Start all services
+#   docker-compose down         # Stop all services
+#   docker-compose logs -f      # Follow logs
+#
+# Services:
+#   - localstack: AWS services emulation
+#   - dynamodb-local: DynamoDB for local testing
+#   - redis: Caching and pub/sub
+#
+# Note: Agents run via AgentCore CLI locally, not Docker
+# ============================================
+
+version: '3.8'
+
+services:
+  # LocalStack for AWS services emulation
+  localstack:
+    image: localstack/localstack:latest
+    container_name: galderma-localstack
+    ports:
+      - "4566:4566"           # LocalStack gateway
+      - "4510-4559:4510-4559" # External services port range
+    environment:
+      - SERVICES=s3,dynamodb,logs,cloudwatch
+      - DEBUG=1
+      - DATA_DIR=/var/lib/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_DEFAULT_REGION=us-east-2
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # DynamoDB Local for faster local development
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: galderma-dynamodb
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /data"
+    volumes:
+      - dynamodb-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/shell/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Redis for caching and pub/sub (WebSocket events)
+  redis:
+    image: redis:7-alpine
+    container_name: galderma-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # DynamoDB Admin UI (optional, for debugging)
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin
+    container_name: galderma-dynamodb-admin
+    ports:
+      - "8001:8001"
+    environment:
+      - DYNAMO_ENDPOINT=http://dynamodb-local:8000
+      - AWS_REGION=us-east-2
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
+    depends_on:
+      - dynamodb-local
+
+volumes:
+  localstack-data:
+    driver: local
+  dynamodb-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  default:
+    name: galderma-network

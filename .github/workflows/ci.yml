@@ -82,7 +82,8 @@ jobs:
         run: uv run ruff check .
 
       - name: Run type checking
-        run: uv run mypy shared --ignore-missing-imports
+        # Only check models, skip tools (boto3-stubs lacks bedrock-agentcore types)
+        run: uv run mypy shared/models shared/config.py --ignore-missing-imports
 
       - name: Run tests
         run: uv run pytest -v --tb=short

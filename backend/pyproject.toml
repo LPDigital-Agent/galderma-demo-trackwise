@@ -96,6 +96,7 @@ ignore = [
     "B904",   # raise without from in except
     "ARG001", # unused function argument (intentional for FastAPI handlers)
     "ARG002", # unused method argument (intentional for API interfaces)
+    "RUF059", # unpacked variable never used (intentional for tuple unpacking)
 ]
 
 [tool.ruff.lint.isort]

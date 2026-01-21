@@ -338,6 +338,26 @@ module "cloudfront" {
   depends_on = [module.s3]
 }
 
+# ============================================
+# Module: API Proxy (HTTP → AgentCore translation)
+# ============================================
+# This is a minimal Lambda that translates HTTP REST requests
+# to AgentCore action-based invocations. Required because:
+# - AgentCore Runtime requires IAM authentication (SigV4)
+# - Browser-based frontend cannot make SigV4 signed requests
+# - This is a thin translation layer, not business logic
+module "api_proxy" {
+  source = "../../modules/api-proxy"
+
+  name_prefix            = local.name_prefix
+  environment            = var.environment
+  aws_region             = var.aws_region
+  simulator_runtime_id   = module.agentcore_runtime.simulator_runtime_id
+  simulator_endpoint_arn = module.agentcore_runtime.simulator_endpoint_arn
+
+  depends_on = [module.agentcore_runtime]
+}
+
 # Frontend
 output "frontend_website_endpoint" {
   description = "Frontend S3 website endpoint (direct S3, use CloudFront instead)"
@@ -353,4 +373,15 @@ output "cloudfront_distribution_id" {
 output "cloudfront_url" {
   description = "CloudFront URL for the frontend (HTTPS)"
   value       = module.cloudfront.cloudfront_url
+}
+
+# API Proxy
+output "api_proxy_function_url" {
+  description = "API Proxy Lambda Function URL (use as VITE_API_URL)"
+  value       = module.api_proxy.function_url
+}
+
+output "api_proxy_function_arn" {
+  description = "API Proxy Lambda Function ARN"
+  value       = module.api_proxy.function_arn
 }

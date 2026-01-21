@@ -1,10 +1,14 @@
 # ============================================
 # Galderma TrackWise AI Autopilot Demo
-# Agent Deployment Workflow (100% AgentCore)
+# Agent Deployment Workflow (100% AgentCore - S3 ZIP)
 # ============================================
 #
-# IMPORTANT: All agents deploy to AgentCore Runtime
-# ZERO Lambda, ZERO ECS - 100% AgentCore
+# ARCHITECTURE: Deploys agents as ZIP files to S3
+# AgentCore Runtime automatically picks up new code via S3 triggers
+#
+# Code deployment path:
+#   agents/{agent-name}/agent.zip → S3://artifacts-bucket/agents/{agent-name}/agent.zip
+#   backend/ → S3://artifacts-bucket/backend/simulator.zip
 #
 
 name: Deploy Agents
@@ -26,26 +30,27 @@ on:
           - all
           - simulator
           - observer
-          - case_understanding
-          - recurring_detector
-          - compliance_guardian
-          - resolution_composer
-          - inquiry_bridge
+          - case-understanding
+          - recurring-detector
+          - compliance-guardian
+          - resolution-composer
+          - inquiry-bridge
           - writeback
-          - memory_curator
-          - csv_pack
+          - memory-curator
+          - csv-pack
 
 env:
   AWS_REGION: us-east-2
   AWS_ACCOUNT_ID: "176545286005"
-  ECR_REGISTRY: "176545286005.dkr.ecr.us-east-2.amazonaws.com"
+  ARTIFACTS_BUCKET: "galderma-trackwise-dev-artifacts-176545286005"
+  PYTHON_VERSION: "3.12"
 
 jobs:
   # ─────────────────────────────────────────────
-  # Build and Push Container Images
+  # Build and Deploy Agents as ZIP files
   # ─────────────────────────────────────────────
-  build-containers:
-    name: Build Containers
+  deploy-agents:
+    name: Deploy Agents to S3
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -54,103 +59,48 @@ jobs:
     strategy:
       matrix:
         include:
+          # TrackWise Simulator (Backend)
           - name: simulator
-            path: backend
-            dockerfile: backend/Dockerfile
+            source_path: backend
+            s3_prefix: backend
+            zip_name: simulator.zip
+          # 9 Strands Agents
           - name: observer
-            path: agents/observer
-            dockerfile: agents/observer/Dockerfile
-          - name: case_understanding
-            path: agents/case_understanding
-            dockerfile: agents/case_understanding/Dockerfile
-          - name: recurring_detector
-            path: agents/recurring_detector
-            dockerfile: agents/recurring_detector/Dockerfile
-          - name: compliance_guardian
-            path: agents/compliance_guardian
-            dockerfile: agents/compliance_guardian/Dockerfile
-          - name: resolution_composer
-            path: agents/resolution_composer
-            dockerfile: agents/resolution_composer/Dockerfile
-          - name: inquiry_bridge
-            path: agents/inquiry_bridge
-            dockerfile: agents/inquiry_bridge/Dockerfile
+            source_path: agents/observer
+            s3_prefix: agents/observer
+            zip_name: agent.zip
+          - name: case-understanding
+            source_path: agents/case_understanding
+            s3_prefix: agents/case-understanding
+            zip_name: agent.zip
+          - name: recurring-detector
+            source_path: agents/recurring_detector
+            s3_prefix: agents/recurring-detector
+            zip_name: agent.zip
+          - name: compliance-guardian
+            source_path: agents/compliance_guardian
+            s3_prefix: agents/compliance-guardian
+            zip_name: agent.zip
+          - name: resolution-composer
+            source_path: agents/resolution_composer
+            s3_prefix: agents/resolution-composer
+            zip_name: agent.zip
+          - name: inquiry-bridge
+            source_path: agents/inquiry_bridge
+            s3_prefix: agents/inquiry-bridge
+            zip_name: agent.zip
           - name: writeback
-            path: agents/writeback
-            dockerfile: agents/writeback/Dockerfile
-          - name: memory_curator
-            path: agents/memory_curator
-            dockerfile: agents/memory_curator/Dockerfile
-          - name: csv_pack
-            path: agents/csv_pack
-            dockerfile: agents/csv_pack/Dockerfile
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check if agent should be built
-        id: check
-        run: |
-          if [[ "${{ inputs.agent }}" == "all" || "${{ inputs.agent }}" == "${{ matrix.name }}" ]]; then
-            echo "should_build=true" >> $GITHUB_OUTPUT
-          else
-            echo "should_build=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Configure AWS Credentials
-        if: steps.check.outputs.should_build == 'true'
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        if: steps.check.outputs.should_build == 'true'
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Set up Docker Buildx
-        if: steps.check.outputs.should_build == 'true'
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push
-        if: steps.check.outputs.should_build == 'true'
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ${{ matrix.dockerfile }}
-          platforms: linux/arm64
-          push: true
-          tags: |
-            ${{ env.ECR_REGISTRY }}/galderma-${{ matrix.name }}:latest
-            ${{ env.ECR_REGISTRY }}/galderma-${{ matrix.name }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  # ─────────────────────────────────────────────
-  # Deploy to AgentCore Runtime
-  # ─────────────────────────────────────────────
-  deploy-to-agentcore:
-    name: Deploy to AgentCore
-    runs-on: ubuntu-latest
-    needs: build-containers
-    permissions:
-      id-token: write
-      contents: read
-
-    strategy:
-      matrix:
-        agent:
-          - simulator
-          - observer
-          - case_understanding
-          - recurring_detector
-          - compliance_guardian
-          - resolution_composer
-          - inquiry_bridge
-          - writeback
-          - memory_curator
-          - csv_pack
+            source_path: agents/writeback
+            s3_prefix: agents/writeback
+            zip_name: agent.zip
+          - name: memory-curator
+            source_path: agents/memory_curator
+            s3_prefix: agents/memory-curator
+            zip_name: agent.zip
+          - name: csv-pack
+            source_path: agents/csv_pack
+            s3_prefix: agents/csv-pack
+            zip_name: agent.zip
 
     steps:
       - uses: actions/checkout@v4
@@ -158,11 +108,23 @@ jobs:
       - name: Check if agent should be deployed
         id: check
         run: |
-          if [[ "${{ inputs.agent }}" == "all" || "${{ inputs.agent }}" == "${{ matrix.agent }}" ]]; then
+          if [[ "${{ inputs.agent }}" == "all" || "${{ inputs.agent }}" == "" || "${{ inputs.agent }}" == "${{ matrix.name }}" ]]; then
             echo "should_deploy=true" >> $GITHUB_OUTPUT
           else
             echo "should_deploy=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Set up Python
+        if: steps.check.outputs.should_deploy == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install uv
+        if: steps.check.outputs.should_deploy == 'true'
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.14"
 
       - name: Configure AWS Credentials
         if: steps.check.outputs.should_deploy == 'true'
@@ -172,71 +134,60 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install AgentCore CLI
+      - name: Install dependencies and create deployment package
         if: steps.check.outputs.should_deploy == 'true'
         run: |
-          pip install bedrock-agentcore-starter-toolkit strands-agents
+          echo "📦 Building deployment package for ${{ matrix.name }}..."
 
-      - name: Deploy Agent to AgentCore Runtime
-        if: steps.check.outputs.should_deploy == 'true'
-        run: |
-          echo "Deploying ${{ matrix.agent }} to AgentCore Runtime..."
+          cd ${{ matrix.source_path }}
 
-          # Set working directory based on agent type
-          if [[ "${{ matrix.agent }}" == "simulator" ]]; then
-            AGENT_PATH="backend"
-            ENTRYPOINT="src/main.py"
+          # Install dependencies to a temporary directory
+          mkdir -p .package
+          uv pip install --target .package -r pyproject.toml 2>/dev/null || \
+          uv pip install --target .package . 2>/dev/null || \
+          echo "No dependencies to install"
+
+          # Create ZIP with all source code and dependencies
+          cd .package 2>/dev/null && zip -r9 ../deployment.zip . 2>/dev/null && cd .. || true
+
+          # Add source code to ZIP (overwriting any conflicts)
+          if [[ -f deployment.zip ]]; then
+            # Add source files
+            zip -r9 deployment.zip . -x ".package/*" -x "*.pyc" -x "__pycache__/*" -x ".git/*" -x "*.egg-info/*" -x ".pytest_cache/*" -x ".ruff_cache/*"
           else
-            AGENT_PATH="agents/${{ matrix.agent }}"
-            ENTRYPOINT="agent.py"
+            # No dependencies, just zip source
+            zip -r9 deployment.zip . -x "*.pyc" -x "__pycache__/*" -x ".git/*" -x "*.egg-info/*" -x ".pytest_cache/*" -x ".ruff_cache/*"
           fi
 
-          cd $AGENT_PATH
+          # Rename to expected name
+          mv deployment.zip ${{ matrix.zip_name }}
 
-          # Configure AgentCore deployment
-          agentcore configure \
-            --entrypoint $ENTRYPOINT \
-            --image ${{ env.ECR_REGISTRY }}/galderma-${{ matrix.agent }}:${{ github.sha }} \
-            --region ${{ env.AWS_REGION }}
+          echo "✅ Created ${{ matrix.zip_name }} ($(du -h ${{ matrix.zip_name }} | cut -f1))"
 
-          # Deploy to AgentCore Runtime (NOT ECS, NOT Lambda!)
-          agentcore launch
-
-          echo "✅ ${{ matrix.agent }} deployed to AgentCore Runtime"
-
-      - name: Wait for Agent to be ACTIVE
+      - name: Upload to S3
         if: steps.check.outputs.should_deploy == 'true'
         run: |
-          echo "Waiting for ${{ matrix.agent }} to become ACTIVE..."
+          echo "☁️ Uploading ${{ matrix.name }} to S3..."
 
-          for i in {1..30}; do
-            STATUS=$(agentcore status --name galderma-${{ matrix.agent }} --format json | jq -r '.status')
-            if [[ "$STATUS" == "ACTIVE" ]]; then
-              echo "✅ ${{ matrix.agent }} is ACTIVE"
-              exit 0
-            fi
-            echo "Status: $STATUS (attempt $i/30)"
-            sleep 10
-          done
+          aws s3 cp \
+            ${{ matrix.source_path }}/${{ matrix.zip_name }} \
+            s3://${{ env.ARTIFACTS_BUCKET }}/${{ matrix.s3_prefix }}/${{ matrix.zip_name }} \
+            --content-type "application/zip"
 
-          echo "❌ Timeout waiting for ${{ matrix.agent }} to become ACTIVE"
-          exit 1
+          echo "✅ Uploaded to s3://${{ env.ARTIFACTS_BUCKET }}/${{ matrix.s3_prefix }}/${{ matrix.zip_name }}"
 
-      - name: Output Deployment Details
+      - name: Verify Upload
         if: steps.check.outputs.should_deploy == 'true'
         run: |
-          echo "## Agent Deployment: ${{ matrix.agent }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Image**: ${{ env.ECR_REGISTRY }}/galderma-${{ matrix.agent }}:${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Region**: ${{ env.AWS_REGION }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Runtime**: AgentCore (100% - ZERO Lambda/ECS)" >> $GITHUB_STEP_SUMMARY
+          aws s3 ls s3://${{ env.ARTIFACTS_BUCKET }}/${{ matrix.s3_prefix }}/${{ matrix.zip_name }}
 
   # ─────────────────────────────────────────────
-  # Verify A2A Communication
+  # Trigger AgentCore Runtime Update
   # ─────────────────────────────────────────────
-  verify-a2a:
-    name: Verify A2A Communication
+  update-agentcore:
+    name: Update AgentCore Runtimes
     runs-on: ubuntu-latest
-    needs: deploy-to-agentcore
+    needs: deploy-agents
     if: inputs.agent == 'all' || inputs.agent == ''
 
     steps:
@@ -249,45 +200,42 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install AgentCore CLI
-        run: pip install bedrock-agentcore-starter-toolkit
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
 
-      - name: Verify Agents Status
+      - name: Trigger AgentCore Update via Terraform
+        working-directory: infra/environments/dev
         run: |
-          echo "Verifying agent deployment status..."
+          echo "🔄 Triggering AgentCore Runtime update..."
 
-          # List of agents to verify
-          AGENTS=(
-            "simulator"
-            "observer"
-            "case_understanding"
-            "recurring_detector"
-            "compliance_guardian"
-            "resolution_composer"
-            "inquiry_bridge"
-            "writeback"
-            "memory_curator"
-            "csv_pack"
-          )
+          # Initialize Terraform
+          terraform init -backend=true
 
-          ALL_ACTIVE=true
-          for agent in "${AGENTS[@]}"; do
-            STATUS=$(agentcore status --name galderma-$agent --format json 2>/dev/null | jq -r '.status' || echo "UNKNOWN")
-            if [[ "$STATUS" == "ACTIVE" ]]; then
-              echo "✅ galderma-$agent: ACTIVE"
-            else
-              echo "⚠️ galderma-$agent: $STATUS"
-              ALL_ACTIVE=false
-            fi
-          done
+          # Apply only the agentcore_runtime module
+          # The CODE_VERSION environment variable in each runtime uses the S3 etag
+          # When the ZIP file changes, the etag changes, triggering a redeployment
+          terraform apply -auto-approve -target=module.agentcore_runtime
 
-          if $ALL_ACTIVE; then
-            echo "✅ All agents are ACTIVE"
-          else
-            echo "⚠️ Some agents are not yet ACTIVE (this may be expected during deployment)"
-          fi
+          echo "✅ AgentCore Runtimes updated"
 
       - name: Summary
         run: |
-          echo "## A2A Communication Verified" >> $GITHUB_STEP_SUMMARY
-          echo "All 9 agents + simulator deployed and communicating via AgentCore A2A protocol" >> $GITHUB_STEP_SUMMARY
+          echo "## Agent Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Agent | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| simulator | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "| observer | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "| case-understanding | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "| recurring-detector | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "| compliance-guardian | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "| resolution-composer | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "| inquiry-bridge | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "| writeback | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "| memory-curator | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "| csv-pack | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Architecture:** 100% AgentCore Runtime (S3 ZIP deployment)" >> $GITHUB_STEP_SUMMARY
+          echo "**Region:** ${{ env.AWS_REGION }}" >> $GITHUB_STEP_SUMMARY

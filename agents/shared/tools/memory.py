@@ -8,12 +8,12 @@
 # ============================================
 
 import os
-from typing import Any, Optional
+from typing import Any
 
 import boto3
 from strands import tool
 
-from ..models.memory import MemoryPattern, MemoryStrategy
+from ..models.memory import MemoryStrategy
 
 
 # Initialize AgentCore client
@@ -37,8 +37,8 @@ def _get_memory_id() -> str:
 def memory_query(
     strategy: str,
     query_text: str,
-    category: Optional[str] = None,
-    product_line: Optional[str] = None,
+    category: str | None = None,
+    product_line: str | None = None,
     min_confidence: float = 0.0,
     limit: int = 10,
     similarity_threshold: float = 0.75,
@@ -148,13 +148,13 @@ def memory_write(
     name: str,
     description: str,
     content: dict[str, Any],
-    pattern_id: Optional[str] = None,
-    category: Optional[str] = None,
-    product_line: Optional[str] = None,
-    severity: Optional[str] = None,
+    pattern_id: str | None = None,
+    category: str | None = None,
+    product_line: str | None = None,
+    severity: str | None = None,
     initial_confidence: float = 0.5,
-    source_case_id: Optional[str] = None,
-    source_run_id: Optional[str] = None,
+    source_case_id: str | None = None,
+    source_run_id: str | None = None,
 ) -> dict[str, Any]:
     """Write or update a pattern in AgentCore Memory.
 
@@ -279,7 +279,7 @@ def memory_delete(
         memory_id = _get_memory_id()
 
         # Execute delete
-        response = client.delete_memory_pattern(
+        client.delete_memory_pattern(
             memoryId=memory_id,
             strategyName=strategy_enum.value,
             patternId=pattern_id,

@@ -18,19 +18,19 @@
 
 import json
 import logging
-import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from strands import Agent, tool
 from strands.agent.hooks import AfterInvocationEvent, BeforeInvocationEvent
 from ulid import ULID
 
-from shared.config import AgentConfig, ExecutionMode
-from shared.tools.memory import memory_query, memory_write
+from shared.config import AgentConfig
 from shared.tools.a2a import call_specialist_agent, get_agent_card
-from shared.tools.ledger import write_ledger_entry
 from shared.tools.human_review import request_human_review
+from shared.tools.ledger import write_ledger_entry
+from shared.tools.memory import memory_query, memory_write
+
 
 # ============================================
 # Configuration
@@ -276,10 +276,7 @@ def _are_related_categories(cat1: str, cat2: str) -> bool:
         {"QUALITY", "EFFICACY"},
         {"ADVERSE_REACTION", "CONTAMINATION"},
     ]
-    for group in related_groups:
-        if cat1 in group and cat2 in group:
-            return True
-    return False
+    return any(cat1 in group and cat2 in group for group in related_groups)
 
 
 @tool
@@ -411,7 +408,7 @@ def suggest_new_pattern(
 @tool(context=True)
 def write_new_pattern(
     pattern: dict[str, Any],
-    approved_by: Optional[str] = None,
+    approved_by: str | None = None,
     tool_context=None,
 ) -> dict[str, Any]:
     """Write a new pattern to RecurringPatterns memory.
@@ -474,13 +471,13 @@ def write_new_pattern(
 def create_pattern_match_result(
     case_id: str,
     run_id: str,
-    matched_pattern_id: Optional[str],
+    matched_pattern_id: str | None,
     similarity_score: float,
     confidence: str,
     recommendation: str,
-    resolution_template_ref: Optional[str] = None,
+    resolution_template_ref: str | None = None,
     is_new_pattern: bool = False,
-    suggested_pattern: Optional[dict[str, Any]] = None,
+    suggested_pattern: dict[str, Any] | None = None,
     requires_human_review: bool = False,
 ) -> dict[str, Any]:
     """Create structured PatternMatchResult output.
@@ -600,10 +597,7 @@ def invoke(payload: dict[str, Any]) -> dict[str, Any]:
         analysis = payload.get("analysis") or payload.get("inputText", "")
         run_id = payload.get("run_id", str(ULID()))
 
-        if isinstance(analysis, dict):
-            analysis_json = json.dumps(analysis)
-        else:
-            analysis_json = analysis
+        analysis_json = json.dumps(analysis) if isinstance(analysis, dict) else analysis
 
         # Create session ID for tracing
         session_id = str(ULID())
@@ -638,7 +632,7 @@ Report the complete PatternMatchResult."""
         }
 
     except Exception as e:
-        logger.error(f"Invocation failed: {str(e)}")
+        logger.error(f"Invocation failed: {e!s}")
         return {
             "success": False,
             "error": str(e),

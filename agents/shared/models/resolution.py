@@ -4,7 +4,6 @@
 # ============================================
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -59,7 +58,7 @@ class MultilingualResolution(BaseModel):
     primary_language: ResolutionLanguage = Field(
         default=ResolutionLanguage.EN, description="Primary language of customer"
     )
-    template_used: Optional[str] = Field(
+    template_used: str | None = Field(
         default=None, description="Memory template ID used (if any)"
     )
 

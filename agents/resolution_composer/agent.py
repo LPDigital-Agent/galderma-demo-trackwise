@@ -20,18 +20,18 @@
 
 import json
 import logging
-import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from strands import Agent, tool
 from strands.agent.hooks import AfterInvocationEvent, BeforeInvocationEvent
 from ulid import ULID
 
 from shared.config import AgentConfig
-from shared.tools.memory import memory_query
 from shared.tools.a2a import call_specialist_agent, get_agent_card
 from shared.tools.ledger import write_ledger_entry
+from shared.tools.memory import memory_query
+
 
 # ============================================
 # Configuration
@@ -211,7 +211,7 @@ def compose_canonical_resolution(
     template: str,
     product: str,
     category: str,
-    case_specific_details: Optional[str] = None,
+    case_specific_details: str | None = None,
 ) -> dict[str, Any]:
     """Compose the canonical (language-neutral) resolution.
 
@@ -262,19 +262,7 @@ def translate_resolution(
     # Here we provide template-based translations for common phrases
 
     # Base translations for common opening phrases
-    openings = {
-        "PT": "Agradecemos o seu contato sobre",
-        "EN": "Thank you for contacting us about",
-        "ES": "Gracias por contactarnos sobre",
-        "FR": "Merci de nous avoir contactés au sujet de",
-    }
 
-    apology = {
-        "PT": "Pedimos desculpas pelo inconveniente",
-        "EN": "We apologize for the inconvenience",
-        "ES": "Nos disculpamos por las molestias",
-        "FR": "Nous nous excusons pour les inconvénients",
-    }
 
     # If target is EN, return canonical (assumed to be in English)
     if target_language == "EN":
@@ -552,7 +540,7 @@ Report the complete ResolutionPackage."""
         }
 
     except Exception as e:
-        logger.error(f"Invocation failed: {str(e)}")
+        logger.error(f"Invocation failed: {e!s}")
         return {
             "success": False,
             "error": str(e),

@@ -9,7 +9,7 @@
 # ============================================
 
 import os
-from typing import Any, Optional
+from typing import Any
 
 import boto3
 from strands import tool
@@ -75,14 +75,14 @@ def get_case(case_id: str) -> dict[str, Any]:
 @tool
 def update_case(
     case_id: str,
-    status: Optional[str] = None,
-    severity: Optional[str] = None,
-    category: Optional[str] = None,
-    resolution: Optional[str] = None,
-    resolution_code: Optional[str] = None,
-    ai_processed: Optional[bool] = None,
-    ai_confidence: Optional[float] = None,
-    ai_recommendation: Optional[str] = None,
+    status: str | None = None,
+    severity: str | None = None,
+    category: str | None = None,
+    resolution: str | None = None,
+    resolution_code: str | None = None,
+    ai_processed: bool | None = None,
+    ai_confidence: float | None = None,
+    ai_recommendation: str | None = None,
 ) -> dict[str, Any]:
     """Update a case in TrackWise Simulator.
 
@@ -141,7 +141,7 @@ def close_case(
     case_id: str,
     resolution: str,
     resolution_code: str,
-    languages: Optional[list[str]] = None,
+    languages: list[str] | None = None,
 ) -> dict[str, Any]:
     """Close a case in TrackWise Simulator with resolution.
 
@@ -184,9 +184,9 @@ def close_case(
 
 @tool
 def list_cases(
-    status: Optional[str] = None,
-    severity: Optional[str] = None,
-    case_type: Optional[str] = None,
+    status: str | None = None,
+    severity: str | None = None,
+    case_type: str | None = None,
     limit: int = 50,
     offset: int = 0,
 ) -> dict[str, Any]:

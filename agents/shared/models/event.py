@@ -5,7 +5,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -49,24 +49,24 @@ class TrackWiseEvent(BaseModel):
     case_id: str = Field(description="TrackWise case ID")
 
     # Case snapshot at event time
-    case_snapshot: Optional[dict[str, Any]] = Field(
+    case_snapshot: dict[str, Any] | None = Field(
         default=None, description="Full case state at event time"
     )
 
     # Change details
-    changed_fields: Optional[list[str]] = Field(
+    changed_fields: list[str] | None = Field(
         default=None, description="List of fields that changed"
     )
-    previous_values: Optional[dict[str, Any]] = Field(
+    previous_values: dict[str, Any] | None = Field(
         default=None, description="Previous values of changed fields"
     )
-    new_values: Optional[dict[str, Any]] = Field(
+    new_values: dict[str, Any] | None = Field(
         default=None, description="New values of changed fields"
     )
 
     # Metadata
     source: str = Field(default="trackwise-simulator", description="Event source")
-    user_id: Optional[str] = Field(
+    user_id: str | None = Field(
         default=None, description="User who triggered event (if manual)"
     )
 
@@ -87,10 +87,10 @@ class EventEnvelope(BaseModel):
     event: TrackWiseEvent = Field(description="The actual event data")
 
     # Processing metadata
-    correlation_id: Optional[str] = Field(
+    correlation_id: str | None = Field(
         default=None, description="Correlation ID for tracing"
     )
-    causation_id: Optional[str] = Field(
+    causation_id: str | None = Field(
         default=None, description="ID of event that caused this one"
     )
 
@@ -104,7 +104,7 @@ class EventEnvelope(BaseModel):
     )
 
     # Routing hints
-    target_agent: Optional[str] = Field(
+    target_agent: str | None = Field(
         default=None, description="Specific agent to route to (if known)"
     )
     requires_opus: bool = Field(
@@ -119,7 +119,7 @@ class EventEnvelope(BaseModel):
         cls,
         event: TrackWiseEvent,
         envelope_id: str,
-        correlation_id: Optional[str] = None,
+        correlation_id: str | None = None,
     ) -> "EventEnvelope":
         """Create envelope from TrackWise event."""
         # Determine if OPUS is required based on event type

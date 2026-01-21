@@ -3,8 +3,6 @@
 # Analysis Models - Agent Analysis Outputs
 # ============================================
 
-from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -21,7 +19,7 @@ class CaseAnalysis(BaseModel):
 
     # Product classification
     product: str = Field(description="Identified Galderma product")
-    product_line: Optional[str] = Field(
+    product_line: str | None = Field(
         default=None,
         description="Product line: CETAPHIL | ALASTIN | DIFFERIN | EPIDUO | RESTYLANE",
     )
@@ -61,10 +59,10 @@ class PatternMatch(BaseModel):
     match_count: int = Field(
         ge=0, description="Number of previous cases matching this pattern"
     )
-    avg_resolution_time_hours: Optional[float] = Field(
+    avg_resolution_time_hours: float | None = Field(
         default=None, description="Average resolution time for this pattern"
     )
-    suggested_resolution: Optional[str] = Field(
+    suggested_resolution: str | None = Field(
         default=None, description="Suggested resolution based on pattern"
     )
     confidence_boost: float = Field(
@@ -79,13 +77,13 @@ class PolicyViolation(BaseModel):
     policy_name: str = Field(description="Policy name")
     severity: str = Field(description="Violation severity: WARNING | ERROR | CRITICAL")
     message: str = Field(description="Violation message")
-    field: Optional[str] = Field(
+    field: str | None = Field(
         default=None, description="Field that caused violation"
     )
-    expected_value: Optional[str] = Field(
+    expected_value: str | None = Field(
         default=None, description="Expected value for compliance"
     )
-    actual_value: Optional[str] = Field(
+    actual_value: str | None = Field(
         default=None, description="Actual value found"
     )
 
@@ -130,7 +128,7 @@ class ComplianceResult(BaseModel):
     requires_human_review: bool = Field(
         default=False, description="Whether human review is required"
     )
-    human_review_reason: Optional[str] = Field(
+    human_review_reason: str | None = Field(
         default=None, description="Reason for human review requirement"
     )
 

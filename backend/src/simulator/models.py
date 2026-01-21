@@ -8,10 +8,10 @@
 #
 # ============================================
 
+import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
-import uuid
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -135,12 +135,12 @@ class CaseBase(BaseModel):
     product_name: str = Field(description="Specific product name")
     complaint_text: str = Field(description="Customer complaint description")
     customer_name: str = Field(description="Customer name")
-    customer_email: Optional[str] = Field(default=None, description="Customer email")
-    customer_phone: Optional[str] = Field(default=None, description="Customer phone")
+    customer_email: str | None = Field(default=None, description="Customer email")
+    customer_phone: str | None = Field(default=None, description="Customer phone")
     case_type: CaseType = Field(default=CaseType.COMPLAINT, description="Type of case")
-    category: Optional[ComplaintCategory] = Field(default=None, description="Complaint category")
-    lot_number: Optional[str] = Field(default=None, description="Product lot/batch number")
-    linked_case_id: Optional[str] = Field(default=None, description="ID of linked case (for inquiries)")
+    category: ComplaintCategory | None = Field(default=None, description="Complaint category")
+    lot_number: str | None = Field(default=None, description="Product lot/batch number")
+    linked_case_id: str | None = Field(default=None, description="ID of linked case (for inquiries)")
 
 
 class CaseCreate(CaseBase):
@@ -150,18 +150,18 @@ class CaseCreate(CaseBase):
 
 class CaseUpdate(BaseModel):
     """Model for updating an existing case."""
-    status: Optional[CaseStatus] = None
-    severity: Optional[CaseSeverity] = None
-    category: Optional[ComplaintCategory] = None
-    resolution_text: Optional[str] = None
-    resolution_text_pt: Optional[str] = None
-    resolution_text_en: Optional[str] = None
-    resolution_text_es: Optional[str] = None
-    resolution_text_fr: Optional[str] = None
-    ai_recommendation: Optional[str] = None
-    ai_confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    guardian_approved: Optional[bool] = None
-    processed_by_agent: Optional[str] = None
+    status: CaseStatus | None = None
+    severity: CaseSeverity | None = None
+    category: ComplaintCategory | None = None
+    resolution_text: str | None = None
+    resolution_text_pt: str | None = None
+    resolution_text_en: str | None = None
+    resolution_text_es: str | None = None
+    resolution_text_fr: str | None = None
+    ai_recommendation: str | None = None
+    ai_confidence: float | None = Field(default=None, ge=0.0, le=1.0)
+    guardian_approved: bool | None = None
+    processed_by_agent: str | None = None
 
 
 class Case(CaseBase):
@@ -171,23 +171,23 @@ class Case(CaseBase):
     severity: CaseSeverity = Field(default=CaseSeverity.MEDIUM)
 
     # Resolution fields
-    resolution_text: Optional[str] = None
-    resolution_text_pt: Optional[str] = None
-    resolution_text_en: Optional[str] = None
-    resolution_text_es: Optional[str] = None
-    resolution_text_fr: Optional[str] = None
+    resolution_text: str | None = None
+    resolution_text_pt: str | None = None
+    resolution_text_en: str | None = None
+    resolution_text_es: str | None = None
+    resolution_text_fr: str | None = None
 
     # AI processing fields
-    ai_recommendation: Optional[str] = None
-    ai_confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    guardian_approved: Optional[bool] = None
-    processed_by_agent: Optional[str] = None
-    run_id: Optional[str] = None
+    ai_recommendation: str | None = None
+    ai_confidence: float | None = Field(default=None, ge=0.0, le=1.0)
+    guardian_approved: bool | None = None
+    processed_by_agent: str | None = None
+    run_id: str | None = None
 
     # Metadata
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    closed_at: Optional[datetime] = None
+    closed_at: datetime | None = None
 
     model_config = {"from_attributes": True}
 
@@ -210,7 +210,7 @@ class CaseEvent(BaseModel):
     """Case-related event payload."""
     case_id: str
     case: Case
-    previous_status: Optional[CaseStatus] = None
+    previous_status: CaseStatus | None = None
 
 
 # ============================================

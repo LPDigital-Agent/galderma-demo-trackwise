@@ -9,7 +9,7 @@
 
 import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 import boto3
 from strands import tool
@@ -38,18 +38,18 @@ def write_ledger_entry(
     agent_name: str,
     action: str,
     action_description: str,
-    decision: Optional[str] = None,
-    confidence: Optional[float] = None,
-    reasoning: Optional[str] = None,
-    state_changes: Optional[list[dict[str, Any]]] = None,
-    policies_evaluated: Optional[list[str]] = None,
-    policy_violations: Optional[list[str]] = None,
-    memory_strategy: Optional[str] = None,
-    memory_pattern_id: Optional[str] = None,
+    decision: str | None = None,
+    confidence: float | None = None,
+    reasoning: str | None = None,
+    state_changes: list[dict[str, Any]] | None = None,
+    policies_evaluated: list[str] | None = None,
+    policy_violations: list[str] | None = None,
+    memory_strategy: str | None = None,
+    memory_pattern_id: str | None = None,
     requires_human_action: bool = False,
-    model_id: Optional[str] = None,
-    tokens_used: Optional[int] = None,
-    latency_ms: Optional[int] = None,
+    model_id: str | None = None,
+    tokens_used: int | None = None,
+    latency_ms: int | None = None,
 ) -> dict[str, Any]:
     """Write an entry to the immutable decision ledger.
 
@@ -161,9 +161,9 @@ def write_ledger_entry(
 
 @tool
 def get_ledger_entries(
-    run_id: Optional[str] = None,
-    case_id: Optional[str] = None,
-    agent_name: Optional[str] = None,
+    run_id: str | None = None,
+    case_id: str | None = None,
+    agent_name: str | None = None,
     limit: int = 100,
 ) -> dict[str, Any]:
     """Get ledger entries with optional filters.

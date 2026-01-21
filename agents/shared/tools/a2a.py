@@ -12,7 +12,7 @@
 
 import json
 import os
-from typing import Any, Optional
+from typing import Any
 
 import boto3
 from strands import tool
@@ -26,7 +26,7 @@ def _get_agentcore_client():
     )
 
 
-def _get_agent_arn(agent_type: str) -> Optional[str]:
+def _get_agent_arn(agent_type: str) -> str | None:
     """Get agent ARN from environment variable.
 
     Environment variables are set by Terraform:
@@ -68,7 +68,7 @@ SPECIALIST_AGENTS = [
 def call_specialist_agent(
     query: str,
     agent_type: str,
-    context: Optional[dict[str, Any]] = None,
+    context: dict[str, Any] | None = None,
     timeout_seconds: int = 60,
 ) -> dict[str, Any]:
     """Invoke a specialist agent via A2A protocol (IAM-based).

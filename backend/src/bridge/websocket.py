@@ -12,7 +12,7 @@ import asyncio
 import json
 import logging
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import WebSocket
 
@@ -76,7 +76,7 @@ class WebSocketManager:
         """Initialize the WebSocket manager."""
         self._connections: list[WebSocket] = []
         self._event_queue: asyncio.Queue[dict] = asyncio.Queue()
-        self._broadcast_task: Optional[asyncio.Task] = None
+        self._broadcast_task: asyncio.Task | None = None
 
     async def connect(self, websocket: WebSocket) -> None:
         """Accept a new WebSocket connection.

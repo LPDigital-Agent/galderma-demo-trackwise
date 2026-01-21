@@ -11,7 +11,7 @@
 import json
 import logging
 import os
-from typing import Any, Optional
+from typing import Any
 
 import boto3
 from botocore.exceptions import ClientError
@@ -50,7 +50,7 @@ class EventEmitter:
             region: AWS region for AgentCore client
         """
         self.region = region
-        self._client: Optional[Any] = None
+        self._client: Any | None = None
         self._enabled = A2A_ENABLED
         self._observer_arn = OBSERVER_AGENT_ARN
 

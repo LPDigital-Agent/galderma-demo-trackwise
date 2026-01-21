@@ -11,16 +11,13 @@
 import logging
 import random
 from datetime import datetime
-from typing import Optional
-
-from ulid import ULID
 
 from .models import (
+    GALDERMA_PRODUCTS,
     BatchCreate,
     BatchResult,
     Case,
     CaseCreate,
-    CaseEvent,
     CaseListResponse,
     CaseSeverity,
     CaseStatus,
@@ -29,7 +26,6 @@ from .models import (
     ComplaintCategory,
     EventEnvelope,
     EventType,
-    GALDERMA_PRODUCTS,
 )
 
 
@@ -102,7 +98,7 @@ class SimulatorAPI:
         """Initialize the simulator with empty case storage."""
         self._cases: dict[str, Case] = {}
         self._events: list[EventEnvelope] = []
-        self._event_callback: Optional[callable] = None
+        self._event_callback: callable | None = None
         logger.info("TrackWise Simulator initialized")
 
     def set_event_callback(self, callback: callable) -> None:
@@ -148,7 +144,7 @@ class SimulatorAPI:
 
         return case, event
 
-    def get_case(self, case_id: str) -> Optional[Case]:
+    def get_case(self, case_id: str) -> Case | None:
         """Get a case by ID.
 
         Args:
@@ -161,7 +157,7 @@ class SimulatorAPI:
 
     def update_case(
         self, case_id: str, update_data: CaseUpdate
-    ) -> tuple[Optional[Case], Optional[EventEnvelope]]:
+    ) -> tuple[Case | None, EventEnvelope | None]:
         """Update an existing case.
 
         Args:
@@ -209,12 +205,12 @@ class SimulatorAPI:
         self,
         case_id: str,
         resolution_text: str,
-        resolution_text_pt: Optional[str] = None,
-        resolution_text_en: Optional[str] = None,
-        resolution_text_es: Optional[str] = None,
-        resolution_text_fr: Optional[str] = None,
-        processed_by_agent: Optional[str] = None,
-    ) -> tuple[Optional[Case], Optional[EventEnvelope]]:
+        resolution_text_pt: str | None = None,
+        resolution_text_en: str | None = None,
+        resolution_text_es: str | None = None,
+        resolution_text_fr: str | None = None,
+        processed_by_agent: str | None = None,
+    ) -> tuple[Case | None, EventEnvelope | None]:
         """Close a case with resolution.
 
         Args:
@@ -265,9 +261,9 @@ class SimulatorAPI:
 
     def list_cases(
         self,
-        status: Optional[CaseStatus] = None,
-        severity: Optional[CaseSeverity] = None,
-        case_type: Optional[CaseType] = None,
+        status: CaseStatus | None = None,
+        severity: CaseSeverity | None = None,
+        case_type: CaseType | None = None,
         page: int = 1,
         page_size: int = 20,
     ) -> CaseListResponse:
@@ -496,7 +492,7 @@ class SimulatorAPI:
         return event
 
     def get_events(
-        self, limit: int = 100, event_type: Optional[EventType] = None
+        self, limit: int = 100, event_type: EventType | None = None
     ) -> list[EventEnvelope]:
         """Get recent events.
 

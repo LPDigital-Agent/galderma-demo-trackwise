@@ -116,6 +116,10 @@ ignore = [
     "E501",   # line too long (handled by formatter)
     "B008",   # function call in argument defaults
     "B904",   # raise without from in except
+    "ARG001", # unused function argument (intentional for @tool decorated functions)
+    "RUF012", # mutable class attributes (Pydantic Config pattern)
+    "SIM105", # contextlib.suppress suggestion (preference)
+    "SIM108", # ternary operator suggestion (preference)
 ]
 
 [tool.ruff.lint.isort]

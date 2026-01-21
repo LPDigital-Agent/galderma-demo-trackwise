@@ -22,7 +22,7 @@ import json
 import logging
 from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -281,9 +281,9 @@ async def create_case(case_data: CaseCreate) -> Case:
 
 @app.get("/api/cases", response_model=CaseListResponse, tags=["Cases"])
 async def list_cases(
-    status: Optional[CaseStatus] = Query(None),
-    severity: Optional[CaseSeverity] = Query(None),
-    case_type: Optional[CaseType] = Query(None),
+    status: CaseStatus | None = Query(None),
+    severity: CaseSeverity | None = Query(None),
+    case_type: CaseType | None = Query(None),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
 ) -> CaseListResponse:
@@ -319,11 +319,11 @@ async def update_case(case_id: str, update_data: CaseUpdate) -> Case:
 async def close_case(
     case_id: str,
     resolution_text: str = Query(...),
-    resolution_text_pt: Optional[str] = Query(None),
-    resolution_text_en: Optional[str] = Query(None),
-    resolution_text_es: Optional[str] = Query(None),
-    resolution_text_fr: Optional[str] = Query(None),
-    processed_by_agent: Optional[str] = Query(None),
+    resolution_text_pt: str | None = Query(None),
+    resolution_text_en: str | None = Query(None),
+    resolution_text_es: str | None = Query(None),
+    resolution_text_fr: str | None = Query(None),
+    processed_by_agent: str | None = Query(None),
 ) -> Case:
     """Close a case with resolution."""
     case, _ = simulator_api.close_case(
@@ -353,7 +353,7 @@ async def delete_case(case_id: str) -> dict[str, Any]:
 @app.get("/api/events", response_model=list[EventEnvelope], tags=["Events"])
 async def list_events(
     limit: int = Query(100, ge=1, le=1000),
-    event_type: Optional[EventType] = Query(None),
+    event_type: EventType | None = Query(None),
 ) -> list[EventEnvelope]:
     """List recent events."""
     return simulator_api.get_events(limit=limit, event_type=event_type)

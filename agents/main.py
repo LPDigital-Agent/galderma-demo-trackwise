@@ -11,11 +11,11 @@ Usage:
 import json
 import logging
 import os
-import sys
 import traceback
 from importlib import import_module
 
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
+
 
 # Configure logging for CloudWatch
 logging.basicConfig(
@@ -100,7 +100,7 @@ def handler(event: dict) -> dict:
         return result
 
     except Exception as e:
-        error_msg = f"Agent invocation failed: {str(e)}"
+        error_msg = f"Agent invocation failed: {e!s}"
         logger.error(error_msg)
         logger.error(traceback.format_exc())
         return {

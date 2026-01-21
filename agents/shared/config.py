@@ -8,7 +8,6 @@
 # ============================================
 
 from enum import Enum
-from typing import Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -63,19 +62,19 @@ class AgentConfig(BaseSettings):
     )
 
     # AgentCore endpoints
-    memory_id: Optional[str] = Field(default=None, description="AgentCore Memory ID")
-    gateway_endpoint: Optional[str] = Field(
+    memory_id: str | None = Field(default=None, description="AgentCore Memory ID")
+    gateway_endpoint: str | None = Field(
         default=None, description="AgentCore Gateway endpoint"
     )
 
     # DynamoDB tables
-    runs_table_name: Optional[str] = Field(
+    runs_table_name: str | None = Field(
         default=None, alias="RUNS_TABLE_NAME"
     )
-    ledger_table_name: Optional[str] = Field(
+    ledger_table_name: str | None = Field(
         default=None, alias="LEDGER_TABLE_NAME"
     )
-    cases_table_name: Optional[str] = Field(
+    cases_table_name: str | None = Field(
         default=None, alias="CASES_TABLE_NAME"
     )
 
@@ -135,10 +134,7 @@ class AgentConfig(BaseSettings):
         if severity in ["HIGH", "CRITICAL"]:
             return True
 
-        if confidence < self.confidence_threshold:
-            return True
-
-        return False
+        return confidence < self.confidence_threshold
 
 
 # Galderma product taxonomy
@@ -175,7 +171,7 @@ GALDERMA_PRODUCTS = {
 }
 
 
-def get_product_line(product_name: str) -> Optional[str]:
+def get_product_line(product_name: str) -> str | None:
     """Get product line from product name."""
     product_lower = product_name.lower()
     for line, products in GALDERMA_PRODUCTS.items():

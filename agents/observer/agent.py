@@ -18,7 +18,6 @@
 
 import json
 import logging
-import os
 from datetime import datetime
 from typing import Any
 
@@ -26,11 +25,12 @@ from strands import Agent, tool
 from strands.agent.hooks import AfterInvocationEvent, BeforeInvocationEvent
 from ulid import ULID
 
-from shared.config import AgentConfig, ExecutionMode
-from shared.models.event import EventEnvelope, EventType, TrackWiseEvent
-from shared.models.run import Run, RunStatus, AgentStep, StepType
+from shared.config import AgentConfig
+from shared.models.event import EventEnvelope, EventType
+from shared.models.run import Run, RunStatus
 from shared.tools.a2a import call_specialist_agent, get_agent_card
 from shared.tools.ledger import write_ledger_entry
+
 
 # ============================================
 # Configuration
@@ -135,12 +135,12 @@ def validate_event(event_json: str) -> dict[str, Any]:
     except json.JSONDecodeError as e:
         return {
             "valid": False,
-            "error": f"Invalid JSON: {str(e)}",
+            "error": f"Invalid JSON: {e!s}",
         }
     except Exception as e:
         return {
             "valid": False,
-            "error": f"Validation failed: {str(e)}",
+            "error": f"Validation failed: {e!s}",
         }
 
 
@@ -378,7 +378,7 @@ Report the result."""
         }
 
     except Exception as e:
-        logger.error(f"Invocation failed: {str(e)}")
+        logger.error(f"Invocation failed: {e!s}")
         return {
             "success": False,
             "error": str(e),

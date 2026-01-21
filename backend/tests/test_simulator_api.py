@@ -3,7 +3,6 @@
 # Backend Tests - Simulator API
 # ============================================
 
-import pytest
 
 from src.simulator.api import SimulatorAPI
 from src.simulator.models import (
@@ -195,7 +194,7 @@ class TestSimulatorAPIIntegration:
             include_linked_inquiries=False,
         )
 
-        result = simulator.create_batch(batch_data)
+        simulator.create_batch(batch_data)
 
         # Get all cases
         cases = simulator.list_cases(page_size=100).cases

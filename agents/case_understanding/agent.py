@@ -18,20 +18,18 @@
 
 import json
 import logging
-import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from strands import Agent, tool
 from strands.agent.hooks import AfterInvocationEvent, BeforeInvocationEvent
 from ulid import ULID
 
-from shared.config import AgentConfig, GALDERMA_PRODUCTS, get_product_line
-from shared.models.analysis import CaseAnalysis, SeverityLevel, RecommendedAction
-from shared.models.case import CaseType, CaseSnapshot
-from shared.tools.memory import memory_query
+from shared.config import GALDERMA_PRODUCTS, AgentConfig
 from shared.tools.a2a import call_specialist_agent, get_agent_card
 from shared.tools.ledger import write_ledger_entry
+from shared.tools.memory import memory_query
+
 
 # ============================================
 # Configuration
@@ -371,7 +369,7 @@ def extract_key_phrases(description: str) -> dict[str, Any]:
     phrases = []
 
     # Product mentions
-    for line, products in GALDERMA_PRODUCTS.items():
+    for _line, products in GALDERMA_PRODUCTS.items():
         for product in products:
             if product.lower() in description.lower():
                 phrases.append(f"Product: {product}")
@@ -408,7 +406,7 @@ def create_case_analysis(
     confidence: float,
     key_phrases: list[str],
     requires_escalation: bool,
-    escalation_reason: Optional[str] = None,
+    escalation_reason: str | None = None,
 ) -> dict[str, Any]:
     """Create structured CaseAnalysis output.
 
@@ -533,10 +531,7 @@ def invoke(payload: dict[str, Any]) -> dict[str, Any]:
         case_data = payload.get("case") or payload.get("inputText", "")
         run_id = payload.get("run_id", str(ULID()))
 
-        if isinstance(case_data, dict):
-            case_json = json.dumps(case_data)
-        else:
-            case_json = case_data
+        case_json = json.dumps(case_data) if isinstance(case_data, dict) else case_data
 
         # Create session ID for tracing
         session_id = str(ULID())
@@ -571,7 +566,7 @@ Report the complete CaseAnalysis."""
         }
 
     except Exception as e:
-        logger.error(f"Invocation failed: {str(e)}")
+        logger.error(f"Invocation failed: {e!s}")
         return {
             "success": False,
             "error": str(e),

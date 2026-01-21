@@ -20,19 +20,19 @@
 
 import json
 import logging
-import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from strands import Agent, tool
 from strands.agent.hooks import AfterInvocationEvent, BeforeInvocationEvent
 from ulid import ULID
 
-from shared.config import AgentConfig, ExecutionMode
-from shared.tools.memory import memory_query
+from shared.config import AgentConfig
 from shared.tools.a2a import call_specialist_agent, get_agent_card
-from shared.tools.ledger import write_ledger_entry
 from shared.tools.human_review import request_human_review
+from shared.tools.ledger import write_ledger_entry
+from shared.tools.memory import memory_query
+
 
 # ============================================
 # Configuration
@@ -193,11 +193,11 @@ def check_policy_001_severity(severity: str) -> dict[str, Any]:
 
 @tool
 def check_policy_002_evidence(
-    case_id: Optional[str],
-    product: Optional[str],
-    category: Optional[str],
-    description: Optional[str],
-    severity: Optional[str],
+    case_id: str | None,
+    product: str | None,
+    category: str | None,
+    description: str | None,
+    severity: str | None,
 ) -> dict[str, Any]:
     """POL-002: Evidence Completeness Policy.
 
@@ -673,7 +673,7 @@ Report the complete ComplianceDecision."""
         }
 
     except Exception as e:
-        logger.error(f"Invocation failed: {str(e)}")
+        logger.error(f"Invocation failed: {e!s}")
         return {
             "success": False,
             "error": str(e),

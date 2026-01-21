@@ -18,19 +18,19 @@
 
 import json
 import logging
-import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from strands import Agent, tool
 from strands.agent.hooks import AfterInvocationEvent, BeforeInvocationEvent
 from ulid import ULID
 
-from shared.config import AgentConfig, ExecutionMode
-from shared.tools.memory import memory_write
+from shared.config import AgentConfig
 from shared.tools.a2a import call_specialist_agent, get_agent_card
 from shared.tools.ledger import write_ledger_entry
-from shared.tools.simulator import get_case, update_case, close_case
+from shared.tools.memory import memory_write
+from shared.tools.simulator import close_case, get_case, update_case
+
 
 # ============================================
 # Configuration
@@ -388,8 +388,8 @@ def create_writeback_result(
     action: str,
     preflight_passed: bool,
     retry_count: int,
-    error: Optional[str] = None,
-    resolution_language: Optional[str] = None,
+    error: str | None = None,
+    resolution_language: str | None = None,
 ) -> dict[str, Any]:
     """Create structured WritebackResult output.
 
@@ -544,7 +544,7 @@ Report the complete WritebackResult."""
         }
 
     except Exception as e:
-        logger.error(f"Invocation failed: {str(e)}")
+        logger.error(f"Invocation failed: {e!s}")
         return {
             "success": False,
             "error": str(e),

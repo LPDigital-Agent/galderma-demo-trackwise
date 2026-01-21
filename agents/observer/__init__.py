@@ -1,6 +1,7 @@
 # Observer Agent (Orchestrator)
 # Routes events to specialist agents
 
-from .agent import observer, invoke
+from .agent import invoke, observer
 
-__all__ = ["observer", "invoke"]
+
+__all__ = ["invoke", "observer"]

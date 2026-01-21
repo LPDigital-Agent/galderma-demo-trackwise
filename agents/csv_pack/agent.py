@@ -18,18 +18,18 @@
 
 import json
 import logging
-import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from strands import Agent, tool
 from strands.agent.hooks import AfterInvocationEvent, BeforeInvocationEvent
 from ulid import ULID
 
 from shared.config import AgentConfig
-from shared.tools.memory import memory_query
-from shared.tools.ledger import get_ledger_entries
 from shared.tools.a2a import get_agent_card
+from shared.tools.ledger import get_ledger_entries
+from shared.tools.memory import memory_query
+
 
 # ============================================
 # Configuration
@@ -202,7 +202,7 @@ def generate_urs(system_name: str, version: str) -> dict[str, Any]:
 
 
 @tool
-def generate_risk_assessment(run_ids: Optional[list[str]] = None) -> dict[str, Any]:
+def generate_risk_assessment(run_ids: list[str] | None = None) -> dict[str, Any]:
     """Generate Risk Assessment document based on agent decisions.
 
     Args:
@@ -223,7 +223,7 @@ def generate_risk_assessment(run_ids: Optional[list[str]] = None) -> dict[str, A
         "CRITICAL": 0,
     }
 
-    for entry in entries:
+    for _entry in entries:
         # Extract severity from entry if available
         # This is a simplified version
         risk_summary["LOW"] += 1
@@ -325,7 +325,7 @@ def generate_traceability_matrix() -> dict[str, Any]:
 
 
 @tool
-def generate_test_logs(run_ids: Optional[list[str]] = None) -> dict[str, Any]:
+def generate_test_logs(run_ids: list[str] | None = None) -> dict[str, Any]:
     """Generate Test Execution Logs from run history.
 
     Args:
@@ -526,7 +526,7 @@ def create_csv_pack_result(
     pack_id: str,
     artifacts: list[dict[str, Any]],
     integrity_hash: str,
-    s3_location: Optional[str] = None,
+    s3_location: str | None = None,
 ) -> dict[str, Any]:
     """Create structured CSVPackResult output.
 
@@ -634,10 +634,7 @@ def invoke(payload: dict[str, Any]) -> dict[str, Any]:
         request_data = payload.get("request") or payload.get("inputText", "")
         run_ids = payload.get("run_ids", [])
 
-        if isinstance(request_data, dict):
-            request_json = json.dumps(request_data)
-        else:
-            request_json = request_data
+        request_json = json.dumps(request_data) if isinstance(request_data, dict) else request_data
 
         # Create session and pack IDs
         session_id = str(ULID())
@@ -676,7 +673,7 @@ Report the complete CSVPackResult with integrity hash."""
         }
 
     except Exception as e:
-        logger.error(f"Invocation failed: {str(e)}")
+        logger.error(f"Invocation failed: {e!s}")
         return {
             "success": False,
             "error": str(e),

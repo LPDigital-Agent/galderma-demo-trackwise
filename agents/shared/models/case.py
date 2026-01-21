@@ -5,7 +5,6 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -61,41 +60,41 @@ class Case(BaseModel):
 
     # Product information
     product: str = Field(description="Galderma product name")
-    product_code: Optional[str] = Field(default=None, description="Product SKU/code")
-    batch_number: Optional[str] = Field(default=None, description="Product batch number")
+    product_code: str | None = Field(default=None, description="Product SKU/code")
+    batch_number: str | None = Field(default=None, description="Product batch number")
 
     # Complaint details
-    category: Optional[ComplaintCategory] = Field(
+    category: ComplaintCategory | None = Field(
         default=None, description="Complaint category"
     )
     severity: Severity = Field(default=Severity.LOW, description="Severity level")
     description: str = Field(description="Case description from customer")
 
     # Contact information
-    customer_name: Optional[str] = Field(default=None, description="Customer name")
-    customer_email: Optional[str] = Field(default=None, description="Customer email")
-    customer_country: Optional[str] = Field(default=None, description="Customer country code")
+    customer_name: str | None = Field(default=None, description="Customer name")
+    customer_email: str | None = Field(default=None, description="Customer email")
+    customer_country: str | None = Field(default=None, description="Customer country code")
 
     # Resolution
-    resolution: Optional[str] = Field(default=None, description="Resolution text")
-    resolution_code: Optional[str] = Field(default=None, description="Resolution code")
+    resolution: str | None = Field(default=None, description="Resolution text")
+    resolution_code: str | None = Field(default=None, description="Resolution code")
 
     # Linked cases
-    linked_inquiry_id: Optional[str] = Field(
+    linked_inquiry_id: str | None = Field(
         default=None, description="Linked inquiry case ID (for complaints)"
     )
 
     # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Creation timestamp")
     updated_at: datetime = Field(default_factory=datetime.utcnow, description="Last update timestamp")
-    closed_at: Optional[datetime] = Field(default=None, description="Closure timestamp")
+    closed_at: datetime | None = Field(default=None, description="Closure timestamp")
 
     # AI processing metadata
     ai_processed: bool = Field(default=False, description="Whether AI has processed this case")
-    ai_confidence: Optional[float] = Field(
+    ai_confidence: float | None = Field(
         default=None, ge=0.0, le=1.0, description="AI confidence score"
     )
-    ai_recommendation: Optional[str] = Field(
+    ai_recommendation: str | None = Field(
         default=None, description="AI recommendation: AUTO_CLOSE | HUMAN_REVIEW | ESCALATE"
     )
 
@@ -109,22 +108,22 @@ class CaseCreate(BaseModel):
     case_type: CaseType = Field(description="Type of case")
     product: str = Field(description="Galderma product name")
     description: str = Field(description="Case description")
-    severity: Optional[Severity] = Field(default=Severity.LOW, description="Initial severity")
-    category: Optional[ComplaintCategory] = Field(default=None, description="Complaint category")
-    customer_name: Optional[str] = Field(default=None, description="Customer name")
-    customer_email: Optional[str] = Field(default=None, description="Customer email")
-    customer_country: Optional[str] = Field(default=None, description="Customer country")
-    batch_number: Optional[str] = Field(default=None, description="Product batch number")
+    severity: Severity | None = Field(default=Severity.LOW, description="Initial severity")
+    category: ComplaintCategory | None = Field(default=None, description="Complaint category")
+    customer_name: str | None = Field(default=None, description="Customer name")
+    customer_email: str | None = Field(default=None, description="Customer email")
+    customer_country: str | None = Field(default=None, description="Customer country")
+    batch_number: str | None = Field(default=None, description="Product batch number")
 
 
 class CaseUpdate(BaseModel):
     """Request model for updating an existing case."""
 
-    status: Optional[CaseStatus] = Field(default=None, description="New status")
-    severity: Optional[Severity] = Field(default=None, description="Updated severity")
-    category: Optional[ComplaintCategory] = Field(default=None, description="Updated category")
-    resolution: Optional[str] = Field(default=None, description="Resolution text")
-    resolution_code: Optional[str] = Field(default=None, description="Resolution code")
-    ai_processed: Optional[bool] = Field(default=None, description="AI processed flag")
-    ai_confidence: Optional[float] = Field(default=None, description="AI confidence score")
-    ai_recommendation: Optional[str] = Field(default=None, description="AI recommendation")
+    status: CaseStatus | None = Field(default=None, description="New status")
+    severity: Severity | None = Field(default=None, description="Updated severity")
+    category: ComplaintCategory | None = Field(default=None, description="Updated category")
+    resolution: str | None = Field(default=None, description="Resolution text")
+    resolution_code: str | None = Field(default=None, description="Resolution code")
+    ai_processed: bool | None = Field(default=None, description="AI processed flag")
+    ai_confidence: float | None = Field(default=None, description="AI confidence score")
+    ai_recommendation: str | None = Field(default=None, description="AI recommendation")

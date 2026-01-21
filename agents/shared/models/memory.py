@@ -5,7 +5,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -33,9 +33,9 @@ class MemoryPattern(BaseModel):
     content: dict[str, Any] = Field(description="Full pattern content")
 
     # Classification
-    category: Optional[str] = Field(default=None, description="Pattern category")
-    product_line: Optional[str] = Field(default=None, description="Product line if applicable")
-    severity: Optional[str] = Field(default=None, description="Associated severity")
+    category: str | None = Field(default=None, description="Pattern category")
+    product_line: str | None = Field(default=None, description="Product line if applicable")
+    severity: str | None = Field(default=None, description="Associated severity")
 
     # Learning metrics
     confidence: float = Field(
@@ -47,21 +47,21 @@ class MemoryPattern(BaseModel):
 
     # Versioning
     version: int = Field(default=1, description="Pattern version number")
-    previous_version_id: Optional[str] = Field(
+    previous_version_id: str | None = Field(
         default=None, description="Previous version ID for history"
     )
 
     # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    last_matched_at: Optional[datetime] = Field(default=None)
+    last_matched_at: datetime | None = Field(default=None)
 
     # Human review
     human_verified: bool = Field(
         default=False, description="Whether pattern was human-verified"
     )
-    verified_by: Optional[str] = Field(default=None, description="Verifier ID")
-    verified_at: Optional[datetime] = Field(default=None)
+    verified_by: str | None = Field(default=None, description="Verifier ID")
+    verified_at: datetime | None = Field(default=None)
 
     class Config:
         json_encoders = {datetime: lambda v: v.isoformat()}
@@ -74,9 +74,9 @@ class MemoryQuery(BaseModel):
     query_text: str = Field(description="Text to search for (semantic)")
 
     # Filters
-    category: Optional[str] = Field(default=None, description="Filter by category")
-    product_line: Optional[str] = Field(default=None, description="Filter by product line")
-    min_confidence: Optional[float] = Field(
+    category: str | None = Field(default=None, description="Filter by category")
+    product_line: str | None = Field(default=None, description="Filter by product line")
+    min_confidence: float | None = Field(
         default=None, ge=0.0, le=1.0, description="Minimum confidence threshold"
     )
 
@@ -95,10 +95,10 @@ class MemoryQueryResult(BaseModel):
     query_time_ms: int = Field(description="Query execution time")
 
     # Best match
-    top_match: Optional[MemoryPattern] = Field(
+    top_match: MemoryPattern | None = Field(
         default=None, description="Highest scoring match"
     )
-    top_similarity: Optional[float] = Field(
+    top_similarity: float | None = Field(
         default=None, description="Similarity score of top match"
     )
 
@@ -107,7 +107,7 @@ class MemoryWriteRequest(BaseModel):
     """Request to write/update AgentCore Memory."""
 
     strategy: MemoryStrategy = Field(description="Target strategy")
-    pattern_id: Optional[str] = Field(
+    pattern_id: str | None = Field(
         default=None, description="Pattern ID (None for new)"
     )
 
@@ -117,18 +117,18 @@ class MemoryWriteRequest(BaseModel):
     content: dict[str, Any] = Field(description="Pattern content")
 
     # Classification
-    category: Optional[str] = Field(default=None)
-    product_line: Optional[str] = Field(default=None)
-    severity: Optional[str] = Field(default=None)
+    category: str | None = Field(default=None)
+    product_line: str | None = Field(default=None)
+    severity: str | None = Field(default=None)
 
     # Initial confidence
     initial_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
 
     # Source
-    source_case_id: Optional[str] = Field(
+    source_case_id: str | None = Field(
         default=None, description="Case that generated this pattern"
     )
-    source_run_id: Optional[str] = Field(
+    source_run_id: str | None = Field(
         default=None, description="Run that generated this pattern"
     )
 
@@ -145,7 +145,7 @@ class MemoryFeedback(BaseModel):
     )
 
     # Correction (if CORRECT)
-    corrected_content: Optional[dict[str, Any]] = Field(
+    corrected_content: dict[str, Any] | None = Field(
         default=None, description="Corrected content if type is CORRECT"
     )
 
@@ -154,12 +154,12 @@ class MemoryFeedback(BaseModel):
     run_id: str = Field(description="Run that generated feedback")
 
     # Confidence adjustment
-    confidence_delta: Optional[float] = Field(
+    confidence_delta: float | None = Field(
         default=None, description="Calculated confidence change"
     )
 
     # Human actor
-    feedback_by: Optional[str] = Field(default=None, description="Human who provided feedback")
+    feedback_by: str | None = Field(default=None, description="Human who provided feedback")
     feedback_at: datetime = Field(default_factory=datetime.utcnow)
 
     def calculate_confidence_delta(self) -> float:

@@ -9,7 +9,7 @@
 
 import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 import boto3
 from strands import tool
@@ -37,7 +37,7 @@ def request_human_review(
     severity: str,
     confidence: float,
     recommendation: str,
-    context_data: Optional[dict[str, Any]] = None,
+    context_data: dict[str, Any] | None = None,
     tool_context=None,
 ) -> dict[str, Any]:
     """Request human review for a decision.
@@ -122,7 +122,7 @@ def request_human_review(
 @tool
 def check_human_approval(
     run_id: str,
-    review_id: Optional[str] = None,
+    review_id: str | None = None,
 ) -> dict[str, Any]:
     """Check if human has approved/rejected a pending review.
 
@@ -190,9 +190,9 @@ def check_human_approval(
 def submit_human_feedback(
     run_id: str,
     approved: bool,
-    feedback: Optional[str] = None,
-    reviewer_id: Optional[str] = None,
-    corrected_recommendation: Optional[str] = None,
+    feedback: str | None = None,
+    reviewer_id: str | None = None,
+    corrected_recommendation: str | None = None,
 ) -> dict[str, Any]:
     """Submit human feedback for a pending review.
 

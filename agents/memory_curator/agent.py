@@ -18,17 +18,17 @@
 
 import json
 import logging
-import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from strands import Agent, tool
 from strands.agent.hooks import AfterInvocationEvent, BeforeInvocationEvent
 from ulid import ULID
 
 from shared.config import AgentConfig
-from shared.tools.memory import memory_query, memory_write, memory_delete
 from shared.tools.ledger import write_ledger_entry
+from shared.tools.memory import memory_delete, memory_query, memory_write
+
 
 # ============================================
 # Configuration
@@ -148,8 +148,8 @@ def process_feedback(
     pattern_id: str,
     strategy: str,
     run_id: str,
-    reviewer_id: Optional[str] = None,
-    corrected_value: Optional[dict[str, Any]] = None,
+    reviewer_id: str | None = None,
+    corrected_value: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Process human feedback and determine memory action.
 
@@ -437,7 +437,7 @@ def create_memory_update_result(
     pattern_id: str,
     strategy: str,
     action: str,
-    old_confidence: Optional[float],
+    old_confidence: float | None,
     new_confidence: float,
     feedback_type: str,
     run_id: str,
@@ -590,7 +590,7 @@ Report the complete MemoryUpdateResult with confidence changes."""
         }
 
     except Exception as e:
-        logger.error(f"Invocation failed: {str(e)}")
+        logger.error(f"Invocation failed: {e!s}")
         return {
             "success": False,
             "error": str(e),

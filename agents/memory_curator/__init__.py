@@ -1,6 +1,7 @@
 # Memory Curator Agent
 # Manages memory updates from feedback
 
-from .agent import memory_curator, invoke
+from .agent import invoke, memory_curator
 
-__all__ = ["memory_curator", "invoke"]
+
+__all__ = ["invoke", "memory_curator"]

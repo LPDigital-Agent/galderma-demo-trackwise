@@ -5,7 +5,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -31,8 +31,8 @@ class BeforeAfterState(BaseModel):
     """Before/after state for audit trail."""
 
     field: str = Field(description="Field that changed")
-    before: Optional[Any] = Field(default=None, description="Value before change")
-    after: Optional[Any] = Field(default=None, description="Value after change")
+    before: Any | None = Field(default=None, description="Value before change")
+    after: Any | None = Field(default=None, description="Value after change")
 
 
 class LedgerEntry(BaseModel):
@@ -57,13 +57,13 @@ class LedgerEntry(BaseModel):
     action_description: str = Field(description="Human-readable action description")
 
     # Decision details
-    decision: Optional[str] = Field(
+    decision: str | None = Field(
         default=None, description="Decision made (e.g., APPROVE, REJECT)"
     )
-    confidence: Optional[float] = Field(
+    confidence: float | None = Field(
         default=None, ge=0.0, le=1.0, description="Confidence score for decision"
     )
-    reasoning: Optional[str] = Field(default=None, description="Reasoning for decision")
+    reasoning: str | None = Field(default=None, description="Reasoning for decision")
 
     # State changes (for audit diff view)
     state_changes: list[BeforeAfterState] = Field(
@@ -71,18 +71,18 @@ class LedgerEntry(BaseModel):
     )
 
     # Policy evaluation
-    policies_evaluated: Optional[list[str]] = Field(
+    policies_evaluated: list[str] | None = Field(
         default=None, description="List of policy IDs evaluated"
     )
-    policy_violations: Optional[list[str]] = Field(
+    policy_violations: list[str] | None = Field(
         default=None, description="List of policy violations (if any)"
     )
 
     # Memory operations
-    memory_strategy: Optional[str] = Field(
+    memory_strategy: str | None = Field(
         default=None, description="Memory strategy used (if applicable)"
     )
-    memory_pattern_id: Optional[str] = Field(
+    memory_pattern_id: str | None = Field(
         default=None, description="Memory pattern ID (if applicable)"
     )
 
@@ -90,35 +90,35 @@ class LedgerEntry(BaseModel):
     requires_human_action: bool = Field(
         default=False, description="Whether entry requires human action"
     )
-    human_action_taken: Optional[str] = Field(
+    human_action_taken: str | None = Field(
         default=None, description="Human action if taken"
     )
-    human_actor: Optional[str] = Field(
+    human_actor: str | None = Field(
         default=None, description="Human who took action (if applicable)"
     )
-    human_action_timestamp: Optional[datetime] = Field(
+    human_action_timestamp: datetime | None = Field(
         default=None, description="Timestamp of human action"
     )
 
     # Error details
-    error_type: Optional[str] = Field(default=None, description="Error type if failed")
-    error_message: Optional[str] = Field(
+    error_type: str | None = Field(default=None, description="Error type if failed")
+    error_message: str | None = Field(
         default=None, description="Error message if failed"
     )
-    error_stack: Optional[str] = Field(
+    error_stack: str | None = Field(
         default=None, description="Error stack trace if applicable"
     )
 
     # Metadata
-    model_id: Optional[str] = Field(default=None, description="LLM model ID used")
-    tokens_used: Optional[int] = Field(default=None, description="Tokens consumed")
-    latency_ms: Optional[int] = Field(default=None, description="Operation latency")
+    model_id: str | None = Field(default=None, description="LLM model ID used")
+    tokens_used: int | None = Field(default=None, description="Tokens consumed")
+    latency_ms: int | None = Field(default=None, description="Operation latency")
 
     # Hash for integrity verification
-    entry_hash: Optional[str] = Field(
+    entry_hash: str | None = Field(
         default=None, description="SHA-256 hash of entry for integrity"
     )
-    previous_hash: Optional[str] = Field(
+    previous_hash: str | None = Field(
         default=None, description="Hash of previous entry (blockchain-style)"
     )
 

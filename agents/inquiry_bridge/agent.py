@@ -18,20 +18,20 @@
 
 import json
 import logging
-import os
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from strands import Agent, tool
 from strands.agent.hooks import AfterInvocationEvent, BeforeInvocationEvent
 from ulid import ULID
 
 from shared.config import AgentConfig
-from shared.tools.memory import memory_query
 from shared.tools.a2a import call_specialist_agent, get_agent_card
-from shared.tools.ledger import write_ledger_entry
-from shared.tools.simulator import get_case, list_cases
 from shared.tools.human_review import request_human_review
+from shared.tools.ledger import write_ledger_entry
+from shared.tools.memory import memory_query
+from shared.tools.simulator import get_case, list_cases
+
 
 # ============================================
 # Configuration
@@ -446,10 +446,7 @@ def invoke(payload: dict[str, Any]) -> dict[str, Any]:
         event_data = payload.get("event") or payload.get("inputText", "")
         run_id = payload.get("run_id", str(ULID()))
 
-        if isinstance(event_data, dict):
-            event_json = json.dumps(event_data)
-        else:
-            event_json = event_data
+        event_json = json.dumps(event_data) if isinstance(event_data, dict) else event_data
 
         # Create session ID for tracing
         session_id = str(ULID())
@@ -485,7 +482,7 @@ Report the complete BridgeDecision."""
         }
 
     except Exception as e:
-        logger.error(f"Invocation failed: {str(e)}")
+        logger.error(f"Invocation failed: {e!s}")
         return {
             "success": False,
             "error": str(e),

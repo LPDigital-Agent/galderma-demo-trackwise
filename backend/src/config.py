@@ -3,8 +3,6 @@
 # Backend Configuration
 # ============================================
 
-import os
-from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -23,7 +21,7 @@ class Settings(BaseSettings):
     aws_account_id: str = "176545286005"
 
     # AgentCore Configuration
-    observer_agent_arn: Optional[str] = None
+    observer_agent_arn: str | None = None
     a2a_enabled: bool = False
 
     # CORS settings (includes CloudFront domain)

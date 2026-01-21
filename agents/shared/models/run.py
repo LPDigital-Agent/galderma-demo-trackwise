@@ -5,7 +5,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -47,28 +47,28 @@ class AgentStep(BaseModel):
 
     # Timing
     started_at: datetime = Field(description="Step start timestamp")
-    completed_at: Optional[datetime] = Field(default=None, description="Step completion timestamp")
-    duration_ms: Optional[int] = Field(default=None, description="Step duration in milliseconds")
+    completed_at: datetime | None = Field(default=None, description="Step completion timestamp")
+    duration_ms: int | None = Field(default=None, description="Step duration in milliseconds")
 
     # Input/Output
-    input_data: Optional[dict[str, Any]] = Field(
+    input_data: dict[str, Any] | None = Field(
         default=None, description="Input data for this step"
     )
-    output_data: Optional[dict[str, Any]] = Field(
+    output_data: dict[str, Any] | None = Field(
         default=None, description="Output data from this step"
     )
 
     # Tool/A2A calls
-    tool_name: Optional[str] = Field(default=None, description="Tool called (if TOOL_CALL)")
-    target_agent: Optional[str] = Field(default=None, description="Target agent (if A2A_CALL)")
+    tool_name: str | None = Field(default=None, description="Tool called (if TOOL_CALL)")
+    target_agent: str | None = Field(default=None, description="Target agent (if A2A_CALL)")
 
     # Status
     success: bool = Field(default=True, description="Whether step succeeded")
-    error_message: Optional[str] = Field(default=None, description="Error message if failed")
+    error_message: str | None = Field(default=None, description="Error message if failed")
 
     # Metadata
-    tokens_used: Optional[int] = Field(default=None, description="LLM tokens consumed")
-    model_id: Optional[str] = Field(default=None, description="Model ID used")
+    tokens_used: int | None = Field(default=None, description="LLM tokens consumed")
+    model_id: str | None = Field(default=None, description="Model ID used")
 
 
 class Run(BaseModel):
@@ -90,8 +90,8 @@ class Run(BaseModel):
 
     # Timing
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Run start time")
-    completed_at: Optional[datetime] = Field(default=None, description="Run completion time")
-    duration_ms: Optional[int] = Field(default=None, description="Total duration in milliseconds")
+    completed_at: datetime | None = Field(default=None, description="Run completion time")
+    duration_ms: int | None = Field(default=None, description="Total duration in milliseconds")
 
     # Steps
     steps: list[AgentStep] = Field(default_factory=list, description="Ordered list of steps")
@@ -104,10 +104,10 @@ class Run(BaseModel):
     )
 
     # Results
-    final_action: Optional[str] = Field(
+    final_action: str | None = Field(
         default=None, description="Final action taken: AUTO_CLOSED | ESCALATED | etc."
     )
-    confidence: Optional[float] = Field(
+    confidence: float | None = Field(
         default=None, ge=0.0, le=1.0, description="Final confidence score"
     )
 
@@ -115,10 +115,10 @@ class Run(BaseModel):
     required_human_review: bool = Field(
         default=False, description="Whether human review was required"
     )
-    human_approved: Optional[bool] = Field(
+    human_approved: bool | None = Field(
         default=None, description="Human approval decision (if applicable)"
     )
-    human_feedback: Optional[str] = Field(
+    human_feedback: str | None = Field(
         default=None, description="Human feedback text"
     )
 
@@ -129,7 +129,7 @@ class Run(BaseModel):
 
     # Error tracking
     error_count: int = Field(default=0, description="Number of errors encountered")
-    last_error: Optional[str] = Field(default=None, description="Last error message")
+    last_error: str | None = Field(default=None, description="Last error message")
 
     def add_step(self, step: AgentStep) -> None:
         """Add a step to the run."""

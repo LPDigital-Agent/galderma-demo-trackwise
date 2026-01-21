@@ -1,12 +1,15 @@
 # ============================================
 # Galderma TrackWise AI Autopilot Demo
-# AgentCore Memory Module - 3 Memory Strategies
+# AgentCore Memory Module - Unified Memory Strategy
 # ============================================
 #
-# This module creates AgentCore Memory with 3 strategies:
-#   1. RecurringPatterns - Semantic memory for recurring complaint patterns
-#   2. ResolutionTemplates - Semantic memory for successful resolutions
-#   3. PolicyKnowledge - Semantic memory for compliance policies
+# This module creates AgentCore Memory with a single semantic strategy.
+# AgentCore only allows ONE strategy per type (semantic).
+#
+# Logical separation at application level:
+#   - recurring-patterns: Recurring complaint patterns for auto-classification
+#   - resolution-templates: Successful resolution templates for reuse
+#   - policy-knowledge: Compliance policy rules and guidelines
 #
 # Uses AWS Provider with full AgentCore Memory support.
 # Docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagentcore_memory
@@ -102,39 +105,25 @@ resource "aws_bedrockagentcore_memory" "main" {
   tags = {
     Name        = "${var.name_prefix}-memory"
     Environment = var.environment
-    Description = "Agent memory with 3 strategies"
+    Description = "Unified agent memory with semantic strategy"
   }
 }
 
 # ============================================
-# Memory Strategies
+# Memory Strategy - Single Unified Semantic Strategy
 # ============================================
-
-# RecurringPatterns - Semantic memory for recurring complaint patterns
-resource "aws_bedrockagentcore_memory_strategy" "recurring_patterns" {
-  name        = "RecurringPatterns"
+# AgentCore only allows ONE semantic strategy per memory.
+# Agents implement logical separation via data prefixes:
+#   - "recurring:" for complaint patterns
+#   - "resolution:" for resolution templates
+#   - "policy:" for compliance knowledge
+#
+resource "aws_bedrockagentcore_memory_strategy" "unified" {
+  name        = "TrackWiseKnowledge"
   memory_id   = aws_bedrockagentcore_memory.main.id
   type        = "SEMANTIC"
-  description = "Recurring complaint patterns for auto-classification"
-  namespaces  = ["recurring-patterns"]
-}
-
-# ResolutionTemplates - Semantic memory for successful resolutions
-resource "aws_bedrockagentcore_memory_strategy" "resolution_templates" {
-  name        = "ResolutionTemplates"
-  memory_id   = aws_bedrockagentcore_memory.main.id
-  type        = "SEMANTIC"
-  description = "Successful resolution templates for reuse"
-  namespaces  = ["resolution-templates"]
-}
-
-# PolicyKnowledge - Semantic memory for compliance policies
-resource "aws_bedrockagentcore_memory_strategy" "policy_knowledge" {
-  name        = "PolicyKnowledge"
-  memory_id   = aws_bedrockagentcore_memory.main.id
-  type        = "SEMANTIC"
-  description = "Compliance policy rules and guidelines"
-  namespaces  = ["policy-knowledge"]
+  description = "Unified semantic memory for all TrackWise agent knowledge"
+  namespaces  = ["trackwise"]
 }
 
 # ============================================
@@ -158,8 +147,12 @@ output "memory_execution_role_arn" {
 output "strategy_ids" {
   description = "Map of strategy names to IDs"
   value = {
-    "RecurringPatterns"   = aws_bedrockagentcore_memory_strategy.recurring_patterns.memory_strategy_id
-    "ResolutionTemplates" = aws_bedrockagentcore_memory_strategy.resolution_templates.memory_strategy_id
-    "PolicyKnowledge"     = aws_bedrockagentcore_memory_strategy.policy_knowledge.memory_strategy_id
+    "TrackWiseKnowledge" = aws_bedrockagentcore_memory_strategy.unified.memory_strategy_id
   }
+}
+
+# Convenience output for agent code
+output "unified_strategy_id" {
+  description = "ID of the unified semantic strategy"
+  value       = aws_bedrockagentcore_memory_strategy.unified.memory_strategy_id
 }

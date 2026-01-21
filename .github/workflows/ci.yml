@@ -130,13 +130,10 @@ jobs:
       - name: Run linting
         run: pnpm lint
 
-      - name: Run type checking
-        run: pnpm type-check
-
       - name: Run tests
         run: pnpm test --run
 
-      - name: Build
+      - name: Build (includes type-check via tsc -b)
         run: pnpm build
 
   # ─────────────────────────────────────────────

@@ -59,8 +59,9 @@ variable "agent_names" {
 # Local Values
 # ============================================
 locals {
-  # AgentCore names must match ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ - no hyphens allowed
-  safe_name_prefix = replace(var.name_prefix, "-", "_")
+  # AgentCore names must match ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ - max 48 chars, no hyphens
+  # Use shortened prefix to stay within limits: gtw (galderma trackwise) + env
+  short_prefix = "gtw_${var.environment}"
 }
 
 # ============================================
@@ -69,8 +70,8 @@ locals {
 resource "aws_bedrockagentcore_workload_identity" "agents" {
   for_each = toset(var.agent_names)
 
-  # AgentCore names must use underscores, not hyphens
-  name = "${local.safe_name_prefix}_${replace(each.value, "-", "_")}_workload"
+  # AgentCore names max 48 chars, use underscores not hyphens
+  name = "${local.short_prefix}_${replace(each.value, "-", "_")}_wl"
 
   # Empty for A2A-only agents (no OAuth callbacks needed)
   allowed_resource_oauth2_return_urls = []
@@ -80,8 +81,8 @@ resource "aws_bedrockagentcore_workload_identity" "agents" {
 # Workload Identity for TrackWise Simulator
 # ============================================
 resource "aws_bedrockagentcore_workload_identity" "simulator" {
-  # AgentCore names must use underscores, not hyphens
-  name = "${local.safe_name_prefix}_simulator_workload"
+  # AgentCore names max 48 chars, use underscores not hyphens
+  name = "${local.short_prefix}_simulator_wl"
 
   allowed_resource_oauth2_return_urls = []
 }

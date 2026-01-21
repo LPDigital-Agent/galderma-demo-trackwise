@@ -159,8 +159,9 @@ variable "agents" {
 # Local Values
 # ============================================
 locals {
-  # AgentCore names must match ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ - no hyphens allowed
-  safe_name_prefix = replace(var.name_prefix, "-", "_")
+  # AgentCore names must match ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ - max 48 chars, no hyphens
+  # Use shortened prefix to stay within limits: gtw (galderma trackwise) + env
+  short_prefix = "gtw_${var.environment}"
 }
 
 # ============================================
@@ -307,7 +308,7 @@ resource "aws_iam_role_policy" "a2a_orchestrator" {
         ]
         Resource = [
           for name, agent in var.agents :
-          "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:agent-runtime/${local.safe_name_prefix}_${replace(name, "-", "_")}"
+          "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:agent-runtime/${local.short_prefix}_${replace(name, "-", "_")}"
           if !agent.is_orchestrator
         ]
       }
@@ -404,7 +405,7 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
   for_each = var.agents
 
   # AgentCore names must use underscores, not hyphens
-  agent_runtime_name = "${local.safe_name_prefix}_${replace(each.key, "-", "_")}"
+  agent_runtime_name = "${local.short_prefix}_${replace(each.key, "-", "_")}"
   description        = each.value.description
   role_arn           = aws_iam_role.agent_execution[each.key].arn
 
@@ -446,7 +447,7 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
     each.value.is_orchestrator ? {
       for name, agent in var.agents :
       "AGENT_${upper(replace(name, "-", "_"))}_ARN" =>
-      "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:agent-runtime/${local.safe_name_prefix}_${replace(name, "-", "_")}"
+      "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:agent-runtime/${local.short_prefix}_${replace(name, "-", "_")}"
       if !agent.is_orchestrator
     } : {}
   )
@@ -466,8 +467,8 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
 resource "aws_bedrockagentcore_agent_runtime_endpoint" "agents" {
   for_each = var.agents
 
-  # AgentCore names must use underscores, not hyphens
-  name             = "${local.safe_name_prefix}_${replace(each.key, "-", "_")}_endpoint"
+  # AgentCore names max 48 chars: gtw_dev_recurring_detector_ep = 30 chars ✓
+  name             = "${local.short_prefix}_${replace(each.key, "-", "_")}_ep"
   agent_runtime_id = aws_bedrockagentcore_agent_runtime.agents[each.key].agent_runtime_id
   description      = "Endpoint for ${each.key} agent"
 

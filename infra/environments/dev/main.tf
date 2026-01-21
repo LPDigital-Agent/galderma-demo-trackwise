@@ -312,8 +312,45 @@ output "cloudwatch_dashboard_name" {
   value       = module.cloudwatch.dashboard_name
 }
 
+# Simulator
+output "agentcore_simulator_runtime_arn" {
+  description = "TrackWise Simulator AgentCore Runtime ARN"
+  value       = module.agentcore_runtime.simulator_runtime_arn
+}
+
+output "agentcore_simulator_endpoint_arn" {
+  description = "TrackWise Simulator AgentCore Endpoint ARN"
+  value       = module.agentcore_runtime.simulator_endpoint_arn
+}
+
+# ============================================
+# Module: CloudFront Distribution
+# ============================================
+module "cloudfront" {
+  source = "../../modules/cloudfront"
+
+  name_prefix                          = local.name_prefix
+  environment                          = var.environment
+  frontend_bucket_name                 = module.s3.frontend_bucket_name
+  frontend_bucket_arn                  = module.s3.frontend_bucket_arn
+  frontend_bucket_regional_domain_name = module.s3.frontend_bucket_regional_domain_name
+
+  depends_on = [module.s3]
+}
+
 # Frontend
 output "frontend_website_endpoint" {
-  description = "Frontend S3 website endpoint"
+  description = "Frontend S3 website endpoint (direct S3, use CloudFront instead)"
   value       = module.s3.frontend_bucket_website_endpoint
+}
+
+# CloudFront
+output "cloudfront_distribution_id" {
+  description = "CloudFront distribution ID"
+  value       = module.cloudfront.distribution_id
+}
+
+output "cloudfront_url" {
+  description = "CloudFront URL for the frontend (HTTPS)"
+  value       = module.cloudfront.cloudfront_url
 }

@@ -26,8 +26,12 @@ class Settings(BaseSettings):
     observer_agent_arn: Optional[str] = None
     a2a_enabled: bool = False
 
-    # CORS settings
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
+    # CORS settings (includes CloudFront domain)
+    cors_origins: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://dkqkiifu9ljdu.cloudfront.net",
+    ]
 
     # Server settings
     host: str = "0.0.0.0"

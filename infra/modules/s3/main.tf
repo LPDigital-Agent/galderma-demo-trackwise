@@ -263,3 +263,8 @@ output "all_bucket_arns" {
     aws_s3_bucket.frontend.arn
   ]
 }
+
+output "frontend_bucket_regional_domain_name" {
+  description = "Regional domain name of the frontend bucket (for CloudFront OAC)"
+  value       = aws_s3_bucket.frontend.bucket_regional_domain_name
+}

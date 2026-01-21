@@ -170,6 +170,21 @@ locals {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+# Get S3 object metadata to detect code changes
+data "aws_s3_object" "agent_code" {
+  for_each = var.agents
+
+  bucket = var.artifacts_bucket_name
+  key    = "agents/${each.key}/agent.zip"
+}
+
+# Create a map of agent name to code hash for change detection
+locals {
+  agent_code_hashes = {
+    for k, v in data.aws_s3_object.agent_code : k => v.etag
+  }
+}
+
 # ============================================
 # IAM Role for Agent Execution
 # ============================================
@@ -437,11 +452,13 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
   # Environment variables for A2A discovery
   environment_variables = merge(
     {
-      AGENT_NAME  = each.key
-      ENVIRONMENT = var.environment
-      MEMORY_ID   = var.memory_id
-      GATEWAY_URL = var.gateway_url
-      AWS_REGION  = var.aws_region
+      AGENT_NAME   = each.key
+      ENVIRONMENT  = var.environment
+      MEMORY_ID    = var.memory_id
+      GATEWAY_URL  = var.gateway_url
+      AWS_REGION   = var.aws_region
+      # Code version hash triggers redeployment when ZIP changes
+      CODE_VERSION = local.agent_code_hashes[each.key]
     },
     # Add specialist agent ARNs for orchestrator (using safe names with underscores)
     each.value.is_orchestrator ? {
@@ -458,6 +475,7 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
     Model        = each.value.model_id
     Orchestrator = each.value.is_orchestrator ? "true" : "false"
     Environment  = var.environment
+    CodeVersion  = local.agent_code_hashes[each.key]
   }
 }
 
@@ -475,6 +493,196 @@ resource "aws_bedrockagentcore_agent_runtime_endpoint" "agents" {
   tags = {
     Name        = "${var.name_prefix}-${each.key}-endpoint"
     Agent       = each.key
+    Environment = var.environment
+  }
+}
+
+# ============================================
+# TrackWise Simulator (Backend on AgentCore Runtime)
+# ============================================
+# The simulator runs on AgentCore Runtime (NOT ECS!) to maintain 100% AgentCore architecture
+
+# Get S3 object metadata for simulator code
+data "aws_s3_object" "simulator_code" {
+  bucket = var.artifacts_bucket_name
+  key    = "backend/simulator.zip"
+}
+
+# IAM Role for Simulator
+resource "aws_iam_role" "simulator_execution" {
+  name               = "${var.name_prefix}-simulator-execution-role"
+  assume_role_policy = data.aws_iam_policy_document.agent_assume_role.json
+
+  tags = {
+    Name        = "${var.name_prefix}-simulator-execution-role"
+    Component   = "simulator"
+    Environment = var.environment
+  }
+}
+
+# Simulator: S3 Artifacts Access
+resource "aws_iam_role_policy" "simulator_s3_artifacts" {
+  name   = "simulator-s3-artifacts-access"
+  role   = aws_iam_role.simulator_execution.id
+  policy = data.aws_iam_policy_document.s3_artifacts_access.json
+}
+
+# Simulator: DynamoDB Access
+resource "aws_iam_role_policy" "simulator_dynamodb" {
+  name = "simulator-dynamodb-access"
+  role = aws_iam_role.simulator_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "DynamoDBAccess"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Query",
+          "dynamodb:Scan"
+        ]
+        Resource = var.dynamodb_table_arns
+      }
+    ]
+  })
+}
+
+# Simulator: S3 Data Access
+resource "aws_iam_role_policy" "simulator_s3_data" {
+  name = "simulator-s3-data-access"
+  role = aws_iam_role.simulator_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "S3Access"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket"
+        ]
+        Resource = concat(
+          var.s3_bucket_arns,
+          [for arn in var.s3_bucket_arns : "${arn}/*"]
+        )
+      }
+    ]
+  })
+}
+
+# Simulator: CloudWatch Logs
+resource "aws_iam_role_policy" "simulator_logs" {
+  name = "simulator-logs-access"
+  role = aws_iam_role.simulator_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "CloudWatchLogs"
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = var.log_group_arns
+      }
+    ]
+  })
+}
+
+# Simulator: A2A Access to invoke agents
+resource "aws_iam_role_policy" "simulator_a2a" {
+  name = "simulator-a2a-invoke-agents"
+  role = aws_iam_role.simulator_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "InvokeAgents"
+        Effect = "Allow"
+        Action = [
+          "bedrock-agentcore:InvokeAgentRuntime"
+        ]
+        Resource = [
+          for name, _ in var.agents :
+          "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:agent-runtime/${local.short_prefix}_${replace(name, "-", "_")}"
+        ]
+      }
+    ]
+  })
+}
+
+# AgentCore Runtime for Simulator
+resource "aws_bedrockagentcore_agent_runtime" "simulator" {
+  agent_runtime_name = "${local.short_prefix}_simulator"
+  description        = "TrackWise Simulator - Mock TrackWise Digital API for demo"
+  role_arn           = aws_iam_role.simulator_execution.arn
+
+  # Code configuration - using S3 ZIP file
+  agent_runtime_artifact {
+    code_configuration {
+      entry_point = ["main.py"]
+      runtime     = var.python_runtime
+
+      code {
+        s3 {
+          bucket = var.artifacts_bucket_name
+          prefix = "backend/simulator.zip"
+        }
+      }
+    }
+  }
+
+  # Network configuration
+  network_configuration {
+    network_mode = "PUBLIC"
+  }
+
+  # Protocol configuration - HTTP for FastAPI/REST
+  protocol_configuration {
+    server_protocol = "HTTP"
+  }
+
+  # Environment variables
+  environment_variables = {
+    SERVICE_NAME  = "simulator"
+    ENVIRONMENT   = var.environment
+    AWS_REGION    = var.aws_region
+    CODE_VERSION  = data.aws_s3_object.simulator_code.etag
+    # Add agent ARNs for A2A calls to Observer
+    OBSERVER_ARN  = "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:agent-runtime/${local.short_prefix}_observer"
+  }
+
+  tags = {
+    Name        = "${var.name_prefix}-simulator"
+    Component   = "simulator"
+    Environment = var.environment
+    CodeVersion = data.aws_s3_object.simulator_code.etag
+  }
+
+  depends_on = [
+    aws_bedrockagentcore_agent_runtime.agents
+  ]
+}
+
+# Simulator Endpoint
+resource "aws_bedrockagentcore_agent_runtime_endpoint" "simulator" {
+  name             = "${local.short_prefix}_simulator_ep"
+  agent_runtime_id = aws_bedrockagentcore_agent_runtime.simulator.agent_runtime_id
+  description      = "Endpoint for TrackWise Simulator"
+
+  tags = {
+    Name        = "${var.name_prefix}-simulator-endpoint"
+    Component   = "simulator"
     Environment = var.environment
   }
 }
@@ -510,4 +718,20 @@ output "orchestrator_arn" {
 output "orchestrator_endpoint_arn" {
   description = "ARN of the Observer (orchestrator) agent endpoint"
   value       = aws_bedrockagentcore_agent_runtime_endpoint.agents["observer"].agent_runtime_endpoint_arn
+}
+
+# Simulator Outputs
+output "simulator_runtime_arn" {
+  description = "ARN of the TrackWise Simulator runtime"
+  value       = aws_bedrockagentcore_agent_runtime.simulator.agent_runtime_arn
+}
+
+output "simulator_runtime_id" {
+  description = "ID of the TrackWise Simulator runtime"
+  value       = aws_bedrockagentcore_agent_runtime.simulator.agent_runtime_id
+}
+
+output "simulator_endpoint_arn" {
+  description = "ARN of the TrackWise Simulator endpoint"
+  value       = aws_bedrockagentcore_agent_runtime_endpoint.simulator.agent_runtime_endpoint_arn
 }

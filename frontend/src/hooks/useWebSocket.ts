@@ -7,7 +7,9 @@ import { useEffect, useRef, useCallback } from 'react'
 import { useTimelineStore } from '@/stores'
 import type { TimelineEvent } from '@/types'
 
-const WS_URL = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/timeline`
+// Get WebSocket URL from environment or derive from current host
+const WS_BASE = import.meta.env.VITE_WS_URL || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`
+const WS_URL = `${WS_BASE}/ws/timeline`
 const RECONNECT_DELAY = 3000
 const PING_INTERVAL = 30000
 

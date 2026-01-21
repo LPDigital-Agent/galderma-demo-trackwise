@@ -89,8 +89,9 @@ class EventEmitter:
 
         try:
             # Prepare payload for Observer agent
-            payload = {
-                "inputText": json.dumps(event.model_dump(mode="json")),
+            # AgentCore expects 'payload' as JSON bytes, with 'prompt' key for input
+            request_payload = {
+                "prompt": json.dumps(event.model_dump(mode="json")),
                 "event_id": event.event_id,
                 "event_type": event.event_type.value,
             }
@@ -98,12 +99,22 @@ class EventEmitter:
             logger.info(f"Invoking Observer agent: {event.event_type.value}")
 
             # Invoke Observer agent via AgentCore Runtime
+            # API requires: agentRuntimeArn + payload (as JSON bytes)
             response = self._client.invoke_agent_runtime(
                 agentRuntimeArn=self._observer_arn,
-                inputText=json.dumps(payload),
+                payload=json.dumps(request_payload).encode("utf-8"),
+                contentType="application/json",
+                accept="application/json",
             )
 
-            output_text = response.get("outputText", "")
+            # Read response body from streaming response
+            response_body = response.get("body", b"")
+            if hasattr(response_body, "read"):
+                response_body = response_body.read()
+            if isinstance(response_body, bytes):
+                response_body = response_body.decode("utf-8")
+
+            output_text = response_body
 
             logger.info(f"Observer response received for event: {event.event_id}")
 

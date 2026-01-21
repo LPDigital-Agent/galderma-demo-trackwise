@@ -104,6 +104,8 @@ frontend/coverage/
 .terraform.lock.hcl
 crash.log
 crash.*.log
+tfplan
+tfplan_*
 override.tf
 override.tf.json
 *_override.tf
@@ -142,6 +144,11 @@ docker-compose.override.yml
 ehthumbs.db
 Thumbs.db
 *.bak
+
+# ----------------------------------------
+# Build Artifacts
+# ----------------------------------------
+.build/
 
 # ----------------------------------------
 # Project Specific

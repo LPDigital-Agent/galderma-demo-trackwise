@@ -59,9 +59,8 @@ resource "aws_cloudwatch_log_group" "agents" {
   retention_in_days = var.log_retention_days
 
   tags = {
-    Name        = "${var.name_prefix}-${each.value}-logs"
-    Agent       = each.value
-    Description = "Logs for ${each.value} agent"
+    Name  = "${var.name_prefix}-${each.value}-logs"
+    Agent = each.value
   }
 }
 
@@ -76,7 +75,7 @@ resource "aws_cloudwatch_log_group" "agentcore_vended" {
 
   tags = {
     Name        = "${var.name_prefix}-agentcore-vended"
-    Description = "AgentCore vended logs (aggregated)"
+    Description = "AgentCore-vended-logs-aggregated"
   }
 }
 
@@ -88,8 +87,7 @@ resource "aws_cloudwatch_log_group" "simulator" {
   retention_in_days = var.log_retention_days
 
   tags = {
-    Name        = "${var.name_prefix}-simulator-logs"
-    Description = "TrackWise Simulator logs"
+    Name = "${var.name_prefix}-simulator-logs"
   }
 }
 
@@ -101,8 +99,7 @@ resource "aws_cloudwatch_log_group" "ui_bridge" {
   retention_in_days = var.log_retention_days
 
   tags = {
-    Name        = "${var.name_prefix}-ui-bridge-logs"
-    Description = "UI Bridge WebSocket logs"
+    Name = "${var.name_prefix}-ui-bridge-logs"
   }
 }
 
@@ -123,16 +120,16 @@ resource "aws_cloudwatch_dashboard" "main" {
           width  = 12
           height = 6
           properties = {
-            title  = "Agent Invocations (per minute)"
+            title  = "Agent Invocations per minute"
             region = data.aws_region.current.name
-            metrics = [
-              for agent in var.agent_names : [
+            metrics = flatten([
+              for agent in var.agent_names : [[
                 "AgentCore",
                 "InvocationCount",
                 "AgentName", agent,
                 { stat = "Sum", period = 60 }
-              ]
-            ]
+              ]]
+            ])
             view   = "timeSeries"
             stacked = false
           }
@@ -170,14 +167,14 @@ resource "aws_cloudwatch_dashboard" "main" {
           properties = {
             title  = "Error Rate"
             region = data.aws_region.current.name
-            metrics = [
-              for agent in var.agent_names : [
+            metrics = flatten([
+              for agent in var.agent_names : [[
                 "AgentCore",
                 "ErrorCount",
                 "AgentName", agent,
                 { stat = "Sum", period = 300 }
-              ]
-            ]
+              ]]
+            ])
             view = "singleValue"
           }
         }

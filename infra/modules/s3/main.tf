@@ -51,8 +51,7 @@ resource "aws_s3_bucket" "artifacts" {
   bucket = "${var.name_prefix}-artifacts-${var.aws_account_id}"
 
   tags = {
-    Name        = "${var.name_prefix}-artifacts"
-    Description = "Agent artifacts, model snapshots, prompt versions"
+    Name = "${var.name_prefix}-artifacts"
   }
 }
 
@@ -94,8 +93,7 @@ resource "aws_s3_bucket" "csv_packs" {
   bucket = "${var.name_prefix}-csv-packs-${var.aws_account_id}"
 
   tags = {
-    Name        = "${var.name_prefix}-csv-packs"
-    Description = "Generated CSV compliance packs for 21 CFR Part 11"
+    Name = "${var.name_prefix}-csv-packs"
   }
 }
 
@@ -175,8 +173,7 @@ resource "aws_s3_bucket" "frontend" {
   bucket = "${var.name_prefix}-frontend-${var.aws_account_id}"
 
   tags = {
-    Name        = "${var.name_prefix}-frontend"
-    Description = "React frontend static assets"
+    Name = "${var.name_prefix}-frontend"
   }
 }
 

@@ -129,7 +129,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 { stat = "Sum", period = 60 }
               ]
             ]
-            view   = "timeSeries"
+            view    = "timeSeries"
             stacked = false
           }
         }

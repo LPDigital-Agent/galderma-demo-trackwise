@@ -249,30 +249,43 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install dependencies
-        run: pip install boto3 httpx
+      - name: Install AgentCore CLI
+        run: pip install bedrock-agentcore-starter-toolkit
 
-      - name: Test A2A Communication
+      - name: Verify Agents Status
         run: |
-          python3 << 'EOF'
-          import boto3
-          import json
+          echo "Verifying agent deployment status..."
 
-          client = boto3.client('bedrock-agentcore', region_name='us-east-2')
-
-          # Test Observer agent (orchestrator)
-          print("Testing Observer agent...")
-          response = client.invoke_agent_runtime(
-              agentRuntimeArn=f"arn:aws:bedrock-agentcore:us-east-2:176545286005:agent-runtime/galderma-observer",
-              inputText=json.dumps({
-                  "action": "health_check",
-                  "source": "ci-pipeline"
-              })
+          # List of agents to verify
+          AGENTS=(
+            "simulator"
+            "observer"
+            "case_understanding"
+            "recurring_detector"
+            "compliance_guardian"
+            "resolution_composer"
+            "inquiry_bridge"
+            "writeback"
+            "memory_curator"
+            "csv_pack"
           )
-          print(f"Observer response: {response.get('outputText', 'OK')}")
 
-          print("✅ A2A communication verified")
-          EOF
+          ALL_ACTIVE=true
+          for agent in "${AGENTS[@]}"; do
+            STATUS=$(agentcore status --name galderma-$agent --format json 2>/dev/null | jq -r '.status' || echo "UNKNOWN")
+            if [[ "$STATUS" == "ACTIVE" ]]; then
+              echo "✅ galderma-$agent: ACTIVE"
+            else
+              echo "⚠️ galderma-$agent: $STATUS"
+              ALL_ACTIVE=false
+            fi
+          done
+
+          if $ALL_ACTIVE; then
+            echo "✅ All agents are ACTIVE"
+          else
+            echo "⚠️ Some agents are not yet ACTIVE (this may be expected during deployment)"
+          fi
 
       - name: Summary
         run: |

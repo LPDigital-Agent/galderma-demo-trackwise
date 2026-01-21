@@ -452,11 +452,11 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
   # Environment variables for A2A discovery
   environment_variables = merge(
     {
-      AGENT_NAME   = each.key
-      ENVIRONMENT  = var.environment
-      MEMORY_ID    = var.memory_id
-      GATEWAY_URL  = var.gateway_url
-      AWS_REGION   = var.aws_region
+      AGENT_NAME  = each.key
+      ENVIRONMENT = var.environment
+      MEMORY_ID   = var.memory_id
+      GATEWAY_URL = var.gateway_url
+      AWS_REGION  = var.aws_region
       # Code version hash triggers redeployment when ZIP changes
       CODE_VERSION = local.agent_code_hashes[each.key]
     },
@@ -654,12 +654,12 @@ resource "aws_bedrockagentcore_agent_runtime" "simulator" {
 
   # Environment variables
   environment_variables = {
-    SERVICE_NAME  = "simulator"
-    ENVIRONMENT   = var.environment
-    AWS_REGION    = var.aws_region
-    CODE_VERSION  = data.aws_s3_object.simulator_code.etag
+    SERVICE_NAME = "simulator"
+    ENVIRONMENT  = var.environment
+    AWS_REGION   = var.aws_region
+    CODE_VERSION = data.aws_s3_object.simulator_code.etag
     # Add agent ARNs for A2A calls to Observer
-    OBSERVER_ARN  = "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:agent-runtime/${local.short_prefix}_observer"
+    OBSERVER_ARN = "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:agent-runtime/${local.short_prefix}_observer"
   }
 
   tags = {

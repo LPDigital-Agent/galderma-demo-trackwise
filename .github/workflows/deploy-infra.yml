@@ -21,6 +21,11 @@ on:
           - dev
           - prod
 
+# Prevent concurrent terraform operations on the same state
+concurrency:
+  group: terraform-${{ inputs.environment || 'dev' }}
+  cancel-in-progress: false
+
 env:
   AWS_REGION: us-east-2
   AWS_ACCOUNT_ID: "176545286005"
@@ -68,7 +73,23 @@ jobs:
 
       - name: Terraform Apply
         working-directory: infra/environments/${{ inputs.environment || 'dev' }}
-        run: terraform apply -auto-approve tfplan
+        run: |
+          # First attempt with the saved plan
+          if terraform apply -auto-approve tfplan; then
+            echo "✅ Terraform apply succeeded"
+            exit 0
+          fi
+
+          echo "⚠️ First apply failed - retrying after state refresh..."
+          echo "AgentCore runtimes may be recovering from UPDATE_FAILED state"
+          sleep 30
+
+          # Refresh state to pick up recovered runtimes
+          terraform refresh || true
+
+          # Re-plan and apply (plan file is consumed after first attempt)
+          terraform plan -out=tfplan-retry
+          terraform apply -auto-approve tfplan-retry
 
       - name: Output Infrastructure Details
         working-directory: infra/environments/${{ inputs.environment || 'dev' }}

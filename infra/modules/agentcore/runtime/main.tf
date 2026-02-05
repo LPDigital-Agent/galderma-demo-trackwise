@@ -477,6 +477,17 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
     Environment  = var.environment
     CodeVersion  = local.agent_code_hashes[each.key]
   }
+
+  # Handle UPDATE_FAILED states by allowing Terraform to recreate stuck runtimes
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  timeouts {
+    create = "10m"
+    update = "10m"
+    delete = "10m"
+  }
 }
 
 # ============================================

@@ -21,6 +21,11 @@ on:
           - dev
           - prod
 
+# Prevent concurrent deployments to same environment
+concurrency:
+  group: deploy-frontend-${{ inputs.environment || 'dev' }}
+  cancel-in-progress: false
+
 env:
   AWS_REGION: us-east-2
   AWS_ACCOUNT_ID: "176545286005"

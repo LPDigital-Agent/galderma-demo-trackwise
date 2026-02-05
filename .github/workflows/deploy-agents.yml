@@ -39,6 +39,11 @@ on:
           - memory-curator
           - csv-pack
 
+# Prevent concurrent terraform operations on the same state
+concurrency:
+  group: terraform-dev
+  cancel-in-progress: false
+
 env:
   AWS_REGION: us-east-2
   AWS_ACCOUNT_ID: "176545286005"
@@ -213,14 +218,31 @@ jobs:
           # Initialize Terraform
           terraform init -backend=true
 
-          # Apply only the agentcore_runtime module
+          # Apply only the agentcore_runtime module with retry logic
           # The CODE_VERSION environment variable in each runtime uses the S3 etag
           # When the ZIP file changes, the etag changes, triggering a redeployment
-          terraform apply -auto-approve -target=module.agentcore_runtime
-
-          echo "✅ AgentCore Runtimes updated"
+          MAX_RETRIES=3
+          RETRY_DELAY=30
+          for attempt in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $attempt/$MAX_RETRIES..."
+            if terraform apply -auto-approve -target=module.agentcore_runtime; then
+              echo "✅ AgentCore Runtimes updated successfully"
+              exit 0
+            else
+              echo "⚠️ Attempt $attempt failed"
+              if [ $attempt -lt $MAX_RETRIES ]; then
+                echo "Waiting ${RETRY_DELAY}s before retry (runtime may be recovering from UPDATE_FAILED)..."
+                sleep $RETRY_DELAY
+                # Refresh state to pick up any recovered runtimes
+                terraform refresh -target=module.agentcore_runtime || true
+              fi
+            fi
+          done
+          echo "❌ All $MAX_RETRIES attempts failed"
+          exit 1
 
       - name: Summary
+        if: always()
         run: |
           echo "## Agent Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

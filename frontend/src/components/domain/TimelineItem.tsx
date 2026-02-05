@@ -5,6 +5,7 @@
 
 import type { TimelineEvent, AgentName } from '@/types'
 import { AGENTS } from '@/types'
+import { timeAgo, timeline } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 export interface TimelineItemProps {
@@ -18,13 +19,13 @@ function formatRelativeTime(timestamp: string): string {
   const diffMs = now.getTime() - eventTime.getTime()
   const diffSec = Math.floor(diffMs / 1000)
 
-  if (diffSec < 60) return `${diffSec}s ago`
+  if (diffSec < 60) return timeAgo.secondsAgo(diffSec)
   const diffMin = Math.floor(diffSec / 60)
-  if (diffMin < 60) return `${diffMin}m ago`
+  if (diffMin < 60) return timeAgo.minutesAgo(diffMin)
   const diffHour = Math.floor(diffMin / 60)
-  if (diffHour < 24) return `${diffHour}h ago`
+  if (diffHour < 24) return timeAgo.hoursAgo(diffHour)
   const diffDay = Math.floor(diffHour / 24)
-  return `${diffDay}d ago`
+  return timeAgo.daysAgo(diffDay)
 }
 
 function formatEventType(type: string): string {
@@ -58,7 +59,7 @@ export function TimelineItem({ event, className }: TimelineItemProps) {
           <div className="text-sm text-[var(--text-primary)]">{displayMessage}</div>
           {event.case_id && (
             <div className="text-xs text-cyan-400 font-mono mt-1">
-              Case: {event.case_id}
+              {timeline.casePrefix} {event.case_id}
             </div>
           )}
         </div>

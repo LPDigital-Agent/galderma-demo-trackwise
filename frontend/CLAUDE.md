@@ -1,42 +1,53 @@
 # Frontend — React Agent Room UI
 
 ## Purpose
-Real-time dashboard showing the 9-agent mesh in action. Dark glassmorphism design system optimized for sales demo impact.
+Real-time dashboard showing the 9-agent mesh in action. Neo-Cyberpunk dark theme optimized for sales demo impact.
 
 ## Stack
-- **Framework:** React 18 + TypeScript strict mode
-- **Build:** Vite
-- **Styling:** Tailwind CSS + shadcn/ui
-- **State:** TanStack Query (server) + useState/useReducer (local)
-- **Forms:** react-hook-form + zod
-- **Package manager:** pnpm
+- **Framework:** React 19 + TypeScript strict mode
+- **Build:** Vite 6
+- **Styling:** Tailwind CSS v4 + shadcn/ui (New York style, 20 components)
+- **State:** TanStack Query v5 (server) + Zustand v5 (global) + useState (local)
+- **Graph:** @xyflow/react v12 (React Flow) for Network visualization
+- **Animations:** Motion v12 (FadeIn, PageTransition, StaggerContainer)
+- **Command Palette:** cmdk (Cmd+K)
+- **Toasts:** sonner
+- **Icons:** lucide-react
+- **Fonts:** Geist Sans + Geist Mono (CDN)
+- **Package manager:** pnpm 9+
 
 ## Key Paths
-- `src/App.tsx` — Root component
-- `src/components/` — Reusable UI components (shadcn/ui based)
-- `src/pages/` — Route-level page components
-- `src/hooks/` — Custom React hooks
-- `src/api/` — API client (TanStack Query queries/mutations)
-- `src/types/` — TypeScript type definitions
-- `public/` — Static assets
+- `src/App.tsx` — Router (7 routes under AppLayout)
+- `src/components/layout/` — Sidebar, StatusBar, CommandPalette, AppLayout
+- `src/components/domain/` — AgentBadge, SeverityBadge, StatusBadge, MetricCard, TimelineItem, GlassPanel, ModeToggle, LanguageSelector, EmptyState
+- `src/components/overlays/` — AuditorView (Sheet), CreateCaseModal (Dialog)
+- `src/components/motion/` — FadeIn, PageTransition, StaggerContainer
+- `src/components/ui/` — 20 shadcn/ui primitives (lowercase filenames!)
+- `src/pages/` — AgentRoom, Cases, CaseDetail, Network, Memory, Ledger, CSVPack
+- `src/hooks/` — useCases, useCaseDetail, useStats, useWebSocket, useRealtimeSync
+- `src/stores/` — modeStore, languageStore, timelineStore
+- `src/api/` — API client (axios)
+- `src/types/` — TypeScript types + AGENTS constant
 
 ## Commands
 ```bash
 pnpm dev          # dev server (http://localhost:5173)
-pnpm build        # production build
+pnpm build        # production build (includes tsc -b)
 pnpm test         # vitest
 pnpm lint         # eslint
 ```
 
 ## Design System
-- See @docs/prd/UI_DESIGN_SYSTEM.md for tokens, colors, glassmorphism specs
+- Neo-Cyberpunk dark theme: `#0A0A0F` base, glass surfaces, cyan/violet accents
+- Galderma teal brand: `#00A4B4`
+- CSS variables in `src/index.css` (--bg-base, --bg-surface, --glass-bg, etc.)
 - Dark theme ONLY (demo requirement)
 - WebSocket connection for real-time agent activity feed
-- A2A protocol events rendered as timeline cards
 
 ## Rules
 - Functional components only, no class components
 - ES modules (import/export), never CommonJS
 - All form inputs must have proper aria-* attributes
-- Optimistic updates for user interactions
-- Never use Redux — TanStack Query + local state only
+- Never use Redux — TanStack Query + Zustand only
+- shadcn/ui component filenames MUST be lowercase (badge.tsx not Badge.tsx) — Linux CI is case-sensitive
+- React Flow custom nodes MUST include Handle components for edges to render

@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react'
 import { CheckCircle2, Zap, Shield, Activity, RotateCcw, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { agentRoom as t } from '@/i18n'
 import { useExecutiveStats, useStats, useCreateBatch, useResetDemo } from '@/hooks'
 import { useTimelineStore, useFilteredEvents } from '@/stores'
 import { AGENTS } from '@/types'
@@ -63,12 +64,12 @@ export default function AgentRoom() {
       },
       {
         onSuccess: (data) => {
-          toast.success(`Created ${data.created_count} cases successfully`, {
-            description: `${data.events_emitted} events emitted`,
+          toast.success(t.toasts.batchSuccess(data.created_count), {
+            description: t.toasts.batchEvents(data.events_emitted),
           })
         },
         onError: (error) => {
-          toast.error('Failed to create batch', {
+          toast.error(t.toasts.batchError, {
             description: error instanceof Error ? error.message : 'Unknown error',
           })
         },
@@ -80,12 +81,12 @@ export default function AgentRoom() {
   const handleResetDemo = () => {
     resetDemo.mutate(undefined, {
       onSuccess: (data) => {
-        toast.success('Demo reset successfully', {
-          description: `Cleared ${data.cases_cleared} cases and ${data.events_cleared} events`,
+        toast.success(t.toasts.resetSuccess, {
+          description: t.toasts.resetCleared(data.cases_cleared, data.events_cleared),
         })
       },
       onError: (error) => {
-        toast.error('Failed to reset demo', {
+        toast.error(t.toasts.resetError, {
           description: error instanceof Error ? error.message : 'Unknown error',
         })
       },
@@ -97,8 +98,8 @@ export default function AgentRoom() {
       {/* Header Section */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary tracking-tight">Agent Room</h1>
-          <p className="text-text-secondary mt-1">AI Autopilot Executive Dashboard</p>
+          <h1 className="text-3xl font-bold text-text-primary tracking-tight">{t.title}</h1>
+          <p className="text-text-secondary mt-1">{t.subtitle}</p>
         </div>
         <div className="flex items-center gap-3">
           <Button
@@ -107,7 +108,7 @@ export default function AgentRoom() {
             className="bg-brand-primary hover:bg-brand-primary/90 text-white font-medium"
           >
             <Plus className="mr-2 h-4 w-4" />
-            {createBatch.isPending ? 'Creating...' : 'Create Batch'}
+            {createBatch.isPending ? t.creating : t.createBatch}
           </Button>
           <Button
             onClick={handleResetDemo}
@@ -116,7 +117,7 @@ export default function AgentRoom() {
             className="font-medium"
           >
             <RotateCcw className="mr-2 h-4 w-4" />
-            {resetDemo.isPending ? 'Resetting...' : 'Reset Demo'}
+            {resetDemo.isPending ? t.resetting : t.resetDemo}
           </Button>
         </div>
       </div>
@@ -133,29 +134,29 @@ export default function AgentRoom() {
           <>
             <MetricCard
               value={executiveStats.ai_closed_count.toLocaleString()}
-              label="AI Closed"
-              sublabel={`of ${executiveStats.total_cases.toLocaleString()} total`}
+              label={t.metrics.aiClosed}
+              sublabel={t.metrics.aiClosedSublabel(executiveStats.total_cases.toLocaleString())}
               icon={CheckCircle2}
               color="#10B981"
             />
             <MetricCard
               value={executiveStats.human_hours_saved.toLocaleString()}
-              label="Hours Saved"
-              sublabel="vs manual processing"
+              label={t.metrics.hoursSaved}
+              sublabel={t.metrics.hoursSavedSublabel}
               icon={Zap}
               color="#06B6D4"
             />
             <MetricCard
               value={executiveStats.risks_avoided.toLocaleString()}
-              label="Risks Avoided"
-              sublabel="escalations prevented"
+              label={t.metrics.risksAvoided}
+              sublabel={t.metrics.risksAvoidedSublabel}
               icon={Shield}
               color="#8B5CF6"
             />
           </>
         ) : (
           <div className="col-span-3 text-center text-text-muted py-8">
-            Failed to load executive metrics
+            {t.failedMetrics}
           </div>
         )}
       </div>
@@ -167,28 +168,28 @@ export default function AgentRoom() {
         <GlassPanel variant="surface" className="px-6 py-4">
           <div className="flex items-center justify-center gap-8 text-sm">
             <div className="flex items-center gap-2">
-              <span className="text-text-secondary">Total:</span>
+              <span className="text-text-secondary">{t.counters.total}</span>
               <span className="text-brand-primary font-mono font-semibold">
                 {stats.total_cases.toLocaleString()}
               </span>
             </div>
             <div className="h-4 w-px bg-glass-border" />
             <div className="flex items-center gap-2">
-              <span className="text-text-secondary">Open:</span>
+              <span className="text-text-secondary">{t.counters.open}</span>
               <span className="text-status-warning font-mono font-semibold">
                 {stats.open_cases.toLocaleString()}
               </span>
             </div>
             <div className="h-4 w-px bg-glass-border" />
             <div className="flex items-center gap-2">
-              <span className="text-text-secondary">In Progress:</span>
+              <span className="text-text-secondary">{t.counters.inProgress}</span>
               <span className="text-brand-accent font-mono font-semibold">
                 {stats.in_progress_cases.toLocaleString()}
               </span>
             </div>
             <div className="h-4 w-px bg-glass-border" />
             <div className="flex items-center gap-2">
-              <span className="text-text-secondary">Closed:</span>
+              <span className="text-text-secondary">{t.counters.closed}</span>
               <span className="text-status-success font-mono font-semibold">
                 {stats.closed_cases.toLocaleString()}
               </span>
@@ -200,13 +201,13 @@ export default function AgentRoom() {
       {/* Activity Timeline Section */}
       <GlassPanel className="p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-text-primary">Activity Timeline</h2>
+          <h2 className="text-xl font-semibold text-text-primary">{t.activityTimeline}</h2>
           <Select value={filter || 'all'} onValueChange={(value) => setFilter(value === 'all' ? null : value)}>
             <SelectTrigger className="w-[200px] bg-bg-elevated border-glass-border">
-              <SelectValue placeholder="Filter by agent" />
+              <SelectValue placeholder={t.filterByAgent} />
             </SelectTrigger>
             <SelectContent className="bg-bg-elevated border-glass-border">
-              <SelectItem value="all">All Agents</SelectItem>
+              <SelectItem value="all">{t.allAgents}</SelectItem>
               {Object.values(AGENTS).map((agent) => (
                 <SelectItem key={agent.name} value={agent.name}>
                   {agent.displayName}
@@ -220,8 +221,8 @@ export default function AgentRoom() {
           {filteredEvents.length === 0 ? (
             <EmptyState
               icon={Activity}
-              title="No activity yet"
-              description="Waiting for agent events..."
+              title={t.noActivityTitle}
+              description={t.noActivityDescription}
               className="py-12"
             />
           ) : (

@@ -10,20 +10,21 @@ import { Activity, FileText, Network, Brain, BookOpen, Package, RotateCcw, PlusC
 import { toast } from 'sonner'
 
 import { cn } from '@/lib/utils'
+import { commandPalette as t, sidebar } from '@/i18n'
 
 const PAGES = [
-  { icon: Activity, label: 'Agent Room', route: '/agent-room' },
-  { icon: FileText, label: 'Cases', route: '/cases' },
-  { icon: Network, label: 'Network', route: '/network' },
-  { icon: Brain, label: 'Memory', route: '/memory' },
-  { icon: BookOpen, label: 'Ledger', route: '/ledger' },
-  { icon: Package, label: 'CSV Pack', route: '/csv-pack' },
+  { icon: Activity, label: sidebar.nav.agentRoom, route: '/agent-room' },
+  { icon: FileText, label: sidebar.nav.cases, route: '/cases' },
+  { icon: Network, label: sidebar.nav.network, route: '/network' },
+  { icon: Brain, label: sidebar.nav.memory, route: '/memory' },
+  { icon: BookOpen, label: sidebar.nav.ledger, route: '/ledger' },
+  { icon: Package, label: sidebar.nav.csvPack, route: '/csv-pack' },
 ] as const
 
 const ACTIONS = [
-  { icon: RotateCcw, label: 'Reset Demo', action: 'reset' },
-  { icon: PlusCircle, label: 'Create Case', action: 'create' },
-  { icon: FileBox, label: 'Generate CSV Pack', action: 'csv' },
+  { icon: RotateCcw, label: t.actionLabels.resetDemo, action: 'reset' },
+  { icon: PlusCircle, label: t.actionLabels.createCase, action: 'create' },
+  { icon: FileBox, label: t.actionLabels.generateCsv, action: 'csv' },
 ] as const
 
 export function CommandPalette() {
@@ -55,16 +56,15 @@ export function CommandPalette() {
     // Handle actions
     switch (value) {
       case 'reset':
-        toast.success('Demo reset requested')
-        // In production, this would call an API endpoint
+        toast.success(t.toasts.resetRequested)
         break
       case 'create':
         navigate('/cases')
-        toast.info('Opening case creation')
+        toast.info(t.toasts.openingCreate)
         break
       case 'csv':
         navigate('/csv-pack')
-        toast.info('Opening CSV Pack generator')
+        toast.info(t.toasts.openingCsv)
         break
     }
     setIsOpen(false)
@@ -89,7 +89,7 @@ export function CommandPalette() {
           )}
         >
           <Command.Input
-            placeholder="Search pages and actions..."
+            placeholder={t.searchPlaceholder}
             className={cn(
               'w-full px-4 py-3 text-sm',
               'bg-transparent border-b border-[var(--glass-border)]',
@@ -100,12 +100,12 @@ export function CommandPalette() {
 
           <Command.List className="max-h-[400px] overflow-y-auto p-2">
             <Command.Empty className="py-6 text-center text-sm text-[var(--text-muted)]">
-              No results found.
+              {t.noResults}
             </Command.Empty>
 
             {/* Pages Group */}
             <Command.Group
-              heading="Pages"
+              heading={t.pages}
               className="text-xs text-[var(--text-muted)] px-2 py-1.5 font-medium"
             >
               {PAGES.map(({ icon: Icon, label, route }) => (
@@ -129,7 +129,7 @@ export function CommandPalette() {
 
             {/* Actions Group */}
             <Command.Group
-              heading="Actions"
+              heading={t.actions}
               className="text-xs text-[var(--text-muted)] px-2 py-1.5 font-medium mt-2"
             >
               {ACTIONS.map(({ icon: Icon, label, action }) => (

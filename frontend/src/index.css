@@ -4,19 +4,20 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================
-   Neo-Cyberpunk Dark Theme
-   Galderma TrackWise AI Autopilot Demo
+   Galderma Dark Theme
+   TrackWise AI Autopilot Demo
+   Brand palette extracted from galderma.com
    ============================================ */
 
 :root {
-  /* Background Colors */
-  --bg-base: #0A0A0F;
-  --bg-surface: #0F0F17;
-  --bg-elevated: #16162A;
-  --bg-overlay: rgba(15, 15, 23, 0.65);
+  /* Background Colors — deeper blue-tinted darks */
+  --bg-base: #080B10;
+  --bg-surface: #0D1117;
+  --bg-elevated: #141D2B;
+  --bg-overlay: rgba(13, 17, 23, 0.65);
 
   /* Glass */
-  --glass-bg: rgba(15, 15, 23, 0.55);
+  --glass-bg: rgba(13, 17, 23, 0.55);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-hover: rgba(255, 255, 255, 0.04);
 
@@ -25,37 +26,37 @@
   --text-secondary: #9CA3AF;
   --text-muted: #6B7280;
 
-  /* Brand — Galderma */
-  --brand-primary: #00A4B4;
-  --brand-secondary: #003C71;
-  --brand-accent: #06B6D4;
+  /* Brand — Galderma corporate palette */
+  --brand-primary: #4A98B8;
+  --brand-secondary: #3860BE;
+  --brand-accent: #6AAAE4;
 
-  /* Glow effects */
-  --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
-  --glow-violet: 0 0 20px rgba(139, 92, 246, 0.3);
-  --glow-green: 0 0 20px rgba(34, 197, 94, 0.3);
+  /* Glow effects — adapted to Galderma teal/blue */
+  --glow-cyan: 0 0 20px rgba(74, 152, 184, 0.3);
+  --glow-violet: 0 0 20px rgba(56, 96, 190, 0.3);
+  --glow-green: 0 0 20px rgba(60, 115, 86, 0.3);
   --glow-amber: 0 0 20px rgba(245, 158, 11, 0.3);
   --glow-red: 0 0 20px rgba(239, 68, 68, 0.3);
 
   /* Status */
-  --status-success: #22C55E;
+  --status-success: #3C7356;
   --status-warning: #F59E0B;
   --status-error: #EF4444;
-  --status-info: #3B82F6;
+  --status-info: #4A98B8;
 
-  /* 9 Agent Colors */
+  /* 9 Agent Colors — keeping distinct hues for readability */
   --agent-observer: #8B5CF6;
-  --agent-case-understanding: #06B6D4;
-  --agent-recurring-detector: #10B981;
+  --agent-case-understanding: #4A98B8;
+  --agent-recurring-detector: #3C7356;
   --agent-compliance-guardian: #EF4444;
   --agent-resolution-composer: #F59E0B;
   --agent-inquiry-bridge: #EC4899;
   --agent-writeback: #84CC16;
-  --agent-memory-curator: #6366F1;
-  --agent-csv-pack: #14B8A6;
+  --agent-memory-curator: #3860BE;
+  --agent-csv-pack: #6AAAE4;
 
   /* Severity */
-  --severity-low: #22C55E;
+  --severity-low: #3C7356;
   --severity-medium: #F59E0B;
   --severity-high: #F97316;
   --severity-critical: #EF4444;
@@ -63,7 +64,7 @@
   /* Mode */
   --mode-observe: #9CA3AF;
   --mode-train: #F59E0B;
-  --mode-act: #00A4B4;
+  --mode-act: #4A98B8;
 
   /* Radii */
   --radius: 0.625rem;
@@ -76,38 +77,38 @@
   --shadow-glass: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
   --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.3);
 
-  /* shadcn dark tokens */
-  --background: oklch(0.07 0.005 280);
+  /* shadcn dark tokens — tuned to Galderma teal */
+  --background: oklch(0.07 0.005 230);
   --foreground: oklch(0.93 0 0);
-  --card: oklch(0.1 0.008 280);
+  --card: oklch(0.1 0.008 230);
   --card-foreground: oklch(0.93 0 0);
-  --popover: oklch(0.1 0.008 280);
+  --popover: oklch(0.1 0.008 230);
   --popover-foreground: oklch(0.93 0 0);
-  --primary: oklch(0.72 0.12 195);
+  --primary: oklch(0.65 0.1 215);
   --primary-foreground: oklch(0.13 0 0);
-  --secondary: oklch(0.18 0.008 280);
+  --secondary: oklch(0.18 0.008 230);
   --secondary-foreground: oklch(0.85 0 0);
-  --muted: oklch(0.18 0.008 280);
+  --muted: oklch(0.18 0.008 230);
   --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.18 0.008 280);
+  --accent: oklch(0.18 0.008 230);
   --accent-foreground: oklch(0.85 0 0);
   --destructive: oklch(0.65 0.2 25);
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.72 0.12 195);
-  --chart-1: oklch(0.72 0.12 195);
-  --chart-2: oklch(0.65 0.18 290);
-  --chart-3: oklch(0.7 0.15 155);
+  --ring: oklch(0.65 0.1 215);
+  --chart-1: oklch(0.65 0.1 215);
+  --chart-2: oklch(0.55 0.15 260);
+  --chart-3: oklch(0.5 0.1 155);
   --chart-4: oklch(0.8 0.15 85);
   --chart-5: oklch(0.7 0.18 340);
-  --sidebar: oklch(0.09 0.006 280);
+  --sidebar: oklch(0.09 0.006 230);
   --sidebar-foreground: oklch(0.93 0 0);
-  --sidebar-primary: oklch(0.72 0.12 195);
+  --sidebar-primary: oklch(0.65 0.1 215);
   --sidebar-primary-foreground: oklch(0.13 0 0);
-  --sidebar-accent: oklch(0.15 0.008 280);
+  --sidebar-accent: oklch(0.15 0.008 230);
   --sidebar-accent-foreground: oklch(0.85 0 0);
   --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.72 0.12 195);
+  --sidebar-ring: oklch(0.65 0.1 215);
 }
 
 /* ============================================
@@ -120,14 +121,19 @@ html {
 }
 
 body {
-  font-family: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   background-color: var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* Nebula gradient background */
+/* Headings use serif stack (closest to Galderma proprietary serif) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: Georgia, Cambria, 'Times New Roman', serif;
+}
+
+/* Nebula gradient background — Galderma teal + blue */
 body::before {
   content: '';
   position: fixed;
@@ -136,9 +142,9 @@ body::before {
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(0, 164, 180, 0.08), transparent 50%),
-    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(139, 92, 246, 0.06), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(0, 60, 113, 0.04), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(74, 152, 184, 0.08), transparent 50%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(56, 96, 190, 0.06), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(106, 170, 228, 0.04), transparent 50%),
     var(--bg-base);
   pointer-events: none;
   z-index: -1;
@@ -205,8 +211,8 @@ body::before {
    Animations
    ============================================ */
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 5px rgba(0, 164, 180, 0.2); }
-  50% { box-shadow: 0 0 20px rgba(0, 164, 180, 0.4); }
+  0%, 100% { box-shadow: 0 0 5px rgba(74, 152, 184, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(74, 152, 184, 0.4); }
 }
 
 @keyframes fade-in {
@@ -261,22 +267,26 @@ body::before {
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
 
-  --color-brand-primary: #00A4B4;
-  --color-brand-secondary: #003C71;
-  --color-brand-accent: #06B6D4;
+  --color-brand-primary: #4A98B8;
+  --color-brand-secondary: #3860BE;
+  --color-brand-accent: #6AAAE4;
 
   --color-text-primary: #EAEAF0;
   --color-text-secondary: #9CA3AF;
   --color-text-muted: #6B7280;
 
-  --color-severity-low: #22C55E;
+  --color-severity-low: #3C7356;
   --color-severity-medium: #F59E0B;
   --color-severity-high: #F97316;
   --color-severity-critical: #EF4444;
 
   --color-mode-observe: #9CA3AF;
   --color-mode-train: #F59E0B;
-  --color-mode-act: #00A4B4;
+  --color-mode-act: #4A98B8;
+
+  --color-status-success: #3C7356;
+  --color-status-warning: #F59E0B;
+  --color-status-error: #EF4444;
 }
 
 @theme inline {

@@ -4,6 +4,7 @@
 // ============================================
 
 import type { ExecutionMode } from '@/types'
+import { modes as modeLabels } from '@/i18n'
 import { useModeStore } from '@/stores'
 import { cn } from '@/lib/utils'
 
@@ -12,18 +13,9 @@ export interface ModeToggleProps {
 }
 
 const modeConfig = {
-  OBSERVE: {
-    label: 'Observe',
-    color: '#9CA3AF',
-  },
-  TRAIN: {
-    label: 'Train',
-    color: '#F59E0B',
-  },
-  ACT: {
-    label: 'Act',
-    color: '#00A4B4',
-  },
+  OBSERVE: { color: '#9CA3AF' },
+  TRAIN: { color: '#F59E0B' },
+  ACT: { color: '#4A98B8' },
 } as const
 
 const modes: ExecutionMode[] = ['OBSERVE', 'TRAIN', 'ACT']
@@ -55,7 +47,7 @@ export function ModeToggle({ className }: ModeToggleProps) {
                 : undefined
             }
           >
-            {config.label}
+            {modeLabels[modeOption]}
           </button>
         )
       })}

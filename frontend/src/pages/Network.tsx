@@ -4,6 +4,7 @@
 // ============================================
 
 import { useCallback, useMemo } from 'react'
+import { network as t } from '@/i18n'
 import {
   ReactFlow,
   Background,
@@ -248,9 +249,9 @@ export default function NetworkPage() {
     <div className="flex flex-col h-full min-h-[600px]">
       {/* Header */}
       <div className="pb-4 border-b border-[var(--glass-border)]">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Network</h1>
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
         <p className="text-sm text-[var(--text-secondary)] mt-1">
-          Agent mesh architecture - 9 agents connected via A2A protocol
+          {t.subtitle}
         </p>
       </div>
 

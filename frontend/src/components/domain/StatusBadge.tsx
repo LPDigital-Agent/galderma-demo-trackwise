@@ -4,6 +4,7 @@
 // ============================================
 
 import type { CaseStatus } from '@/types'
+import { statuses } from '@/i18n'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
@@ -41,10 +42,7 @@ const statusConfig = {
 } as const
 
 function formatStatus(status: CaseStatus): string {
-  return status
-    .split('_')
-    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(' ')
+  return statuses[status]
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {

@@ -3,6 +3,8 @@
 // TypeScript Type Definitions
 // ============================================
 
+import { agentTranslations } from '@/i18n'
+
 // ============================================
 // Enums
 // ============================================
@@ -151,66 +153,66 @@ export interface AgentInfo {
 export const AGENTS: Record<AgentName, AgentInfo> = {
   observer: {
     name: 'observer',
-    displayName: 'Observer',
-    description: 'Orchestrator - validates events, routes to specialists',
+    displayName: agentTranslations.observer.displayName,
+    description: agentTranslations.observer.description,
     model: 'HAIKU',
     color: '#8B5CF6',
   },
   case_understanding: {
     name: 'case_understanding',
-    displayName: 'Case Understanding',
-    description: 'Classifier - extracts product, category, severity',
+    displayName: agentTranslations.case_understanding.displayName,
+    description: agentTranslations.case_understanding.description,
     model: 'HAIKU',
-    color: '#06B6D4',
+    color: '#4A98B8',
   },
   recurring_detector: {
     name: 'recurring_detector',
-    displayName: 'Recurring Detector',
-    description: 'Pattern Matcher - queries memory, calculates similarity',
+    displayName: agentTranslations.recurring_detector.displayName,
+    description: agentTranslations.recurring_detector.description,
     model: 'HAIKU',
-    color: '#10B981',
+    color: '#3C7356',
   },
   compliance_guardian: {
     name: 'compliance_guardian',
-    displayName: 'Compliance Guardian',
-    description: 'Gatekeeper - validates 5 compliance policies',
+    displayName: agentTranslations.compliance_guardian.displayName,
+    description: agentTranslations.compliance_guardian.description,
     model: 'OPUS',
     color: '#EF4444',
   },
   resolution_composer: {
     name: 'resolution_composer',
-    displayName: 'Resolution Composer',
-    description: 'Writer - generates multilingual resolutions',
+    displayName: agentTranslations.resolution_composer.displayName,
+    description: agentTranslations.resolution_composer.description,
     model: 'OPUS',
     color: '#F59E0B',
   },
   inquiry_bridge: {
     name: 'inquiry_bridge',
-    displayName: 'Inquiry Bridge',
-    description: 'Coordinator - handles linked cases',
+    displayName: agentTranslations.inquiry_bridge.displayName,
+    description: agentTranslations.inquiry_bridge.description,
     model: 'HAIKU',
     color: '#EC4899',
   },
   writeback: {
     name: 'writeback',
-    displayName: 'Writeback',
-    description: 'Executor - writes to TrackWise system',
+    displayName: agentTranslations.writeback.displayName,
+    description: agentTranslations.writeback.description,
     model: 'HAIKU',
     color: '#84CC16',
   },
   memory_curator: {
     name: 'memory_curator',
-    displayName: 'Memory Curator',
-    description: 'Learner - processes feedback, updates patterns',
+    displayName: agentTranslations.memory_curator.displayName,
+    description: agentTranslations.memory_curator.description,
     model: 'HAIKU',
-    color: '#6366F1',
+    color: '#3860BE',
   },
   csv_pack: {
     name: 'csv_pack',
-    displayName: 'CSV Pack',
-    description: 'Documenter - generates compliance documentation',
+    displayName: agentTranslations.csv_pack.displayName,
+    description: agentTranslations.csv_pack.description,
     model: 'HAIKU',
-    color: '#14B8A6',
+    color: '#6AAAE4',
   },
 }
 

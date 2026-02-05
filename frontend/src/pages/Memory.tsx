@@ -6,125 +6,11 @@
 import { useState } from 'react'
 import { Brain } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { memory as t } from '@/i18n'
 import { GlassPanel } from '@/components/domain/GlassPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-
-// ============================================
-// Mock Data
-// ============================================
-const MOCK_PATTERNS = [
-  {
-    id: 'PAT-001',
-    name: 'Cetaphil Packaging Defect',
-    confidence: 0.92,
-    occurrences: 15,
-    status: 'ACTIVE',
-    description: 'Recurring issue with tube seal integrity across multiple lots',
-    created_at: '2026-01-15T10:23:00Z',
-  },
-  {
-    id: 'PAT-002',
-    name: 'Differin Tube Seal Failure',
-    confidence: 0.87,
-    occurrences: 8,
-    status: 'ACTIVE',
-    description: 'Customer reports of dried product due to seal degradation',
-    created_at: '2026-01-20T14:45:00Z',
-  },
-  {
-    id: 'PAT-003',
-    name: 'Restylane Cold Chain Break',
-    confidence: 0.74,
-    occurrences: 3,
-    status: 'PENDING',
-    description: 'Possible temperature excursion during shipping - requires validation',
-    created_at: '2026-02-01T08:12:00Z',
-  },
-  {
-    id: 'PAT-004',
-    name: 'Benzac Pump Dispenser Malfunction',
-    confidence: 0.68,
-    occurrences: 5,
-    status: 'ACTIVE',
-    description: 'Mechanical failure preventing product dispensing',
-    created_at: '2026-01-28T16:30:00Z',
-  },
-]
-
-const MOCK_TEMPLATES = [
-  {
-    id: 'TPL-001',
-    name: 'Packaging Defect - Standard Resolution',
-    language: 'EN',
-    confidence: 0.95,
-    uses: 42,
-    status: 'ACTIVE',
-    template_text: 'We apologize for the packaging issue. We will replace your product and investigate the lot.',
-  },
-  {
-    id: 'TPL-002',
-    name: 'Qualidade - Resposta Multilíngue',
-    language: 'PT',
-    confidence: 0.89,
-    uses: 28,
-    status: 'ACTIVE',
-    template_text: 'Lamentamos o inconveniente. Investigaremos o lote e providenciaremos substituição.',
-  },
-  {
-    id: 'TPL-003',
-    name: 'Cold Chain Investigation',
-    language: 'EN',
-    confidence: 0.78,
-    uses: 12,
-    status: 'PENDING',
-    template_text: 'We are investigating potential temperature excursion. Do not use the product.',
-  },
-]
-
-const MOCK_POLICIES = [
-  {
-    id: 'POL-001',
-    name: 'Requires Physician Review',
-    category: 'SAFETY',
-    confidence: 1.0,
-    evaluations: 156,
-    violations: 3,
-    status: 'ENFORCED',
-    description: 'Adverse events must be reviewed by medical professional',
-  },
-  {
-    id: 'POL-002',
-    name: 'Multi-Site Lot Quarantine',
-    category: 'QUALITY',
-    confidence: 0.98,
-    evaluations: 89,
-    violations: 1,
-    status: 'ENFORCED',
-    description: 'Lots with 3+ complaints across multiple sites must be quarantined',
-  },
-  {
-    id: 'POL-003',
-    name: 'Regulatory Filing Trigger',
-    category: 'COMPLIANCE',
-    confidence: 1.0,
-    evaluations: 203,
-    violations: 0,
-    status: 'ENFORCED',
-    description: 'CRITICAL severity cases require regulatory filing within 24h',
-  },
-  {
-    id: 'POL-004',
-    name: 'Multilingual Response Mandatory',
-    category: 'CUSTOMER_SERVICE',
-    confidence: 0.93,
-    evaluations: 312,
-    violations: 8,
-    status: 'ENFORCED',
-    description: 'Responses must match customer language or provide translation',
-  },
-]
 
 // ============================================
 // Memory Page Component
@@ -159,9 +45,9 @@ export default function Memory() {
             <Brain className="w-5 h-5 text-[var(--brand-primary)]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Memory</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
             <p className="text-sm text-[var(--text-secondary)]">
-              Agent Memory Browser - Patterns, Templates & Policy Knowledge
+              {t.subtitle}
             </p>
           </div>
         </div>
@@ -171,9 +57,9 @@ export default function Memory() {
       <div className="flex-1 p-8 overflow-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="patterns">Recurring Patterns</TabsTrigger>
-            <TabsTrigger value="templates">Resolution Templates</TabsTrigger>
-            <TabsTrigger value="policies">Policy Knowledge</TabsTrigger>
+            <TabsTrigger value="patterns">{t.tabs.patterns}</TabsTrigger>
+            <TabsTrigger value="templates">{t.tabs.templates}</TabsTrigger>
+            <TabsTrigger value="policies">{t.tabs.policies}</TabsTrigger>
           </TabsList>
 
           {/* Recurring Patterns Tab */}
@@ -181,25 +67,25 @@ export default function Memory() {
             <GlassPanel className="p-6">
               <div className="mb-4">
                 <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-                  Recurring Patterns
+                  {t.patterns.title}
                 </h3>
                 <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  Patterns detected by Memory Curator from processed cases
+                  {t.patterns.description}
                 </p>
               </div>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-mono">Pattern ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="text-right">Confidence</TableHead>
-                    <TableHead className="text-right">Occurrences</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead className="font-mono">{t.patterns.headers.patternId}</TableHead>
+                    <TableHead>{t.patterns.headers.name}</TableHead>
+                    <TableHead>{t.patterns.headers.description}</TableHead>
+                    <TableHead className="text-right">{t.patterns.headers.confidence}</TableHead>
+                    <TableHead className="text-right">{t.patterns.headers.occurrences}</TableHead>
+                    <TableHead>{t.patterns.headers.status}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {MOCK_PATTERNS.map((pattern) => (
+                  {t.mockPatterns.map((pattern) => (
                     <TableRow key={pattern.id}>
                       <TableCell className="font-mono text-cyan-400">
                         {pattern.id}
@@ -233,25 +119,25 @@ export default function Memory() {
             <GlassPanel className="p-6">
               <div className="mb-4">
                 <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-                  Resolution Templates
+                  {t.templates.title}
                 </h3>
                 <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  Multilingual resolution templates learned from successful resolutions
+                  {t.templates.description}
                 </p>
               </div>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-mono">Template ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Language</TableHead>
-                    <TableHead className="text-right">Confidence</TableHead>
-                    <TableHead className="text-right">Uses</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead className="font-mono">{t.templates.headers.templateId}</TableHead>
+                    <TableHead>{t.templates.headers.name}</TableHead>
+                    <TableHead>{t.templates.headers.language}</TableHead>
+                    <TableHead className="text-right">{t.templates.headers.confidence}</TableHead>
+                    <TableHead className="text-right">{t.templates.headers.uses}</TableHead>
+                    <TableHead>{t.templates.headers.status}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {MOCK_TEMPLATES.map((template) => (
+                  {t.mockTemplates.map((template) => (
                     <TableRow key={template.id}>
                       <TableCell className="font-mono text-cyan-400">
                         {template.id}
@@ -285,26 +171,26 @@ export default function Memory() {
             <GlassPanel className="p-6">
               <div className="mb-4">
                 <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-                  Policy Knowledge
+                  {t.policies.title}
                 </h3>
                 <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  Compliance policies enforced by Compliance Guardian
+                  {t.policies.description}
                 </p>
               </div>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-mono">Policy ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="text-right">Evaluations</TableHead>
-                    <TableHead className="text-right">Violations</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead className="font-mono">{t.policies.headers.policyId}</TableHead>
+                    <TableHead>{t.policies.headers.name}</TableHead>
+                    <TableHead>{t.policies.headers.category}</TableHead>
+                    <TableHead>{t.policies.headers.description}</TableHead>
+                    <TableHead className="text-right">{t.policies.headers.evaluations}</TableHead>
+                    <TableHead className="text-right">{t.policies.headers.violations}</TableHead>
+                    <TableHead>{t.policies.headers.status}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {MOCK_POLICIES.map((policy) => (
+                  {t.mockPolicies.map((policy) => (
                     <TableRow key={policy.id}>
                       <TableCell className="font-mono text-cyan-400">
                         {policy.id}

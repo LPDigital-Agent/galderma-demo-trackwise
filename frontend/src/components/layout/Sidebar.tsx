@@ -5,18 +5,19 @@
 
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Activity, FileText, Network, Brain, BookOpen, Package, Cpu, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Activity, FileText, Network, Brain, BookOpen, Package, ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { useTimelineStore } from '@/stores'
 import { cn } from '@/lib/utils'
+import { sidebar as t } from '@/i18n'
 
 const NAV_ITEMS = [
-  { icon: Activity, label: 'Agent Room', route: '/agent-room' },
-  { icon: FileText, label: 'Cases', route: '/cases' },
-  { icon: Network, label: 'Network', route: '/network' },
-  { icon: Brain, label: 'Memory', route: '/memory' },
-  { icon: BookOpen, label: 'Ledger', route: '/ledger' },
-  { icon: Package, label: 'CSV Pack', route: '/csv-pack' },
+  { icon: Activity, label: t.nav.agentRoom, route: '/agent-room' },
+  { icon: FileText, label: t.nav.cases, route: '/cases' },
+  { icon: Network, label: t.nav.network, route: '/network' },
+  { icon: Brain, label: t.nav.memory, route: '/memory' },
+  { icon: BookOpen, label: t.nav.ledger, route: '/ledger' },
+  { icon: Package, label: t.nav.csvPack, route: '/csv-pack' },
 ] as const
 
 export function Sidebar() {
@@ -33,14 +34,17 @@ export function Sidebar() {
     >
       {/* Logo Area */}
       <div className="flex items-center gap-3 px-4 py-6 border-b border-[var(--glass-border)]">
-        <Cpu className="h-8 w-8 text-[var(--brand-primary)] shrink-0" />
-        {!isCollapsed && (
+        {isCollapsed ? (
+          <span className="text-[var(--brand-primary)] font-bold text-lg mx-auto" style={{ fontFamily: 'Georgia, Cambria, serif' }}>G</span>
+        ) : (
           <div className="flex flex-col overflow-hidden">
-            <span className="text-gradient text-sm font-semibold whitespace-nowrap">
-              TrackWise AI
-            </span>
+            <img
+              src="/assets/galderma-logo.svg"
+              alt="Galderma"
+              className="h-7 object-contain object-left"
+            />
             <span className="text-xs text-[var(--text-muted)] whitespace-nowrap">
-              Autopilot
+              {t.subtitle}
             </span>
           </div>
         )}
@@ -90,7 +94,7 @@ export function Sidebar() {
           />
           {!isCollapsed && (
             <span className="text-xs text-[var(--text-muted)]">
-              {isConnected ? 'Live' : 'Offline'}
+              {isConnected ? t.live : t.offline}
             </span>
           )}
         </div>
@@ -105,14 +109,14 @@ export function Sidebar() {
             'transition-colors duration-200',
             isCollapsed && 'justify-center'
           )}
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={isCollapsed ? t.expandSidebar : t.collapseSidebar}
         >
           {isCollapsed ? (
             <ChevronRight className="h-4 w-4" />
           ) : (
             <>
               <ChevronLeft className="h-4 w-4" />
-              <span>Collapse</span>
+              <span>{t.collapse}</span>
             </>
           )}
         </button>

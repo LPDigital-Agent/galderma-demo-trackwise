@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { caseDetail as t, DATE_LOCALE } from '@/i18n'
 import { ArrowLeft, ChevronDown, ChevronRight, Link as LinkIcon } from 'lucide-react'
 import { useCase, useCaseRuns, useCaseLedger } from '@/hooks'
 import { useLanguageStore } from '@/stores/languageStore'
@@ -46,7 +47,7 @@ export default function CaseDetail() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(DATE_LOCALE, {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -80,13 +81,13 @@ export default function CaseDetail() {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <p className="text-text-secondary">Case not found</p>
+          <p className="text-text-secondary">{t.notFound}</p>
           <Button
             onClick={() => navigate('/cases')}
             variant="outline"
             className="mt-4"
           >
-            Back to Cases
+            {t.backToCases}
           </Button>
         </div>
       </div>
@@ -106,14 +107,14 @@ export default function CaseDetail() {
           className="w-fit text-text-secondary hover:text-text-primary"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Cases
+          {t.backToCases}
         </Button>
 
         {/* Case Info Card */}
         <GlassPanel variant="surface">
           <div className="space-y-4">
             <div>
-              <p className="text-text-muted text-sm mb-1">Case ID</p>
+              <p className="text-text-muted text-sm mb-1">{t.labels.caseId}</p>
               <p className="font-mono text-brand-accent text-lg">{caseData.case_id}</p>
             </div>
 
@@ -121,11 +122,11 @@ export default function CaseDetail() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-text-muted text-sm mb-1">Status</p>
+                <p className="text-text-muted text-sm mb-1">{t.labels.status}</p>
                 <StatusBadge status={caseData.status} />
               </div>
               <div>
-                <p className="text-text-muted text-sm mb-1">Severity</p>
+                <p className="text-text-muted text-sm mb-1">{t.labels.severity}</p>
                 <SeverityBadge severity={caseData.severity} />
               </div>
             </div>
@@ -133,18 +134,18 @@ export default function CaseDetail() {
             <Separator className="bg-glass-border" />
 
             <div>
-              <p className="text-text-muted text-sm mb-1">Product Brand</p>
+              <p className="text-text-muted text-sm mb-1">{t.labels.productBrand}</p>
               <p className="text-text-primary font-medium">{caseData.product_brand}</p>
             </div>
 
             <div>
-              <p className="text-text-muted text-sm mb-1">Product Name</p>
+              <p className="text-text-muted text-sm mb-1">{t.labels.productName}</p>
               <p className="text-text-primary">{caseData.product_name}</p>
             </div>
 
             {caseData.lot_number && (
               <div>
-                <p className="text-text-muted text-sm mb-1">Lot Number</p>
+                <p className="text-text-muted text-sm mb-1">{t.labels.lotNumber}</p>
                 <p className="font-mono text-text-primary">{caseData.lot_number}</p>
               </div>
             )}
@@ -153,12 +154,12 @@ export default function CaseDetail() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-text-muted text-sm mb-1">Type</p>
+                <p className="text-text-muted text-sm mb-1">{t.labels.type}</p>
                 <p className="text-text-primary">{caseData.case_type.replace('_', ' ')}</p>
               </div>
               {caseData.category && (
                 <div>
-                  <p className="text-text-muted text-sm mb-1">Category</p>
+                  <p className="text-text-muted text-sm mb-1">{t.labels.category}</p>
                   <p className="text-text-primary">{caseData.category}</p>
                 </div>
               )}
@@ -167,7 +168,7 @@ export default function CaseDetail() {
             <Separator className="bg-glass-border" />
 
             <div>
-              <p className="text-text-muted text-sm mb-1">Customer</p>
+              <p className="text-text-muted text-sm mb-1">{t.labels.customer}</p>
               <p className="text-text-primary font-medium">{caseData.customer_name}</p>
               {caseData.customer_email && (
                 <p className="text-text-secondary text-sm">{caseData.customer_email}</p>
@@ -180,7 +181,7 @@ export default function CaseDetail() {
             <Separator className="bg-glass-border" />
 
             <div>
-              <p className="text-text-muted text-sm mb-1">Created</p>
+              <p className="text-text-muted text-sm mb-1">{t.labels.created}</p>
               <p className="text-text-secondary text-sm font-mono">{formatDate(caseData.created_at)}</p>
             </div>
           </div>
@@ -188,7 +189,7 @@ export default function CaseDetail() {
 
         {/* Complaint Text */}
         <GlassPanel variant="surface">
-          <h3 className="text-text-primary font-semibold mb-3">Complaint</h3>
+          <h3 className="text-text-primary font-semibold mb-3">{t.complaint}</h3>
           <p className="text-text-secondary leading-relaxed">{caseData.complaint_text}</p>
         </GlassPanel>
 
@@ -196,17 +197,17 @@ export default function CaseDetail() {
         {resolutionText && (
           <GlassPanel variant="surface">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-text-primary font-semibold">Resolution</h3>
+              <h3 className="text-text-primary font-semibold">{t.resolution}</h3>
               <Select value={language} onValueChange={(val) => setLanguage(val as Language)}>
                 <SelectTrigger className="w-[120px] h-8 bg-bg-elevated border-glass-border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="AUTO">Auto</SelectItem>
-                  <SelectItem value="EN">English</SelectItem>
-                  <SelectItem value="PT">Português</SelectItem>
-                  <SelectItem value="ES">Español</SelectItem>
-                  <SelectItem value="FR">Français</SelectItem>
+                  <SelectItem value="AUTO">{t.languages.AUTO}</SelectItem>
+                  <SelectItem value="EN">{t.languages.EN}</SelectItem>
+                  <SelectItem value="PT">{t.languages.PT}</SelectItem>
+                  <SelectItem value="ES">{t.languages.ES}</SelectItem>
+                  <SelectItem value="FR">{t.languages.FR}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -219,7 +220,7 @@ export default function CaseDetail() {
           <GlassPanel variant="surface">
             <h3 className="text-text-primary font-semibold mb-3 flex items-center gap-2">
               <LinkIcon className="w-4 h-4" />
-              Linked Case
+              {t.linkedCase}
             </h3>
             <div
               onClick={() => navigate(`/cases/${caseData.linked_case_id}`)}
@@ -236,14 +237,14 @@ export default function CaseDetail() {
         {/* Processing Timeline */}
         <GlassPanel variant="surface" className="flex-1">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-text-primary font-semibold text-lg">Processing Timeline</h3>
+            <h3 className="text-text-primary font-semibold text-lg">{t.processingTimeline}</h3>
             <Button
               onClick={() => setAuditorOpen(true)}
               variant="outline"
               size="sm"
               className="border-brand-primary/30 text-brand-primary hover:bg-brand-primary/10"
             >
-              Open Auditor
+              {t.openAuditor}
             </Button>
           </div>
 
@@ -307,7 +308,7 @@ export default function CaseDetail() {
                             ) : (
                               <ChevronRight className="w-4 h-4" />
                             )}
-                            Reasoning
+                            {t.reasoning}
                           </button>
                           {expandedSteps.has(step.step_number) && (
                             <div className="mt-2 p-3 rounded-lg bg-bg-elevated border border-glass-border">
@@ -324,13 +325,13 @@ export default function CaseDetail() {
               ))}
             </div>
           ) : (
-            <p className="text-text-muted text-center py-8">No processing steps available</p>
+            <p className="text-text-muted text-center py-8">{t.noProcessingSteps}</p>
           )}
         </GlassPanel>
 
         {/* Audit Trail */}
         <GlassPanel variant="surface">
-          <h3 className="text-text-primary font-semibold text-lg mb-4">Audit Trail</h3>
+          <h3 className="text-text-primary font-semibold text-lg mb-4">{t.auditTrail}</h3>
 
           {ledgerLoading ? (
             <div className="space-y-3">
@@ -364,7 +365,7 @@ export default function CaseDetail() {
 
                     {entry.confidence !== undefined && (
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-text-muted text-xs">Confidence:</span>
+                        <span className="text-text-muted text-xs">{t.confidence}</span>
                         <div className="flex-1 h-1.5 bg-bg-base rounded-full overflow-hidden max-w-xs">
                           <div
                             className={cn(
@@ -401,7 +402,7 @@ export default function CaseDetail() {
               </div>
             </ScrollArea>
           ) : (
-            <p className="text-text-muted text-center py-8">No audit trail available</p>
+            <p className="text-text-muted text-center py-8">{t.noAuditTrail}</p>
           )}
         </GlassPanel>
       </div>

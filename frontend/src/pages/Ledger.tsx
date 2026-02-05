@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { BookOpen, Download } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { ledger as t, DATE_LOCALE } from '@/i18n'
 import { AGENTS, type AgentName } from '@/types'
 import { useLedger } from '@/hooks/useCaseDetail'
 import { AgentBadge } from '@/components/domain/AgentBadge'
@@ -45,7 +46,7 @@ export default function Ledger() {
   // Export to JSON
   const handleExport = () => {
     if (!entries || entries.length === 0) {
-      toast.error('No ledger entries to export')
+      toast.error(t.toasts.exportEmpty)
       return
     }
 
@@ -57,7 +58,7 @@ export default function Ledger() {
     link.download = `ledger-export-${new Date().toISOString()}.json`
     link.click()
     URL.revokeObjectURL(url)
-    toast.success('Ledger exported successfully')
+    toast.success(t.toasts.exportSuccess)
   }
 
   // Format confidence as percentage with color
@@ -70,7 +71,7 @@ export default function Ledger() {
 
   // Format timestamp
   const formatTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString('en-US', {
+    return new Date(timestamp).toLocaleString(DATE_LOCALE, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -87,9 +88,9 @@ export default function Ledger() {
       <div className="px-8 py-6 border-b border-[var(--glass-border)]">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Ledger</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
-              Decision Audit Trail - Immutable log of all agent actions
+              {t.subtitle}
             </p>
           </div>
           <Button
@@ -100,20 +101,20 @@ export default function Ledger() {
             className="gap-2"
           >
             <Download className="w-4 h-4" />
-            Export JSON
+            {t.exportJson}
           </Button>
         </div>
 
         {/* Filters */}
         <div className="mt-4 flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-[var(--text-secondary)]">Agent:</span>
+            <span className="text-sm text-[var(--text-secondary)]">{t.agentFilter}</span>
             <Select value={selectedAgent} onValueChange={(value) => setSelectedAgent(value as AgentName | 'all')}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Agents</SelectItem>
+                <SelectItem value="all">{t.allAgents}</SelectItem>
                 {Object.keys(AGENTS).map((agentName) => (
                   <SelectItem key={agentName} value={agentName}>
                     {AGENTS[agentName as AgentName].displayName}
@@ -136,21 +137,21 @@ export default function Ledger() {
         ) : !entries || entries.length === 0 ? (
           <EmptyState
             icon={BookOpen}
-            title="No ledger entries found"
-            description="Start processing cases to see decision audit trail"
+            title={t.empty.title}
+            description={t.empty.description}
           />
         ) : (
           <div className="bg-[var(--bg-surface)] rounded-xl border border-[var(--glass-border)] overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="font-mono">Timestamp</TableHead>
-                  <TableHead>Agent</TableHead>
-                  <TableHead>Action</TableHead>
-                  <TableHead>Decision</TableHead>
-                  <TableHead className="text-right">Confidence</TableHead>
-                  <TableHead className="font-mono">Case ID</TableHead>
-                  <TableHead className="font-mono">Hash</TableHead>
+                  <TableHead className="font-mono">{t.table.timestamp}</TableHead>
+                  <TableHead>{t.table.agent}</TableHead>
+                  <TableHead>{t.table.action}</TableHead>
+                  <TableHead>{t.table.decision}</TableHead>
+                  <TableHead className="text-right">{t.table.confidence}</TableHead>
+                  <TableHead className="font-mono">{t.table.caseId}</TableHead>
+                  <TableHead className="font-mono">{t.table.hash}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

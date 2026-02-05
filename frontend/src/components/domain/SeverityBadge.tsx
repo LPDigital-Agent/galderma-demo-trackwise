@@ -5,6 +5,7 @@
 
 import { AlertTriangle } from 'lucide-react'
 import type { CaseSeverity } from '@/types'
+import { severities } from '@/i18n'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
@@ -55,7 +56,7 @@ export function SeverityBadge({ severity, className }: SeverityBadgeProps) {
       )}
     >
       {showIcon && <AlertTriangle className="w-3 h-3" />}
-      <span className="capitalize">{severity.toLowerCase()}</span>
+      <span>{severities[severity]}</span>
     </Badge>
   )
 }

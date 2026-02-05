@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { CheckCircle2, XCircle, Shield, Hash, TrendingUp } from 'lucide-react'
+import { auditorView as t, DATE_LOCALE } from '@/i18n'
 import { useCaseLedger } from '@/hooks'
 import { AgentBadge } from '@/components/domain'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -107,7 +108,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
   }, [ledger])
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(DATE_LOCALE, {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
@@ -122,10 +123,10 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
         <SheetHeader>
           <SheetTitle className="text-text-primary flex items-center gap-2">
             <Shield className="w-5 h-5 text-brand-primary" />
-            Auditor View
+            {t.title}
           </SheetTitle>
           <SheetDescription className="text-text-secondary">
-            Compliance audit trail and chain-of-custody verification
+            {t.subtitle}
           </SheetDescription>
         </SheetHeader>
 
@@ -150,19 +151,19 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                 <div className="flex items-center gap-2 mb-2">
                   <Hash className="w-4 h-4" />
                   <span className="text-sm font-semibold text-text-primary">
-                    {integrity?.valid ? 'Chain Valid' : 'Unverified'}
+                    {integrity?.valid ? t.integrity.chainValid : t.integrity.unverified}
                   </span>
                 </div>
                 {integrity?.valid ? (
                   <div className="space-y-1">
                     <p className="text-xs text-text-secondary">
-                      First hash:{' '}
+                      {t.integrity.firstHash}{' '}
                       <span className="font-mono text-text-primary">
                         {integrity.firstHash?.substring(0, 16)}...
                       </span>
                     </p>
                     <p className="text-xs text-text-secondary">
-                      Last hash:{' '}
+                      {t.integrity.lastHash}{' '}
                       <span className="font-mono text-text-primary">
                         {integrity.lastHash?.substring(0, 16)}...
                       </span>
@@ -170,7 +171,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                   </div>
                 ) : (
                   <p className="text-xs text-text-secondary">
-                    Some entries are missing cryptographic hashes
+                    {t.integrity.missingHashes}
                   </p>
                 )}
               </div>
@@ -179,28 +180,28 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               <div className="p-4 rounded-lg bg-glass-bg border border-glass-border">
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="w-4 h-4 text-brand-primary" />
-                  <span className="text-sm font-semibold text-text-primary">Policy Summary</span>
+                  <span className="text-sm font-semibold text-text-primary">{t.policySummary}</span>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-text-primary">
                       {policySummary.evaluated}
                     </p>
-                    <p className="text-xs text-text-muted">Evaluated</p>
+                    <p className="text-xs text-text-muted">{t.evaluated}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-green-400">{policySummary.passed}</p>
-                    <p className="text-xs text-text-muted">Passed</p>
+                    <p className="text-xs text-text-muted">{t.passed}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-red-400">{policySummary.violated}</p>
-                    <p className="text-xs text-text-muted">Violated</p>
+                    <p className="text-xs text-text-muted">{t.violated}</p>
                   </div>
                 </div>
                 {policySummary.violations.length > 0 && (
                   <div className="mt-3">
                     <Separator className="bg-glass-border mb-3" />
-                    <p className="text-xs text-text-muted mb-2">Violations:</p>
+                    <p className="text-xs text-text-muted mb-2">{t.violations}</p>
                     <div className="space-y-1">
                       {policySummary.violations.map((violation, idx) => (
                         <div key={idx} className="flex items-start gap-2">
@@ -217,7 +218,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               {decisionEntries.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-text-primary mb-3">
-                    Critical Decisions
+                    {t.criticalDecisions}
                   </h3>
                   <div className="space-y-3">
                     {decisionEntries.map((entry) => (
@@ -244,7 +245,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                         {entry.confidence !== undefined && (
                           <div className="mb-3">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs text-text-muted">Confidence</span>
+                              <span className="text-xs text-text-muted">{t.confidence}</span>
                               <span className="text-xs text-text-secondary">
                                 {(entry.confidence * 100).toFixed(0)}%
                               </span>
@@ -295,14 +296,14 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               {/* State Changes Table */}
               {stateChanges.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-text-primary mb-3">State Changes</h3>
+                  <h3 className="text-sm font-semibold text-text-primary mb-3">{t.stateChanges}</h3>
                   <div className="rounded-lg border border-glass-border overflow-hidden">
                     <Table>
                       <TableHeader>
                         <TableRow className="border-glass-border hover:bg-transparent">
-                          <TableHead className="text-text-muted text-xs">Field</TableHead>
-                          <TableHead className="text-text-muted text-xs">Before</TableHead>
-                          <TableHead className="text-text-muted text-xs">After</TableHead>
+                          <TableHead className="text-text-muted text-xs">{t.stateTable.field}</TableHead>
+                          <TableHead className="text-text-muted text-xs">{t.stateTable.before}</TableHead>
+                          <TableHead className="text-text-muted text-xs">{t.stateTable.after}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -329,19 +330,19 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               <div className="p-4 rounded-lg bg-glass-bg border border-glass-border">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <p className="text-xs text-text-muted mb-1">Model</p>
+                    <p className="text-xs text-text-muted mb-1">{t.modelStats.model}</p>
                     <p className="text-sm text-text-primary font-mono">
                       {modelStats.modelId ? modelStats.modelId.split('/').pop() : 'N/A'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-text-muted mb-1">Total Tokens</p>
+                    <p className="text-xs text-text-muted mb-1">{t.modelStats.totalTokens}</p>
                     <p className="text-sm text-text-primary font-semibold">
                       {modelStats.totalTokens.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-text-muted mb-1">Total Latency</p>
+                    <p className="text-xs text-text-muted mb-1">{t.modelStats.totalLatency}</p>
                     <p className="text-sm text-text-primary font-semibold">
                       {(modelStats.totalLatency / 1000).toFixed(2)}s
                     </p>
@@ -352,7 +353,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
           </ScrollArea>
         ) : (
           <div className="flex items-center justify-center h-64">
-            <p className="text-text-muted">No audit trail available</p>
+            <p className="text-text-muted">{t.noAuditTrail}</p>
           </div>
         )}
       </SheetContent>

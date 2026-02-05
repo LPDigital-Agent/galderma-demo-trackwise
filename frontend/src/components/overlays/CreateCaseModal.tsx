@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useCreateCase } from '@/hooks'
+import { createCase as t } from '@/i18n'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,7 +40,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
     e.preventDefault()
 
     if (!customerName.trim() || !productBrand || !productName.trim() || !complaintText.trim()) {
-      toast.error('Please fill in all required fields')
+      toast.error(t.toasts.fillRequired)
       return
     }
 
@@ -55,13 +56,13 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
       },
       {
         onSuccess: () => {
-          toast.success('Case created successfully')
+          toast.success(t.toasts.success)
           resetForm()
           onOpenChange(false)
         },
         onError: (error) => {
           console.error('Failed to create case:', error)
-          toast.error('Failed to create case')
+          toast.error(t.toasts.error)
         },
       }
     )
@@ -71,9 +72,9 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] bg-bg-surface border-glass-border">
         <DialogHeader>
-          <DialogTitle className="text-text-primary">Create New Case</DialogTitle>
+          <DialogTitle className="text-text-primary">{t.title}</DialogTitle>
           <DialogDescription className="text-text-secondary">
-            Enter the details for the new complaint or inquiry case.
+            {t.description}
           </DialogDescription>
         </DialogHeader>
 
@@ -81,13 +82,13 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Customer Name */}
           <div>
             <Label htmlFor="customerName" className="text-text-secondary">
-              Customer Name <span className="text-red-400">*</span>
+              {t.fields.customerName} <span className="text-red-400">*</span>
             </Label>
             <Input
               id="customerName"
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
-              placeholder="John Doe"
+              placeholder={t.placeholders.customerName}
               className="bg-glass-bg border-glass-border text-text-primary"
               required
             />
@@ -96,11 +97,11 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Product Brand */}
           <div>
             <Label htmlFor="productBrand" className="text-text-secondary">
-              Product Brand <span className="text-red-400">*</span>
+              {t.fields.productBrand} <span className="text-red-400">*</span>
             </Label>
             <Select value={productBrand} onValueChange={setProductBrand} required>
               <SelectTrigger className="bg-glass-bg border-glass-border text-text-primary">
-                <SelectValue placeholder="Select a brand" />
+                <SelectValue placeholder={t.placeholders.selectBrand} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Cetaphil">Cetaphil</SelectItem>
@@ -115,13 +116,13 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Product Name */}
           <div>
             <Label htmlFor="productName" className="text-text-secondary">
-              Product Name <span className="text-red-400">*</span>
+              {t.fields.productName} <span className="text-red-400">*</span>
             </Label>
             <Input
               id="productName"
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
-              placeholder="Daily Facial Cleanser"
+              placeholder={t.placeholders.productName}
               className="bg-glass-bg border-glass-border text-text-primary"
               required
             />
@@ -130,13 +131,13 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Complaint Text */}
           <div>
             <Label htmlFor="complaintText" className="text-text-secondary">
-              Complaint / Inquiry <span className="text-red-400">*</span>
+              {t.fields.complaintText} <span className="text-red-400">*</span>
             </Label>
             <Textarea
               id="complaintText"
               value={complaintText}
               onChange={(e) => setComplaintText(e.target.value)}
-              placeholder="Describe the complaint or inquiry in detail..."
+              placeholder={t.placeholders.complaintText}
               className="bg-glass-bg border-glass-border text-text-primary min-h-[100px]"
               required
             />
@@ -145,16 +146,16 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Case Type */}
           <div>
             <Label htmlFor="caseType" className="text-text-secondary">
-              Case Type <span className="text-red-400">*</span>
+              {t.fields.caseType} <span className="text-red-400">*</span>
             </Label>
             <Select value={caseType} onValueChange={(val) => setCaseType(val as CaseType)} required>
               <SelectTrigger className="bg-glass-bg border-glass-border text-text-primary">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="COMPLAINT">Complaint</SelectItem>
-                <SelectItem value="INQUIRY">Inquiry</SelectItem>
-                <SelectItem value="ADVERSE_EVENT">Adverse Event</SelectItem>
+                <SelectItem value="COMPLAINT">{t.caseTypes.COMPLAINT}</SelectItem>
+                <SelectItem value="INQUIRY">{t.caseTypes.INQUIRY}</SelectItem>
+                <SelectItem value="ADVERSE_EVENT">{t.caseTypes.ADVERSE_EVENT}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -162,20 +163,20 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Category */}
           <div>
             <Label htmlFor="category" className="text-text-secondary">
-              Category
+              {t.fields.category}
             </Label>
             <Select value={category} onValueChange={(val) => setCategory(val as ComplaintCategory)}>
               <SelectTrigger className="bg-glass-bg border-glass-border text-text-primary">
-                <SelectValue placeholder="Select a category" />
+                <SelectValue placeholder={t.placeholders.selectCategory} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="PACKAGING">Packaging</SelectItem>
-                <SelectItem value="QUALITY">Quality</SelectItem>
-                <SelectItem value="EFFICACY">Efficacy</SelectItem>
-                <SelectItem value="SAFETY">Safety</SelectItem>
-                <SelectItem value="DOCUMENTATION">Documentation</SelectItem>
-                <SelectItem value="SHIPPING">Shipping</SelectItem>
-                <SelectItem value="OTHER">Other</SelectItem>
+                <SelectItem value="PACKAGING">{t.categories.PACKAGING}</SelectItem>
+                <SelectItem value="QUALITY">{t.categories.QUALITY}</SelectItem>
+                <SelectItem value="EFFICACY">{t.categories.EFFICACY}</SelectItem>
+                <SelectItem value="SAFETY">{t.categories.SAFETY}</SelectItem>
+                <SelectItem value="DOCUMENTATION">{t.categories.DOCUMENTATION}</SelectItem>
+                <SelectItem value="SHIPPING">{t.categories.SHIPPING}</SelectItem>
+                <SelectItem value="OTHER">{t.categories.OTHER}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -183,13 +184,13 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Lot Number */}
           <div>
             <Label htmlFor="lotNumber" className="text-text-secondary">
-              Lot Number
+              {t.fields.lotNumber}
             </Label>
             <Input
               id="lotNumber"
               value={lotNumber}
               onChange={(e) => setLotNumber(e.target.value)}
-              placeholder="LOT-12345"
+              placeholder={t.placeholders.lotNumber}
               className="bg-glass-bg border-glass-border text-text-primary font-mono"
             />
           </div>
@@ -202,14 +203,14 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
               disabled={isPending}
               className="text-text-secondary hover:text-text-primary"
             >
-              Cancel
+              {t.cancel}
             </Button>
             <Button
               type="submit"
               disabled={isPending}
               className="bg-brand-primary hover:bg-brand-primary/90 text-white"
             >
-              {isPending ? 'Creating...' : 'Create Case'}
+              {isPending ? t.submitting : t.submit}
             </Button>
           </DialogFooter>
         </form>

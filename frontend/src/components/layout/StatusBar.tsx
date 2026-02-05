@@ -6,14 +6,15 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useTimelineStore } from '@/stores'
 import { useModeStore } from '@/stores/modeStore'
-import { useLanguageStore, getLanguageLabel } from '@/stores/languageStore'
+import { useLanguageStore } from '@/stores/languageStore'
 import { cn } from '@/lib/utils'
+import { statusBar as t, languageLabels } from '@/i18n'
 import type { ExecutionMode, Language } from '@/types'
 
 const MODES: { value: ExecutionMode; label: string; color: string }[] = [
-  { value: 'OBSERVE', label: 'Observe', color: 'var(--mode-observe)' },
-  { value: 'TRAIN', label: 'Train', color: 'var(--mode-train)' },
-  { value: 'ACT', label: 'Act', color: 'var(--mode-act)' },
+  { value: 'OBSERVE', label: t.modes.OBSERVE, color: 'var(--mode-observe)' },
+  { value: 'TRAIN', label: t.modes.TRAIN, color: 'var(--mode-train)' },
+  { value: 'ACT', label: t.modes.ACT, color: 'var(--mode-act)' },
 ]
 
 const LANGUAGES: Language[] = ['AUTO', 'PT', 'EN', 'ES', 'FR']
@@ -36,7 +37,7 @@ export function StatusBar() {
           )}
         />
         <span className="text-[var(--text-muted)]">
-          {isConnected ? 'Connected' : 'Disconnected'}
+          {isConnected ? t.connected : t.disconnected}
         </span>
       </div>
 
@@ -68,7 +69,7 @@ export function StatusBar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors duration-200">
-              {getLanguageLabel(language)}
+              {languageLabels[language]}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-[var(--bg-elevated)] border-[var(--glass-border)]">
@@ -81,7 +82,7 @@ export function StatusBar() {
                   language === lang && 'bg-white/5'
                 )}
               >
-                {getLanguageLabel(lang)}
+                {languageLabels[lang]}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

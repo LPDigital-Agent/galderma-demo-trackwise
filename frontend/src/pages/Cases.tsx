@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FileText, Plus, Link as LinkIcon } from 'lucide-react'
+import { cases as t, DATE_LOCALE } from '@/i18n'
 import { useCases } from '@/hooks'
 import { StatusBadge, SeverityBadge, EmptyState } from '@/components/domain'
 import { Button } from '@/components/ui/button'
@@ -25,7 +26,7 @@ export default function Cases() {
   })
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(DATE_LOCALE, {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -39,7 +40,7 @@ export default function Cases() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-semibold text-text-primary">Cases</h1>
+          <h1 className="text-3xl font-semibold text-text-primary">{t.title}</h1>
           {data && (
             <Badge
               variant="outline"
@@ -54,7 +55,7 @@ export default function Cases() {
           className="bg-brand-primary hover:bg-brand-primary/90 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
-          New Case
+          {t.newCase}
         </Button>
       </div>
 
@@ -65,15 +66,15 @@ export default function Cases() {
           onValueChange={(value) => setStatusFilter(value as CaseStatus | 'ALL')}
         >
           <SelectTrigger className="w-[180px] bg-glass-bg border-glass-border">
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder={t.filters.filterByStatus} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="ALL">All Statuses</SelectItem>
-            <SelectItem value="OPEN">Open</SelectItem>
-            <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-            <SelectItem value="PENDING_REVIEW">Pending Review</SelectItem>
-            <SelectItem value="RESOLVED">Resolved</SelectItem>
-            <SelectItem value="CLOSED">Closed</SelectItem>
+            <SelectItem value="ALL">{t.filters.allStatuses}</SelectItem>
+            <SelectItem value="OPEN">{t.filters.open}</SelectItem>
+            <SelectItem value="IN_PROGRESS">{t.filters.inProgress}</SelectItem>
+            <SelectItem value="PENDING_REVIEW">{t.filters.pendingReview}</SelectItem>
+            <SelectItem value="RESOLVED">{t.filters.resolved}</SelectItem>
+            <SelectItem value="CLOSED">{t.filters.closed}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -82,14 +83,14 @@ export default function Cases() {
           onValueChange={(value) => setSeverityFilter(value as CaseSeverity | 'ALL')}
         >
           <SelectTrigger className="w-[180px] bg-glass-bg border-glass-border">
-            <SelectValue placeholder="Filter by severity" />
+            <SelectValue placeholder={t.filters.filterBySeverity} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="ALL">All Severities</SelectItem>
-            <SelectItem value="LOW">Low</SelectItem>
-            <SelectItem value="MEDIUM">Medium</SelectItem>
-            <SelectItem value="HIGH">High</SelectItem>
-            <SelectItem value="CRITICAL">Critical</SelectItem>
+            <SelectItem value="ALL">{t.filters.allSeverities}</SelectItem>
+            <SelectItem value="LOW">{t.filters.low}</SelectItem>
+            <SelectItem value="MEDIUM">{t.filters.medium}</SelectItem>
+            <SelectItem value="HIGH">{t.filters.high}</SelectItem>
+            <SelectItem value="CRITICAL">{t.filters.critical}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -99,12 +100,12 @@ export default function Cases() {
         <Table>
           <TableHeader>
             <TableRow className="border-glass-border hover:bg-transparent">
-              <TableHead className="text-text-secondary font-medium">Case ID</TableHead>
-              <TableHead className="text-text-secondary font-medium">Product</TableHead>
-              <TableHead className="text-text-secondary font-medium">Status</TableHead>
-              <TableHead className="text-text-secondary font-medium">Severity</TableHead>
-              <TableHead className="text-text-secondary font-medium">Type</TableHead>
-              <TableHead className="text-text-secondary font-medium">Created</TableHead>
+              <TableHead className="text-text-secondary font-medium">{t.table.caseId}</TableHead>
+              <TableHead className="text-text-secondary font-medium">{t.table.product}</TableHead>
+              <TableHead className="text-text-secondary font-medium">{t.table.status}</TableHead>
+              <TableHead className="text-text-secondary font-medium">{t.table.severity}</TableHead>
+              <TableHead className="text-text-secondary font-medium">{t.table.type}</TableHead>
+              <TableHead className="text-text-secondary font-medium">{t.table.created}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -163,15 +164,15 @@ export default function Cases() {
           <div className="flex items-center justify-center h-64">
             <EmptyState
               icon={FileText}
-              title="No cases found"
-              description="Try adjusting your filters or create a new case"
+              title={t.empty.title}
+              description={t.empty.description}
               action={
                 <Button
                   onClick={() => setCreateModalOpen(true)}
                   className="bg-brand-primary hover:bg-brand-primary/90 text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Case
+                  {t.empty.createCase}
                 </Button>
               }
             />

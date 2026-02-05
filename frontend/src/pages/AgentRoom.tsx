@@ -1,203 +1,238 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// AgentRoom Page - Main Dashboard
+// Agent Room - Main Dashboard Page
 // ============================================
 
-import { useNavigate } from 'react-router-dom'
-import {
-  Activity,
-  Bot,
-  Clock,
-  ShieldCheck,
-  TrendingUp,
-} from 'lucide-react'
-import { GlassCard } from '@/components/ui'
-import { useExecutiveStats, useStats, useWebSocket } from '@/hooks'
-import { useFilteredEvents } from '@/stores'
+import { useEffect, useRef } from 'react'
+import { CheckCircle2, Zap, Shield, Activity, RotateCcw, Plus } from 'lucide-react'
+import { toast } from 'sonner'
+
+import { useExecutiveStats, useStats, useCreateBatch, useResetDemo } from '@/hooks'
+import { useTimelineStore, useFilteredEvents } from '@/stores'
 import { AGENTS } from '@/types'
-import type { AgentName } from '@/types'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Skeleton } from '@/components/ui/skeleton'
+import { MetricCard, TimelineItem, GlassPanel, EmptyState } from '@/components/domain'
 
 /**
- * AgentRoom Page
+ * AgentRoom - Premium AI Agent Dashboard
  *
- * Main dashboard with executive metrics and activity timeline.
+ * Main executive dashboard showing:
+ * - Executive metrics (AI closed, hours saved, risks avoided)
+ * - Status counters (total, open, in progress, closed)
+ * - Real-time activity timeline with agent events
  *
- * Executive metrics (the 3 numbers Galderma needs):
- * 1. Complaints closed by AI
- * 2. Human hours saved
- * 3. Risks avoided
- *
- * Plus operational stats and real-time activity feed.
+ * Features:
+ * - Auto-refreshing stats (5s interval)
+ * - WebSocket-driven timeline updates
+ * - Batch case creation
+ * - Demo reset capability
+ * - Agent-specific filtering
  */
-export function AgentRoom() {
-  const navigate = useNavigate()
+export default function AgentRoom() {
+  const { data: executiveStats, isLoading: executiveLoading } = useExecutiveStats()
   const { data: stats, isLoading: statsLoading } = useStats()
-  const { data: execStats, isLoading: execLoading } = useExecutiveStats()
-  const { isConnected } = useWebSocket()
-  const events = useFilteredEvents()
+  const createBatch = useCreateBatch()
+  const resetDemo = useResetDemo()
 
-  const isLoading = statsLoading || execLoading
+  const filteredEvents = useFilteredEvents()
+  const { filter, setFilter, autoScroll } = useTimelineStore()
+
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+
+  // Auto-scroll to top when new events arrive (if autoScroll enabled)
+  useEffect(() => {
+    if (autoScroll && scrollAreaRef.current) {
+      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+      if (viewport) {
+        viewport.scrollTop = 0
+      }
+    }
+  }, [filteredEvents.length, autoScroll])
+
+  // Handle create batch mutation
+  const handleCreateBatch = () => {
+    createBatch.mutate(
+      {
+        count: 5,
+        include_recurring: true,
+        include_adverse_events: true,
+        include_linked_inquiries: true,
+      },
+      {
+        onSuccess: (data) => {
+          toast.success(`Created ${data.created_count} cases successfully`, {
+            description: `${data.events_emitted} events emitted`,
+          })
+        },
+        onError: (error) => {
+          toast.error('Failed to create batch', {
+            description: error instanceof Error ? error.message : 'Unknown error',
+          })
+        },
+      }
+    )
+  }
+
+  // Handle reset demo mutation
+  const handleResetDemo = () => {
+    resetDemo.mutate(undefined, {
+      onSuccess: (data) => {
+        toast.success('Demo reset successfully', {
+          description: `Cleared ${data.cases_cleared} cases and ${data.events_cleared} events`,
+        })
+      },
+      onError: (error) => {
+        toast.error('Failed to reset demo', {
+          description: error instanceof Error ? error.message : 'Unknown error',
+        })
+      },
+    })
+  }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Header Section */}
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Agent Room</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            AI Autopilot Executive Dashboard
-          </p>
+          <h1 className="text-3xl font-bold text-text-primary tracking-tight">Agent Room</h1>
+          <p className="text-text-secondary mt-1">AI Autopilot Executive Dashboard</p>
         </div>
-        <div className="flex items-center gap-2">
-          <div
-            className={`h-3 w-3 rounded-full ${isConnected ? 'bg-[var(--status-success)]' : 'bg-[var(--status-error)]'}`}
-          />
-          <span className="text-sm text-[var(--text-secondary)]">
-            {isConnected ? 'Live' : 'Disconnected'}
-          </span>
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={handleCreateBatch}
+            disabled={createBatch.isPending}
+            className="bg-brand-primary hover:bg-brand-primary/90 text-white font-medium"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            {createBatch.isPending ? 'Creating...' : 'Create Batch'}
+          </Button>
+          <Button
+            onClick={handleResetDemo}
+            disabled={resetDemo.isPending}
+            variant="destructive"
+            className="font-medium"
+          >
+            <RotateCcw className="mr-2 h-4 w-4" />
+            {resetDemo.isPending ? 'Resetting...' : 'Reset Demo'}
+          </Button>
         </div>
       </div>
 
-      {/* Executive Metrics (THE 3 NUMBERS) */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <GlassCard variant="elevated">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                AI Closed
-              </p>
-              <p className="mt-2 text-4xl font-bold text-[var(--status-success)]">
-                {isLoading ? '—' : (execStats?.ai_closed_count ?? 0).toLocaleString()}
-              </p>
-              <p className="mt-1 text-xs text-[var(--text-secondary)]">complaints resolved by agents</p>
-            </div>
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-[var(--border-radius-sm)]"
-              style={{ background: 'rgba(34, 197, 94, 0.15)', color: 'var(--status-success)' }}
-            >
-              <Bot className="h-7 w-7" />
-            </div>
+      {/* Executive Metrics Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {executiveLoading ? (
+          <>
+            <Skeleton className="h-32 bg-glass-bg border border-glass-border rounded-xl" />
+            <Skeleton className="h-32 bg-glass-bg border border-glass-border rounded-xl" />
+            <Skeleton className="h-32 bg-glass-bg border border-glass-border rounded-xl" />
+          </>
+        ) : executiveStats ? (
+          <>
+            <MetricCard
+              value={executiveStats.ai_closed_count.toLocaleString()}
+              label="AI Closed"
+              sublabel={`of ${executiveStats.total_cases.toLocaleString()} total`}
+              icon={CheckCircle2}
+              color="#10B981"
+            />
+            <MetricCard
+              value={executiveStats.human_hours_saved.toLocaleString()}
+              label="Hours Saved"
+              sublabel="vs manual processing"
+              icon={Zap}
+              color="#06B6D4"
+            />
+            <MetricCard
+              value={executiveStats.risks_avoided.toLocaleString()}
+              label="Risks Avoided"
+              sublabel="escalations prevented"
+              icon={Shield}
+              color="#8B5CF6"
+            />
+          </>
+        ) : (
+          <div className="col-span-3 text-center text-text-muted py-8">
+            Failed to load executive metrics
           </div>
-        </GlassCard>
-
-        <GlassCard variant="elevated">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                Hours Saved
-              </p>
-              <p className="mt-2 text-4xl font-bold text-[var(--brand-primary)]">
-                {isLoading ? '—' : (execStats?.human_hours_saved ?? 0).toLocaleString()}h
-              </p>
-              <p className="mt-1 text-xs text-[var(--text-secondary)]">human hours freed up</p>
-            </div>
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-[var(--border-radius-sm)]"
-              style={{ background: 'rgba(0, 164, 180, 0.15)', color: 'var(--brand-primary)' }}
-            >
-              <Clock className="h-7 w-7" />
-            </div>
-          </div>
-        </GlassCard>
-
-        <GlassCard variant="elevated">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                Risks Avoided
-              </p>
-              <p className="mt-2 text-4xl font-bold text-[var(--status-warning)]">
-                {isLoading ? '—' : (execStats?.risks_avoided ?? 0).toLocaleString()}
-              </p>
-              <p className="mt-1 text-xs text-[var(--text-secondary)]">compliance escalations caught</p>
-            </div>
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-[var(--border-radius-sm)]"
-              style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--status-warning)' }}
-            >
-              <ShieldCheck className="h-7 w-7" />
-            </div>
-          </div>
-        </GlassCard>
+        )}
       </div>
 
-      {/* Operational Stats (secondary row) */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {[
-          { label: 'Total Cases', value: stats?.total_cases ?? 0, color: 'var(--text-primary)' },
-          { label: 'Open', value: stats?.open_cases ?? 0, color: 'var(--status-warning)' },
-          { label: 'In Progress', value: stats?.in_progress_cases ?? 0, color: 'var(--status-info)' },
-          { label: 'Closed', value: stats?.closed_cases ?? 0, color: 'var(--status-success)' },
-        ].map(({ label, value, color }) => (
-          <GlassCard key={label} variant="subtle" padding="sm">
-            <p className="text-xs text-[var(--text-tertiary)]">{label}</p>
-            <p className="mt-0.5 text-xl font-bold" style={{ color }}>
-              {statsLoading ? '—' : value.toLocaleString()}
-            </p>
-          </GlassCard>
-        ))}
-      </div>
+      {/* Status Counters Row */}
+      {statsLoading ? (
+        <Skeleton className="h-12 bg-glass-bg border border-glass-border rounded-lg" />
+      ) : stats ? (
+        <GlassPanel variant="surface" className="px-6 py-4">
+          <div className="flex items-center justify-center gap-8 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-text-secondary">Total:</span>
+              <span className="text-brand-primary font-mono font-semibold">
+                {stats.total_cases.toLocaleString()}
+              </span>
+            </div>
+            <div className="h-4 w-px bg-glass-border" />
+            <div className="flex items-center gap-2">
+              <span className="text-text-secondary">Open:</span>
+              <span className="text-status-warning font-mono font-semibold">
+                {stats.open_cases.toLocaleString()}
+              </span>
+            </div>
+            <div className="h-4 w-px bg-glass-border" />
+            <div className="flex items-center gap-2">
+              <span className="text-text-secondary">In Progress:</span>
+              <span className="text-brand-accent font-mono font-semibold">
+                {stats.in_progress_cases.toLocaleString()}
+              </span>
+            </div>
+            <div className="h-4 w-px bg-glass-border" />
+            <div className="flex items-center gap-2">
+              <span className="text-text-secondary">Closed:</span>
+              <span className="text-status-success font-mono font-semibold">
+                {stats.closed_cases.toLocaleString()}
+              </span>
+            </div>
+          </div>
+        </GlassPanel>
+      ) : null}
 
-      {/* Timeline */}
-      <GlassCard>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-            Recent Activity
-          </h2>
-          <TrendingUp className="h-4 w-4 text-[var(--text-tertiary)]" />
+      {/* Activity Timeline Section */}
+      <GlassPanel className="p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-text-primary">Activity Timeline</h2>
+          <Select value={filter || 'all'} onValueChange={(value) => setFilter(value === 'all' ? null : value)}>
+            <SelectTrigger className="w-[200px] bg-bg-elevated border-glass-border">
+              <SelectValue placeholder="Filter by agent" />
+            </SelectTrigger>
+            <SelectContent className="bg-bg-elevated border-glass-border">
+              <SelectItem value="all">All Agents</SelectItem>
+              {Object.values(AGENTS).map((agent) => (
+                <SelectItem key={agent.name} value={agent.name}>
+                  {agent.displayName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        <div className="space-y-3">
-          {events.length === 0 ? (
-            <div className="py-8 text-center">
-              <Activity className="mx-auto h-12 w-12 text-[var(--text-tertiary)]" />
-              <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                No recent activity. Waiting for events...
-              </p>
-            </div>
+
+        <ScrollArea className="h-[400px]" ref={scrollAreaRef}>
+          {filteredEvents.length === 0 ? (
+            <EmptyState
+              icon={Activity}
+              title="No activity yet"
+              description="Waiting for agent events..."
+              className="py-12"
+            />
           ) : (
-            events.slice(0, 15).map((event, index) => {
-              const agentInfo = event.agent ? AGENTS[event.agent as AgentName] : null
-              const agentColor = agentInfo?.color ?? 'var(--brand-primary)'
-
-              return (
-                <div
-                  key={`${event.timestamp}-${index}`}
-                  className={`flex items-start gap-3 border-b border-[rgba(0,0,0,0.06)] pb-3 last:border-0 ${
-                    event.case_id ? 'cursor-pointer hover:bg-[rgba(0,0,0,0.02)] rounded-md -mx-2 px-2' : ''
-                  }`}
-                  onClick={event.case_id ? () => navigate(`/cases/${event.case_id}`) : undefined}
-                >
-                  <div
-                    className="mt-1.5 h-2 w-2 shrink-0 rounded-full"
-                    style={{ backgroundColor: agentColor }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-[var(--text-primary)]">
-                        {event.type.replace(/_/g, ' ')}
-                      </p>
-                      <p className="shrink-0 text-xs text-[var(--text-tertiary)]">
-                        {new Date(event.timestamp).toLocaleTimeString()}
-                      </p>
-                    </div>
-                    {event.message && (
-                      <p className="mt-0.5 text-sm text-[var(--text-secondary)]">{event.message}</p>
-                    )}
-                    {event.agent && (
-                      <span
-                        className="mt-0.5 inline-block text-xs font-medium"
-                        style={{ color: agentColor }}
-                      >
-                        {agentInfo?.displayName ?? event.agent}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )
-            })
+            <div className="space-y-3 pr-4">
+              {filteredEvents.map((event, index) => (
+                <TimelineItem key={`${event.timestamp}-${index}`} event={event} />
+              ))}
+            </div>
           )}
-        </div>
-      </GlassCard>
+        </ScrollArea>
+      </GlassPanel>
     </div>
   )
 }

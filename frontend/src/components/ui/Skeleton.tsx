@@ -1,21 +1,13 @@
-// ============================================
-// Galderma TrackWise AI Autopilot Demo
-// Skeleton — Animated Loading Placeholder
-// ============================================
+import { cn } from "@/lib/utils"
 
-import { cn } from '@/lib/utils'
-
-export interface SkeletonProps {
-  className?: string
-}
-
-export function Skeleton({ className }: SkeletonProps) {
+function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        'animate-pulse rounded-[var(--border-radius-md)] bg-[rgba(0,0,0,0.06)]',
-        className
-      )}
+      data-slot="skeleton"
+      className={cn("bg-accent animate-pulse rounded-md", className)}
+      {...props}
     />
   )
 }
+
+export { Skeleton }

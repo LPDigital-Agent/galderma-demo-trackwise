@@ -1,242 +1,204 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// Ledger Page - Decision Ledger (Audit Trail)
+// Page: Ledger - Decision Audit Trail
 // ============================================
 
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
+import { BookOpen, Download } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { BookOpen, Download, Filter, Shield, ExternalLink } from 'lucide-react'
-import { GlassCard, Button, Badge } from '@/components/ui'
+import { cn } from '@/lib/utils'
+import { AGENTS, type AgentName } from '@/types'
 import { useLedger } from '@/hooks/useCaseDetail'
-import { AGENTS } from '@/types'
-import type { AgentName, LedgerEntry } from '@/types'
+import { AgentBadge } from '@/components/domain/AgentBadge'
+import { EmptyState } from '@/components/domain/EmptyState'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
+import { toast } from 'sonner'
 
-/**
- * Ledger Page
- *
- * Immutable decision ledger for compliance and audit trail.
- * Now wired to the /api/ledger endpoint with real data.
- */
-export function Ledger() {
-  const navigate = useNavigate()
-  const [agentFilter, setAgentFilter] = useState<AgentName | 'ALL'>('ALL')
-
-  const { data: entries, isLoading } = useLedger({
-    agent_name: agentFilter === 'ALL' ? undefined : agentFilter,
-    limit: 200,
-  })
-
-  const agentList = Object.values(AGENTS)
-
-  const handleExport = useCallback(() => {
-    if (!entries || entries.length === 0) return
-    const json = JSON.stringify(entries, null, 2)
-    const blob = new Blob([json], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `galderma-ledger-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [entries])
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Decision Ledger</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Immutable audit trail of all agent decisions &bull; {entries?.length ?? 0} entries
-          </p>
-        </div>
-        <Button
-          variant="secondary"
-          size="md"
-          onClick={handleExport}
-          disabled={!entries || entries.length === 0}
-        >
-          <Download className="h-4 w-4" />
-          Export JSON
-        </Button>
-      </div>
-
-      {/* Filters */}
-      <GlassCard>
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-[var(--text-secondary)]" />
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Filters</h2>
-          </div>
-
-          {/* Agent Filter */}
-          <div>
-            <p className="mb-2 text-xs font-medium text-[var(--text-secondary)]">Agent</p>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant={agentFilter === 'ALL' ? 'primary' : 'secondary'}
-                size="sm"
-                onClick={() => setAgentFilter('ALL')}
-              >
-                All
-              </Button>
-              {agentList.map((agent) => (
-                <Button
-                  key={agent.name}
-                  variant={agentFilter === agent.name ? 'primary' : 'secondary'}
-                  size="sm"
-                  onClick={() => setAgentFilter(agent.name)}
-                >
-                  {agent.displayName}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </GlassCard>
-
-      {/* Ledger Table */}
-      <GlassCard padding="none">
-        <div className="p-5 pb-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Entries</h2>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                All entries are cryptographically signed and immutable
-              </p>
-            </div>
-            <Shield className="h-5 w-5 text-[var(--brand-primary)]" />
-          </div>
-        </div>
-
-        {isLoading ? (
-          <div className="flex min-h-[300px] items-center justify-center py-12">
-            <div className="text-center">
-              <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-[var(--brand-primary)] border-t-transparent" />
-              <p className="mt-3 text-sm text-[var(--text-secondary)]">Loading ledger...</p>
-            </div>
-          </div>
-        ) : !entries || entries.length === 0 ? (
-          <div className="flex min-h-[300px] items-center justify-center py-12">
-            <div className="text-center">
-              <BookOpen className="mx-auto h-16 w-16 text-[var(--text-tertiary)]" />
-              <p className="mt-4 text-sm text-[var(--text-secondary)]">No ledger entries yet</p>
-              <p className="mt-1 text-xs text-[var(--text-tertiary)]">
-                Create cases and let agents process them to see entries
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-y border-[rgba(0,0,0,0.06)] bg-[rgba(0,0,0,0.02)]">
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                    Timestamp
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                    Agent
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                    Action
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                    Decision
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                    Confidence
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                    Case
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
-                    Hash
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[rgba(0,0,0,0.06)]">
-                {entries.map((entry) => (
-                  <LedgerRow
-                    key={entry.ledger_id}
-                    entry={entry}
-                    onCaseClick={(id) => navigate(`/cases/${id}`)}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </GlassCard>
-    </div>
-  )
+// ============================================
+// Action Badge Helper
+// ============================================
+function getActionColor(action: string): string {
+  if (action.includes('APPROVED') || action.includes('GENERATED')) return 'bg-green-500/10 text-green-400 border-green-500/20'
+  if (action.includes('REVIEW') || action.includes('PENDING')) return 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+  if (action.includes('REJECTED') || action.includes('ERROR') || action.includes('ESCALATED')) return 'bg-red-500/10 text-red-400 border-red-500/20'
+  if (action.includes('PATTERN')) return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+  if (action.includes('COMPLIANCE')) return 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+  return 'bg-gray-500/10 text-gray-400 border-gray-500/20'
 }
 
-function LedgerRow({
-  entry,
-  onCaseClick,
-}: {
-  entry: LedgerEntry
-  onCaseClick: (caseId: string) => void
-}) {
-  const agentInfo = AGENTS[entry.agent_name as AgentName]
-  const agentColor = agentInfo?.color ?? 'var(--text-secondary)'
+// ============================================
+// Ledger Page Component
+// ============================================
+export default function Ledger() {
+  const navigate = useNavigate()
+  const [selectedAgent, setSelectedAgent] = useState<AgentName | 'all'>('all')
 
-  const actionVariant =
-    entry.action === 'WRITEBACK_EXECUTED'
-      ? 'success'
-      : entry.action === 'ERROR_OCCURRED'
-        ? 'error'
-        : entry.action === 'HUMAN_REVIEW_REQUESTED'
-          ? 'warning'
-          : entry.action === 'COMPLIANCE_CHECKED'
-            ? 'info'
-            : 'default'
+  // Fetch ledger entries
+  const { data: entries, isLoading } = useLedger(
+    selectedAgent === 'all' ? { limit: 100 } : { agent_name: selectedAgent, limit: 100 }
+  )
+
+  // Export to JSON
+  const handleExport = () => {
+    if (!entries || entries.length === 0) {
+      toast.error('No ledger entries to export')
+      return
+    }
+
+    const dataStr = JSON.stringify(entries, null, 2)
+    const blob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `ledger-export-${new Date().toISOString()}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+    toast.success('Ledger exported successfully')
+  }
+
+  // Format confidence as percentage with color
+  const getConfidenceDisplay = (confidence?: number) => {
+    if (!confidence) return null
+    const percent = Math.round(confidence * 100)
+    const colorClass = confidence >= 0.8 ? 'text-green-400' : confidence >= 0.5 ? 'text-amber-400' : 'text-red-400'
+    return <span className={cn('font-mono', colorClass)}>{percent}%</span>
+  }
+
+  // Format timestamp
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    })
+  }
 
   return (
-    <tr className="hover:bg-[rgba(0,0,0,0.02)]">
-      <td className="whitespace-nowrap px-4 py-3 text-xs text-[var(--text-tertiary)]">
-        {new Date(entry.timestamp).toLocaleString()}
-      </td>
-      <td className="whitespace-nowrap px-4 py-3">
-        <span className="text-xs font-semibold" style={{ color: agentColor }}>
-          {agentInfo?.displayName ?? entry.agent_name}
-        </span>
-      </td>
-      <td className="whitespace-nowrap px-4 py-3">
-        <Badge variant={actionVariant}>{entry.action.replace(/_/g, ' ')}</Badge>
-      </td>
-      <td className="max-w-[200px] truncate px-4 py-3 text-xs text-[var(--text-secondary)]">
-        {entry.decision || '—'}
-      </td>
-      <td className="whitespace-nowrap px-4 py-3">
-        {entry.confidence != null ? (
-          <span
-            className={`text-xs font-medium ${
-              entry.confidence >= 0.9
-                ? 'text-[var(--status-success)]'
-                : entry.confidence >= 0.7
-                  ? 'text-[var(--status-warning)]'
-                  : 'text-[var(--status-error)]'
-            }`}
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="px-8 py-6 border-b border-[var(--glass-border)]">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Ledger</h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
+              Decision Audit Trail - Immutable log of all agent actions
+            </p>
+          </div>
+          <Button
+            onClick={handleExport}
+            disabled={!entries || entries.length === 0}
+            variant="outline"
+            size="sm"
+            className="gap-2"
           >
-            {(entry.confidence * 100).toFixed(0)}%
-          </span>
+            <Download className="w-4 h-4" />
+            Export JSON
+          </Button>
+        </div>
+
+        {/* Filters */}
+        <div className="mt-4 flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[var(--text-secondary)]">Agent:</span>
+            <Select value={selectedAgent} onValueChange={(value) => setSelectedAgent(value as AgentName | 'all')}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Agents</SelectItem>
+                {Object.keys(AGENTS).map((agentName) => (
+                  <SelectItem key={agentName} value={agentName}>
+                    {AGENTS[agentName as AgentName].displayName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 p-8 overflow-auto">
+        {isLoading ? (
+          <div className="space-y-2">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full" />
+            ))}
+          </div>
+        ) : !entries || entries.length === 0 ? (
+          <EmptyState
+            icon={BookOpen}
+            title="No ledger entries found"
+            description="Start processing cases to see decision audit trail"
+          />
         ) : (
-          <span className="text-xs text-[var(--text-tertiary)]">—</span>
+          <div className="bg-[var(--bg-surface)] rounded-xl border border-[var(--glass-border)] overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-mono">Timestamp</TableHead>
+                  <TableHead>Agent</TableHead>
+                  <TableHead>Action</TableHead>
+                  <TableHead>Decision</TableHead>
+                  <TableHead className="text-right">Confidence</TableHead>
+                  <TableHead className="font-mono">Case ID</TableHead>
+                  <TableHead className="font-mono">Hash</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {entries.map((entry) => (
+                  <TableRow
+                    key={entry.ledger_id}
+                    className={cn(
+                      'cursor-pointer hover:bg-[var(--bg-elevated)]/50 transition-colors',
+                      entry.requires_human_action && 'border-l-2 border-amber-500'
+                    )}
+                    onClick={() => navigate(`/cases/${entry.case_id}`)}
+                  >
+                    <TableCell className="font-mono text-xs text-[var(--text-secondary)]">
+                      {formatTimestamp(entry.timestamp)}
+                    </TableCell>
+                    <TableCell>
+                      <AgentBadge agent={entry.agent_name} />
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={getActionColor(entry.action)}>
+                        {entry.action.replace(/_/g, ' ')}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-[var(--text-secondary)] max-w-md truncate">
+                      {entry.decision || entry.action_description || '—'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {getConfidenceDisplay(entry.confidence) || '—'}
+                    </TableCell>
+                    <TableCell
+                      className="font-mono text-cyan-400 hover:underline"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        navigate(`/cases/${entry.case_id}`)
+                      }}
+                    >
+                      {entry.case_id}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-[var(--text-muted)]">
+                      {entry.entry_hash ? `${entry.entry_hash.slice(0, 8)}...` : '—'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
-      </td>
-      <td className="whitespace-nowrap px-4 py-3">
-        <button
-          className="flex items-center gap-1 text-xs text-[var(--brand-primary)] hover:underline"
-          onClick={() => onCaseClick(entry.case_id)}
-        >
-          {entry.case_id.slice(0, 11)}...
-          <ExternalLink className="h-3 w-3" />
-        </button>
-      </td>
-      <td className="whitespace-nowrap px-4 py-3 font-mono text-[10px] text-[var(--text-tertiary)] opacity-50">
-        {entry.entry_hash?.slice(0, 12) ?? '—'}
-      </td>
-    </tr>
+      </div>
+    </div>
   )
 }

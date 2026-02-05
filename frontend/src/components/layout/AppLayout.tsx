@@ -1,35 +1,63 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// AppLayout Component — Main Layout Wrapper
+// AppLayout Component - Main Layout Wrapper
 // ============================================
 
 import { Outlet, useLocation } from 'react-router-dom'
-import { TopBar } from './TopBar'
-import { useRealtimeSync } from '@/hooks'
+import { Toaster } from 'sonner'
+
+import { useRealtimeSync } from '@/hooks/useRealtimeSync'
+import { Sidebar } from './Sidebar'
+import { StatusBar } from './StatusBar'
+import { CommandPalette } from './CommandPalette'
 
 /**
  * AppLayout Component
  *
- * Main layout wrapper with Liquid Glass page transitions.
- * Each route change triggers a subtle entrance animation.
+ * Main layout wrapper with:
+ * - Sidebar navigation (collapsible)
+ * - Real-time WebSocket sync (useRealtimeSync hook)
+ * - Command palette (Cmd+K)
+ * - Status bar (bottom)
+ * - Toast notifications
+ *
+ * Layout:
+ * - Sidebar (60px collapsed / 240px expanded)
+ * - Main content area (flex-1)
+ * - Status bar (fixed 36px height)
  */
 export function AppLayout() {
-  const location = useLocation()
-
-  // Bridge WebSocket events to TanStack Query cache invalidation
+  // Initialize real-time sync (invalidates TanStack Query caches on WebSocket events)
   useRealtimeSync()
 
+  const location = useLocation()
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <TopBar />
-      <main className="flex-1 overflow-y-auto">
-        <div
-          key={location.pathname}
-          className="container mx-auto px-6 py-8 animate-liquid-in"
-        >
-          <Outlet />
+    <div className="flex h-screen overflow-hidden bg-[var(--bg-base)]">
+      {/* Sidebar */}
+      <Sidebar />
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
+          {/* Animate route transitions with key */}
+          <div
+            key={location.pathname}
+            className="mx-auto max-w-7xl px-8 py-6 animate-fade-in"
+          >
+            <Outlet />
+          </div>
         </div>
+
+        {/* Status Bar */}
+        <StatusBar />
       </main>
+
+      {/* Command Palette (Cmd+K) */}
+      <CommandPalette />
+
+      {/* Toast Notifications */}
+      <Toaster theme="dark" position="bottom-right" richColors />
     </div>
   )
 }

@@ -1,248 +1,305 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// Network Page - A2A Network Visualization
+// Page: Network - Agent Mesh Visualization
 // ============================================
 
-import { useRef, useCallback, useMemo, useEffect } from 'react'
-import { Circle } from 'lucide-react'
-import ForceGraph2D from 'react-force-graph-2d'
-import { GlassCard, Badge } from '@/components/ui'
-import { AGENTS } from '@/types'
-import { useWebSocket } from '@/hooks'
-import type { AgentName } from '@/types'
+import { useCallback, useMemo } from 'react'
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  MiniMap,
+  type Node,
+  type Edge,
+  type NodeTypes,
+} from '@xyflow/react'
+import '@xyflow/react/dist/style.css'
+import { AGENTS, type AgentName } from '@/types'
+import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 
-// A2A communication edges (the real agent-to-agent call graph)
-const A2A_EDGES: { source: AgentName; target: AgentName; label: string }[] = [
-  { source: 'observer', target: 'case_understanding', label: 'routes event' },
-  { source: 'case_understanding', target: 'recurring_detector', label: 'CaseAnalysis' },
-  { source: 'recurring_detector', target: 'compliance_guardian', label: 'PatternResult' },
-  { source: 'compliance_guardian', target: 'resolution_composer', label: 'ComplianceDecision' },
-  { source: 'resolution_composer', target: 'writeback', label: 'ResolutionPackage' },
-  { source: 'writeback', target: 'memory_curator', label: 'success log' },
-  { source: 'observer', target: 'inquiry_bridge', label: 'FactoryComplaintClosed' },
-  { source: 'inquiry_bridge', target: 'writeback', label: 'cascade close' },
-  { source: 'writeback', target: 'csv_pack', label: 'trigger pack' },
-]
-
-interface GraphNode {
-  id: string
-  name: string
-  displayName: string
-  model: 'OPUS' | 'HAIKU'
-  color: string
-  description: string
-  // Added by force-graph simulation at runtime
-  x?: number
-  y?: number
+// ============================================
+// Custom Agent Node Component
+// ============================================
+interface AgentNodeData extends Record<string, unknown> {
+  agent: AgentName
 }
 
-interface GraphLink {
-  source: string
-  target: string
-  label: string
+function AgentNode({ data }: { data: AgentNodeData }) {
+  const agentInfo = AGENTS[data.agent]
+
+  return (
+    <div
+      className={cn(
+        'px-6 py-4 rounded-xl bg-[var(--bg-elevated)] border-[var(--glass-border)] border',
+        'min-w-[240px] max-w-[280px]',
+        'transition-all duration-300 hover:scale-105'
+      )}
+      style={{
+        borderLeftWidth: '3px',
+        borderLeftColor: agentInfo.color,
+        boxShadow: `0 0 20px ${agentInfo.color}20`,
+      }}
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <div
+          className="w-3 h-3 rounded-full shrink-0"
+          style={{ backgroundColor: agentInfo.color }}
+        />
+        <div className="text-sm font-bold text-[var(--text-primary)]">
+          {agentInfo.displayName}
+        </div>
+      </div>
+      <div className="text-xs text-[var(--text-secondary)] mb-3 leading-relaxed">
+        {agentInfo.description}
+      </div>
+      <Badge
+        variant="outline"
+        className={cn(
+          'text-[10px] font-mono uppercase px-2 py-0.5',
+          agentInfo.model === 'OPUS'
+            ? 'bg-red-500/10 text-red-400 border-red-500/20'
+            : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+        )}
+      >
+        {agentInfo.model}
+      </Badge>
+    </div>
+  )
 }
 
-/**
- * Network Page
- *
- * Interactive force-directed graph showing the 9-agent A2A mesh.
- * Nodes are agents (color-coded, sized by model importance).
- * Edges are A2A communication channels with directional arrows.
- */
-export function Network() {
-  const { isConnected } = useWebSocket()
-  const graphRef = useRef<ReturnType<typeof ForceGraph2D> | null>(null)
-
-  const agentList = Object.values(AGENTS)
-
-  const graphData = useMemo(() => {
-    const nodes: GraphNode[] = agentList.map((agent) => ({
-      id: agent.name,
-      name: agent.name,
-      displayName: agent.displayName,
-      model: agent.model,
-      color: agent.color,
-      description: agent.description,
-    }))
-
-    const links: GraphLink[] = A2A_EDGES.map((edge) => ({
-      source: edge.source,
-      target: edge.target,
-      label: edge.label,
-    }))
-
-    return { nodes, links }
-  }, [agentList])
-
-  // Custom node rendering on canvas
-  const paintNode = useCallback(
-    (node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const size = node.model === 'OPUS' ? 8 : 6
-      const fontSize = 12 / globalScale
-      const x = node.x ?? 0
-      const y = node.y ?? 0
-
-      // Glow effect
-      ctx.shadowColor = node.color
-      ctx.shadowBlur = 15
-      ctx.beginPath()
-      ctx.arc(x, y, size, 0, 2 * Math.PI)
-      ctx.fillStyle = node.color
-      ctx.fill()
-      ctx.shadowBlur = 0
-
-      // Border ring for OPUS agents
-      if (node.model === 'OPUS') {
-        ctx.strokeStyle = 'rgba(26,26,46,0.4)'
-        ctx.lineWidth = 1.5
-        ctx.stroke()
-      }
-
-      // Label
-      ctx.font = `${fontSize}px sans-serif`
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'top'
-      ctx.fillStyle = 'rgba(26,26,46,0.85)'
-      ctx.fillText(node.displayName, x, y + size + 3)
-
-      // Model badge
-      if (globalScale > 0.8) {
-        const badgeText = node.model
-        ctx.font = `${fontSize * 0.7}px sans-serif`
-        ctx.fillStyle = node.model === 'OPUS' ? 'rgba(239,68,68,0.8)' : 'rgba(6,182,212,0.5)'
-        ctx.fillText(badgeText, x, y + size + 3 + fontSize + 2)
-      }
-    },
+// ============================================
+// Network Page Component
+// ============================================
+export default function NetworkPage() {
+  // Define node types
+  const nodeTypes: NodeTypes = useMemo(
+    () => ({
+      agent: AgentNode,
+    }),
     []
   )
 
-  // Custom link rendering
-  const paintLink = useCallback(
-    (link: GraphLink, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const source = link.source as unknown as GraphNode
-      const target = link.target as unknown as GraphNode
-      if (!source.x || !target.x) return
-
-      // Draw line
-      ctx.beginPath()
-      ctx.moveTo(source.x, source.y ?? 0)
-      ctx.lineTo(target.x, target.y ?? 0)
-      ctx.strokeStyle = 'rgba(0,0,0,0.1)'
-      ctx.lineWidth = 1
-      ctx.stroke()
-
-      // Draw arrow
-      const dx = (target.x) - (source.x)
-      const dy = (target.y ?? 0) - (source.y ?? 0)
-      const len = Math.sqrt(dx * dx + dy * dy)
-      if (len === 0) return
-      const nx = dx / len
-      const ny = dy / len
-      const arrowSize = 4
-      const arrowX = (target.x) - nx * 10
-      const arrowY = (target.y ?? 0) - ny * 10
-
-      ctx.beginPath()
-      ctx.moveTo(arrowX, arrowY)
-      ctx.lineTo(arrowX - nx * arrowSize + ny * arrowSize * 0.5, arrowY - ny * arrowSize - nx * arrowSize * 0.5)
-      ctx.lineTo(arrowX - nx * arrowSize - ny * arrowSize * 0.5, arrowY - ny * arrowSize + nx * arrowSize * 0.5)
-      ctx.closePath()
-      ctx.fillStyle = 'rgba(0,0,0,0.2)'
-      ctx.fill()
-
-      // Label on hover scale
-      if (globalScale > 1.2) {
-        const midX = ((source.x) + (target.x)) / 2
-        const midY = ((source.y ?? 0) + (target.y ?? 0)) / 2
-        ctx.font = `${8 / globalScale}px sans-serif`
-        ctx.textAlign = 'center'
-        ctx.fillStyle = 'rgba(0,0,0,0.25)'
-        ctx.fillText(link.label, midX, midY - 4)
-      }
-    },
+  // Define nodes with DAG layout positions
+  const nodes: Node[] = useMemo(
+    () => [
+      {
+        id: 'observer',
+        type: 'agent',
+        position: { x: 0, y: 200 },
+        data: { agent: 'observer' },
+      },
+      {
+        id: 'case_understanding',
+        type: 'agent',
+        position: { x: 350, y: 200 },
+        data: { agent: 'case_understanding' },
+      },
+      {
+        id: 'recurring_detector',
+        type: 'agent',
+        position: { x: 700, y: 200 },
+        data: { agent: 'recurring_detector' },
+      },
+      {
+        id: 'compliance_guardian',
+        type: 'agent',
+        position: { x: 1050, y: 200 },
+        data: { agent: 'compliance_guardian' },
+      },
+      {
+        id: 'resolution_composer',
+        type: 'agent',
+        position: { x: 1400, y: 200 },
+        data: { agent: 'resolution_composer' },
+      },
+      {
+        id: 'writeback',
+        type: 'agent',
+        position: { x: 1750, y: 200 },
+        data: { agent: 'writeback' },
+      },
+      {
+        id: 'inquiry_bridge',
+        type: 'agent',
+        position: { x: 1050, y: 450 },
+        data: { agent: 'inquiry_bridge' },
+      },
+      {
+        id: 'memory_curator',
+        type: 'agent',
+        position: { x: 1400, y: 450 },
+        data: { agent: 'memory_curator' },
+      },
+      {
+        id: 'csv_pack',
+        type: 'agent',
+        position: { x: 1750, y: 450 },
+        data: { agent: 'csv_pack' },
+      },
+    ],
     []
   )
 
-  // Fit graph to viewport on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const fg = graphRef.current as unknown as { zoomToFit?: (ms: number, px: number) => void }
-      fg?.zoomToFit?.(400, 60)
-    }, 500)
-    return () => clearTimeout(timer)
+  // Define edges (A2A communication paths)
+  const edges: Edge[] = useMemo(
+    () => [
+      // Main pipeline
+      {
+        id: 'e-observer-case_understanding',
+        source: 'observer',
+        target: 'case_understanding',
+        animated: true,
+        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+      },
+      {
+        id: 'e-case_understanding-recurring_detector',
+        source: 'case_understanding',
+        target: 'recurring_detector',
+        animated: true,
+        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+      },
+      {
+        id: 'e-recurring_detector-compliance_guardian',
+        source: 'recurring_detector',
+        target: 'compliance_guardian',
+        animated: true,
+        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+      },
+      {
+        id: 'e-compliance_guardian-resolution_composer',
+        source: 'compliance_guardian',
+        target: 'resolution_composer',
+        animated: true,
+        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+      },
+      {
+        id: 'e-resolution_composer-writeback',
+        source: 'resolution_composer',
+        target: 'writeback',
+        animated: true,
+        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+      },
+      // Inquiry bridge path
+      {
+        id: 'e-observer-inquiry_bridge',
+        source: 'observer',
+        target: 'inquiry_bridge',
+        animated: true,
+        style: { stroke: 'rgba(236, 72, 153, 0.3)', strokeWidth: 2 },
+      },
+      {
+        id: 'e-inquiry_bridge-resolution_composer',
+        source: 'inquiry_bridge',
+        target: 'resolution_composer',
+        animated: true,
+        style: { stroke: 'rgba(236, 72, 153, 0.3)', strokeWidth: 2 },
+      },
+      // Memory curator path
+      {
+        id: 'e-recurring_detector-memory_curator',
+        source: 'recurring_detector',
+        target: 'memory_curator',
+        animated: true,
+        style: { stroke: 'rgba(99, 102, 241, 0.3)', strokeWidth: 2 },
+      },
+      {
+        id: 'e-memory_curator-resolution_composer',
+        source: 'memory_curator',
+        target: 'resolution_composer',
+        animated: true,
+        style: { stroke: 'rgba(99, 102, 241, 0.3)', strokeWidth: 2 },
+      },
+      // CSV Pack path
+      {
+        id: 'e-writeback-csv_pack',
+        source: 'writeback',
+        target: 'csv_pack',
+        animated: true,
+        style: { stroke: 'rgba(20, 184, 166, 0.3)', strokeWidth: 2 },
+      },
+    ],
+    []
+  )
+
+  const onNodesChange = useCallback(() => {
+    // Handle node changes if needed
+  }, [])
+
+  const onEdgesChange = useCallback(() => {
+    // Handle edge changes if needed
   }, [])
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">A2A Network</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Agent-to-Agent communication mesh &bull; {A2A_EDGES.length} connections
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Circle
-            className={`h-3 w-3 ${isConnected ? 'fill-[var(--status-success)]' : 'fill-[var(--status-error)]'}`}
+      <div className="px-8 py-6 border-b border-[var(--glass-border)]">
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Network</h1>
+        <p className="text-sm text-[var(--text-secondary)] mt-1">
+          Agent mesh architecture - 9 agents connected via A2A protocol
+        </p>
+      </div>
+
+      {/* React Flow Canvas */}
+      <div
+        className="flex-1 bg-[var(--bg-base)]"
+        style={{
+          height: 'calc(100vh - 120px)',
+        }}
+      >
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          fitView
+          defaultViewport={{ x: 0, y: 0, zoom: 0.7 }}
+          minZoom={0.3}
+          maxZoom={1.5}
+          attributionPosition="bottom-right"
+          className="react-flow-dark"
+        >
+          <Background
+            color="#333"
+            gap={16}
+            size={1}
           />
-          <span className="text-sm text-[var(--text-secondary)]">
-            {isConnected ? '9 agents online' : 'Disconnected'}
-          </span>
-        </div>
+          <Controls className="react-flow-controls-dark" />
+          <MiniMap
+            nodeColor={(node) => {
+              const agent = node.data.agent as AgentName
+              return AGENTS[agent].color
+            }}
+            maskColor="rgba(10, 10, 15, 0.8)"
+            style={{
+              backgroundColor: 'var(--bg-elevated)',
+              border: '1px solid var(--glass-border)',
+            }}
+          />
+        </ReactFlow>
       </div>
 
-      {/* Force Graph */}
-      <GlassCard padding="none" className="overflow-hidden">
-        <ForceGraph2D
-          ref={graphRef as never}
-          graphData={graphData}
-          nodeCanvasObject={paintNode as never}
-          linkCanvasObject={paintLink as never}
-          nodePointerAreaPaint={(node: GraphNode, color: string, ctx: CanvasRenderingContext2D) => {
-            const size = node.model === 'OPUS' ? 10 : 8
-            ctx.beginPath()
-            ctx.arc(node.x ?? 0, node.y ?? 0, size, 0, 2 * Math.PI)
-            ctx.fillStyle = color
-            ctx.fill()
-          }}
-          backgroundColor="transparent"
-          linkDirectionalArrowLength={0}
-          d3VelocityDecay={0.3}
-          warmupTicks={50}
-          cooldownTime={2000}
-          width={undefined}
-          height={500}
-        />
-      </GlassCard>
-
-      {/* Agent Legend */}
-      <div>
-        <h2 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">Agents</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {agentList.map((agent) => (
-            <GlassCard key={agent.name} variant="hover" padding="sm">
-              <div className="flex items-start gap-3">
-                <div
-                  className="mt-0.5 h-3 w-3 shrink-0 rounded-full"
-                  style={{ backgroundColor: agent.color, boxShadow: `0 0 8px ${agent.color}60` }}
-                />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                      {agent.displayName}
-                    </h3>
-                    <Badge variant={agent.model === 'OPUS' ? 'error' : 'info'}>
-                      {agent.model}
-                    </Badge>
-                  </div>
-                  <p className="mt-0.5 text-xs text-[var(--text-secondary)]">{agent.description}</p>
-                </div>
-              </div>
-            </GlassCard>
-          ))}
-        </div>
-      </div>
+      {/* Inline dark theme styles */}
+      <style>{`
+        .react-flow-dark {
+          background-color: var(--bg-base);
+        }
+        .react-flow-dark .react-flow__node {
+          cursor: pointer;
+        }
+        .react-flow-dark .react-flow__edge-path {
+          stroke: rgba(255, 255, 255, 0.3);
+        }
+        .react-flow-dark .react-flow__attribution {
+          background: var(--bg-elevated);
+          color: var(--text-muted);
+          border: 1px solid var(--glass-border);
+          border-radius: 4px;
+          padding: 2px 6px;
+          font-size: 10px;
+        }
+      `}</style>
     </div>
   )
 }

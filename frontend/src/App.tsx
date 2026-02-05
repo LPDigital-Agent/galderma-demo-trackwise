@@ -5,27 +5,14 @@
 
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AppLayout } from '@/components/layout'
-import { AgentRoom, Cases, CaseDetail, Network, Memory, Ledger, CSVPack } from '@/pages'
+import AgentRoom from '@/pages/AgentRoom'
+import Cases from '@/pages/Cases'
+import CaseDetail from '@/pages/CaseDetail'
+import Network from '@/pages/Network'
+import Memory from '@/pages/Memory'
+import Ledger from '@/pages/Ledger'
+import CSVPack from '@/pages/CSVPack'
 
-/**
- * App Component
- *
- * Main application component with routing.
- *
- * Routes:
- * - / - Redirects to /agent-room
- * - /agent-room - Main dashboard with timeline and stats
- * - /cases - Cases list with filtering
- * - /network - A2A network visualization
- * - /memory - Memory browser (3 strategies)
- * - /ledger - Decision ledger (audit trail)
- * - /csv-pack - CSV Pack generator (compliance docs)
- *
- * Architecture:
- * - AppLayout wraps all pages with TopBar
- * - Uses React Router v7 with nested routes
- * - All pages use glassmorphism design system
- */
 function App() {
   return (
     <Routes>

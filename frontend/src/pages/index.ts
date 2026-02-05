@@ -1,12 +1,7 @@
-// ============================================
-// Galderma TrackWise AI Autopilot Demo
-// Pages - Barrel Export
-// ============================================
-
-export { AgentRoom } from './AgentRoom'
-export { Cases } from './Cases'
-export { CaseDetail } from './CaseDetail'
-export { Network } from './Network'
-export { Memory } from './Memory'
-export { Ledger } from './Ledger'
-export { CSVPack } from './CSVPack'
+export { default as AgentRoom } from './AgentRoom'
+export { default as Cases } from './Cases'
+export { default as CaseDetail } from './CaseDetail'
+export { default as Network } from './Network'
+export { default as Memory } from './Memory'
+export { default as Ledger } from './Ledger'
+export { default as CSVPack } from './CSVPack'

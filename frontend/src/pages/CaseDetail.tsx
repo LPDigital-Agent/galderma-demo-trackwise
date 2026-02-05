@@ -1,92 +1,76 @@
-// ============================================
-// Galderma TrackWise AI Autopilot Demo
-// CaseDetail Page - Case Detail with Timeline
-// ============================================
-
 import { useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
-import {
-  ArrowLeft,
-  Clock,
-  CheckCircle2,
-  AlertTriangle,
-  ExternalLink,
-  Shield,
-  Brain,
-  Cpu,
-  Zap,
-  FileSearch,
-  Link2,
-  Eye,
-  ArrowRight,
-} from 'lucide-react'
-import { GlassCard, Button, Badge, SeverityBadge } from '@/components/ui'
-import { AuditorView } from '@/components/AuditorView'
-import { useCase } from '@/hooks'
-import { useCaseRuns, useCaseLedger } from '@/hooks/useCaseDetail'
-import { useLanguageStore } from '@/stores'
-import { AGENTS } from '@/types'
-import type { AgentName, AgentStep, Case, Language, LedgerEntry } from '@/types'
+import { useParams, useNavigate } from 'react-router-dom'
+import { ArrowLeft, ChevronDown, ChevronRight, Link as LinkIcon } from 'lucide-react'
+import { useCase, useCaseRuns, useCaseLedger } from '@/hooks'
+import { useLanguageStore } from '@/stores/languageStore'
+import { StatusBadge, SeverityBadge, AgentBadge, GlassPanel } from '@/components/domain'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Separator } from '@/components/ui/separator'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { AuditorView } from '@/components/overlays/AuditorView'
+import { cn } from '@/lib/utils'
+import type { Case, Language } from '@/types'
 
-// Agent step icon mapping
-const STEP_ICONS: Record<string, typeof Brain> = {
-  observer: Zap,
-  case_understanding: Brain,
-  recurring_detector: FileSearch,
-  compliance_guardian: Shield,
-  resolution_composer: Cpu,
-  inquiry_bridge: Link2,
-  writeback: CheckCircle2,
-  memory_curator: Brain,
-  csv_pack: FileSearch,
+// Helper to get resolution text based on language
+function getResolutionForLanguage(caseData: Case, language: Language): string {
+  if (language === 'AUTO') return caseData.resolution_text || ''
+  const key = `resolution_text_${language.toLowerCase()}` as keyof Case
+  return (caseData[key] as string) || caseData.resolution_text || ''
 }
 
-// Get resolution text for current language
-function getResolutionForLanguage(caseData: Case, language: Language): string | undefined {
-  switch (language) {
-    case 'PT':
-      return caseData.resolution_text_pt
-    case 'EN':
-      return caseData.resolution_text_en
-    case 'ES':
-      return caseData.resolution_text_es
-    case 'FR':
-      return caseData.resolution_text_fr
-    case 'AUTO':
-    default:
-      return caseData.resolution_text_en || caseData.resolution_text || caseData.resolution_text_pt
-  }
-}
-
-/**
- * CaseDetail Page
- *
- * Full case detail with:
- * - Case info (product, complaint, severity, status)
- * - Multi-language resolution text
- * - Processing timeline (agent steps from Run)
- * - Linked case indicator
- * - Audit trail entries
- */
-export function CaseDetail() {
+export default function CaseDetail() {
   const { caseId } = useParams<{ caseId: string }>()
   const navigate = useNavigate()
-  const { data: caseData, isLoading: caseLoading } = useCase(caseId ?? '')
-  const { data: runs } = useCaseRuns(caseId ?? '')
-  const { data: ledger } = useCaseLedger(caseId ?? '')
-  const language = useLanguageStore((s) => s.language)
-  const [showAuditor, setShowAuditor] = useState(false)
+  const { language, setLanguage } = useLanguageStore()
+  const [auditorOpen, setAuditorOpen] = useState(false)
+  const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set())
 
-  // Fetch linked case data for Inquiry Bridge visualization
-  const linkedCaseId = caseData?.linked_case_id
-  const { data: linkedCase } = useCase(linkedCaseId ?? '', { enabled: !!linkedCaseId })
+  const { data: caseData, isLoading: caseLoading } = useCase(caseId ?? '')
+  const { data: runs, isLoading: runsLoading } = useCaseRuns(caseId ?? '')
+  const { data: ledger, isLoading: ledgerLoading } = useCaseLedger(caseId ?? '')
+
+  const firstRun = runs?.[0]
+  const agentSteps = firstRun?.agent_steps || []
+
+  const toggleStep = (stepNumber: number) => {
+    const newExpanded = new Set(expandedSteps)
+    if (newExpanded.has(stepNumber)) {
+      newExpanded.delete(stepNumber)
+    } else {
+      newExpanded.add(stepNumber)
+    }
+    setExpandedSteps(newExpanded)
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
+  const formatDuration = (ms?: number) => {
+    if (!ms) return '-'
+    if (ms < 1000) return `${ms}ms`
+    return `${(ms / 1000).toFixed(2)}s`
+  }
 
   if (caseLoading) {
     return (
-      <div className="flex items-center justify-center py-24">
-        <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-[var(--brand-primary)] border-t-transparent" />
-          <p className="mt-3 text-sm text-[var(--text-secondary)]">Loading case...</p>
+      <div className="flex gap-6 h-full">
+        <div className="w-1/3 space-y-4">
+          <Skeleton className="h-10 w-32 bg-white/5" />
+          <Skeleton className="h-64 bg-white/5" />
+          <Skeleton className="h-48 bg-white/5" />
+        </div>
+        <div className="w-2/3 space-y-4">
+          <Skeleton className="h-96 bg-white/5" />
         </div>
       </div>
     )
@@ -94,482 +78,336 @@ export function CaseDetail() {
 
   if (!caseData) {
     return (
-      <div className="py-12 text-center">
-        <AlertTriangle className="mx-auto h-12 w-12 text-[var(--status-warning)]" />
-        <p className="mt-2 text-[var(--text-primary)]">Case not found</p>
-        <Button variant="secondary" size="sm" className="mt-4" onClick={() => navigate('/cases')}>
-          Back to Cases
-        </Button>
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <p className="text-text-secondary">Case not found</p>
+          <Button
+            onClick={() => navigate('/cases')}
+            variant="outline"
+            className="mt-4"
+          >
+            Back to Cases
+          </Button>
+        </div>
       </div>
     )
   }
 
-  const currentRun = runs?.[0]
-  const steps = currentRun?.agent_steps ?? []
-  const resolution = getResolutionForLanguage(caseData, language)
+  const resolutionText = getResolutionForLanguage(caseData, language)
 
   return (
-    <div className="space-y-6">
-      {/* Header with back button */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/cases')}>
-          <ArrowLeft className="h-4 w-4" />
+    <div className="flex gap-6 h-full overflow-hidden">
+      {/* Left Column */}
+      <div className="w-1/3 flex flex-col gap-4 overflow-auto">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/cases')}
+          className="w-fit text-text-secondary hover:text-text-primary"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
           Cases
         </Button>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-              {caseData.case_id}
-            </h1>
-            <SeverityBadge severity={caseData.severity} />
-            <Badge
-              variant={
-                caseData.status === 'CLOSED'
-                  ? 'success'
-                  : caseData.status === 'OPEN'
-                    ? 'warning'
-                    : 'info'
-              }
-            >
-              {caseData.status.replace(/_/g, ' ')}
-            </Badge>
-            <Badge variant="default">{caseData.case_type}</Badge>
-          </div>
-        </div>
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => setShowAuditor(true)}
-          disabled={!ledger || ledger.length === 0}
-        >
-          <Eye className="h-4 w-4" />
-          Auditor View
-        </Button>
-      </div>
 
-      {/* Auditor Mode Overlay */}
-      {showAuditor && ledger && (
-        <AuditorView
-          caseData={caseData}
-          ledger={ledger}
-          run={currentRun}
-          onClose={() => setShowAuditor(false)}
-        />
-      )}
-
-      {/* Two-column layout */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Left column: Case info + Resolution */}
-        <div className="space-y-6 lg:col-span-1">
-          {/* Case Information */}
-          <GlassCard>
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-              Case Information
-            </h2>
-            <div className="space-y-3">
-              <InfoRow label="Product" value={`${caseData.product_brand} — ${caseData.product_name}`} />
-              <InfoRow label="Category" value={caseData.category || '—'} />
-              <InfoRow label="Customer" value={caseData.customer_name} />
-              <InfoRow label="Type" value={caseData.case_type} />
-              {caseData.lot_number && <InfoRow label="Lot" value={caseData.lot_number} />}
-              <InfoRow label="Created" value={new Date(caseData.created_at).toLocaleString()} />
-              {caseData.closed_at && (
-                <InfoRow label="Closed" value={new Date(caseData.closed_at).toLocaleString()} />
-              )}
-              {caseData.ai_confidence != null && (
-                <InfoRow label="AI Confidence" value={`${(caseData.ai_confidence * 100).toFixed(0)}%`} />
-              )}
-              {caseData.processed_by_agent && (
-                <InfoRow label="Processed By" value={caseData.processed_by_agent} />
-              )}
-            </div>
-          </GlassCard>
-
-          {/* Complaint Text */}
-          <GlassCard>
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-              Complaint
-            </h2>
-            <p className="text-sm leading-relaxed text-[var(--text-primary)]">
-              {caseData.complaint_text}
-            </p>
-          </GlassCard>
-
-          {/* Inquiry Bridge Visualization */}
-          {caseData.linked_case_id && (
-            <GlassCard variant="elevated">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-                <Link2 className="mr-1.5 inline h-4 w-4" />
-                Inquiry Bridge
-              </h2>
-
-              {/* Visual connection between cases */}
-              <div className="space-y-2">
-                {/* This case */}
-                <div
-                  className="rounded-lg border p-3"
-                  style={{
-                    borderColor: caseData.status === 'CLOSED' ? 'rgba(22,163,74,0.3)' : 'rgba(217,119,6,0.3)',
-                    backgroundColor: caseData.status === 'CLOSED' ? 'rgba(22,163,74,0.06)' : 'rgba(217,119,6,0.06)',
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Badge variant={caseData.case_type === 'COMPLAINT' ? 'error' : 'info'}>
-                        {caseData.case_type}
-                      </Badge>
-                      <span className="text-xs font-medium text-[var(--text-primary)]">
-                        {caseData.case_id}
-                      </span>
-                    </div>
-                    <Badge variant={caseData.status === 'CLOSED' ? 'success' : 'warning'}>
-                      {caseData.status}
-                    </Badge>
-                  </div>
-                </div>
-
-                {/* Arrow connector */}
-                <div className="flex items-center justify-center gap-2 py-1">
-                  <div className="h-px flex-1 bg-[rgba(0,0,0,0.08)]" />
-                  <div className="flex items-center gap-1 text-xs text-[var(--brand-primary)]">
-                    <ArrowRight className="h-3.5 w-3.5" />
-                    <span className="font-medium">
-                      {caseData.case_type === 'COMPLAINT' ? 'triggers closure' : 'auto-closed by'}
-                    </span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </div>
-                  <div className="h-px flex-1 bg-[rgba(0,0,0,0.08)]" />
-                </div>
-
-                {/* Linked case */}
-                <Link
-                  to={`/cases/${caseData.linked_case_id}`}
-                  className="block rounded-lg border p-3 transition-colors hover:bg-[rgba(0,0,0,0.02)]"
-                  style={{
-                    borderColor: linkedCase?.status === 'CLOSED' ? 'rgba(22,163,74,0.3)' : 'rgba(217,119,6,0.3)',
-                    backgroundColor: linkedCase?.status === 'CLOSED' ? 'rgba(22,163,74,0.06)' : 'rgba(217,119,6,0.06)',
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Badge variant={caseData.case_type === 'COMPLAINT' ? 'info' : 'error'}>
-                        {caseData.case_type === 'COMPLAINT' ? 'INQUIRY' : 'COMPLAINT'}
-                      </Badge>
-                      <span className="text-xs font-medium text-[var(--text-primary)]">
-                        {caseData.linked_case_id}
-                      </span>
-                      <ExternalLink className="h-3 w-3 text-[var(--text-tertiary)]" />
-                    </div>
-                    {linkedCase ? (
-                      <Badge variant={linkedCase.status === 'CLOSED' ? 'success' : 'warning'}>
-                        {linkedCase.status}
-                      </Badge>
-                    ) : (
-                      <span className="text-xs text-[var(--text-tertiary)]">Loading...</span>
-                    )}
-                  </div>
-                  {linkedCase && (
-                    <p className="mt-1.5 line-clamp-1 text-xs text-[var(--text-tertiary)]">
-                      {linkedCase.product_brand} — {linkedCase.complaint_text}
-                    </p>
-                  )}
-                </Link>
-              </div>
-
-              <p className="mt-3 text-xs text-[var(--text-tertiary)]">
-                {caseData.case_type === 'INQUIRY'
-                  ? 'This inquiry is linked to the above complaint. When the complaint closes, this inquiry auto-closes via the Inquiry Bridge agent.'
-                  : 'This complaint has a linked inquiry. When this complaint is resolved, the Inquiry Bridge agent automatically closes the linked inquiry.'}
-              </p>
-            </GlassCard>
-          )}
-
-          {/* Resolution (multi-language) */}
-          {caseData.status === 'CLOSED' && (
-            <GlassCard>
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-                Resolution ({language === 'AUTO' ? 'EN' : language})
-              </h2>
-              {resolution ? (
-                <p className="text-sm leading-relaxed text-[var(--text-primary)]">{resolution}</p>
-              ) : (
-                <p className="text-sm italic text-[var(--text-tertiary)]">No resolution text in this language</p>
-              )}
-
-              {/* All languages preview */}
-              <div className="mt-4 space-y-2 border-t border-[rgba(0,0,0,0.06)] pt-3">
-                <p className="text-xs font-medium text-[var(--text-tertiary)]">All languages:</p>
-                {(['EN', 'PT', 'ES', 'FR'] as const).map((lang) => {
-                  const text = getResolutionForLanguage(caseData, lang)
-                  return (
-                    <div key={lang} className="flex gap-2">
-                      <Badge variant={text ? 'success' : 'default'} className="shrink-0">{lang}</Badge>
-                      <p className="line-clamp-1 text-xs text-[var(--text-tertiary)]">
-                        {text || 'Not available'}
-                      </p>
-                    </div>
-                  )
-                })}
-              </div>
-            </GlassCard>
-          )}
-        </div>
-
-        {/* Right column: Processing Timeline + Audit Trail */}
-        <div className="space-y-6 lg:col-span-2">
-          {/* Processing Timeline */}
-          <GlassCard>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-                Processing Timeline
-              </h2>
-              {currentRun && (
-                <div className="flex items-center gap-2">
-                  <Badge
-                    variant={
-                      currentRun.status === 'COMPLETED'
-                        ? 'success'
-                        : currentRun.status === 'FAILED'
-                          ? 'error'
-                          : 'warning'
-                    }
-                  >
-                    {currentRun.status}
-                  </Badge>
-                  {currentRun.duration_ms && (
-                    <span className="text-xs text-[var(--text-tertiary)]">
-                      {(currentRun.duration_ms / 1000).toFixed(1)}s
-                    </span>
-                  )}
-                </div>
-              )}
+        {/* Case Info Card */}
+        <GlassPanel variant="surface">
+          <div className="space-y-4">
+            <div>
+              <p className="text-text-muted text-sm mb-1">Case ID</p>
+              <p className="font-mono text-brand-accent text-lg">{caseData.case_id}</p>
             </div>
 
-            {steps.length === 0 ? (
-              <div className="py-8 text-center">
-                <Clock className="mx-auto h-10 w-10 text-[var(--text-tertiary)]" />
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                  Waiting for agent processing...
-                </p>
-              </div>
-            ) : (
-              <div className="relative">
-                {/* Vertical timeline line */}
-                <div className="absolute left-5 top-2 bottom-2 w-px bg-[rgba(0,0,0,0.08)]" />
+            <Separator className="bg-glass-border" />
 
-                <div className="space-y-1">
-                  {steps.map((step, index) => (
-                    <TimelineStep
-                      key={step.step_number}
-                      step={step}
-                      isActive={index === steps.length - 1 && currentRun?.status === 'RUNNING'}
-                    />
-                  ))}
-                </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-text-muted text-sm mb-1">Status</p>
+                <StatusBadge status={caseData.status} />
+              </div>
+              <div>
+                <p className="text-text-muted text-sm mb-1">Severity</p>
+                <SeverityBadge severity={caseData.severity} />
+              </div>
+            </div>
+
+            <Separator className="bg-glass-border" />
+
+            <div>
+              <p className="text-text-muted text-sm mb-1">Product Brand</p>
+              <p className="text-text-primary font-medium">{caseData.product_brand}</p>
+            </div>
+
+            <div>
+              <p className="text-text-muted text-sm mb-1">Product Name</p>
+              <p className="text-text-primary">{caseData.product_name}</p>
+            </div>
+
+            {caseData.lot_number && (
+              <div>
+                <p className="text-text-muted text-sm mb-1">Lot Number</p>
+                <p className="font-mono text-text-primary">{caseData.lot_number}</p>
               </div>
             )}
-          </GlassCard>
 
-          {/* Audit Trail */}
-          <GlassCard>
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-              Audit Trail
-            </h2>
+            <Separator className="bg-glass-border" />
 
-            {!ledger || ledger.length === 0 ? (
-              <div className="py-6 text-center">
-                <Shield className="mx-auto h-10 w-10 text-[var(--text-tertiary)]" />
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                  No audit entries yet
-                </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-text-muted text-sm mb-1">Type</p>
+                <p className="text-text-primary">{caseData.case_type.replace('_', ' ')}</p>
               </div>
-            ) : (
+              {caseData.category && (
+                <div>
+                  <p className="text-text-muted text-sm mb-1">Category</p>
+                  <p className="text-text-primary">{caseData.category}</p>
+                </div>
+              )}
+            </div>
+
+            <Separator className="bg-glass-border" />
+
+            <div>
+              <p className="text-text-muted text-sm mb-1">Customer</p>
+              <p className="text-text-primary font-medium">{caseData.customer_name}</p>
+              {caseData.customer_email && (
+                <p className="text-text-secondary text-sm">{caseData.customer_email}</p>
+              )}
+              {caseData.customer_phone && (
+                <p className="text-text-secondary text-sm">{caseData.customer_phone}</p>
+              )}
+            </div>
+
+            <Separator className="bg-glass-border" />
+
+            <div>
+              <p className="text-text-muted text-sm mb-1">Created</p>
+              <p className="text-text-secondary text-sm font-mono">{formatDate(caseData.created_at)}</p>
+            </div>
+          </div>
+        </GlassPanel>
+
+        {/* Complaint Text */}
+        <GlassPanel variant="surface">
+          <h3 className="text-text-primary font-semibold mb-3">Complaint</h3>
+          <p className="text-text-secondary leading-relaxed">{caseData.complaint_text}</p>
+        </GlassPanel>
+
+        {/* Resolution Text */}
+        {resolutionText && (
+          <GlassPanel variant="surface">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-text-primary font-semibold">Resolution</h3>
+              <Select value={language} onValueChange={(val) => setLanguage(val as Language)}>
+                <SelectTrigger className="w-[120px] h-8 bg-bg-elevated border-glass-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="AUTO">Auto</SelectItem>
+                  <SelectItem value="EN">English</SelectItem>
+                  <SelectItem value="PT">Português</SelectItem>
+                  <SelectItem value="ES">Español</SelectItem>
+                  <SelectItem value="FR">Français</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-text-secondary leading-relaxed">{resolutionText}</p>
+          </GlassPanel>
+        )}
+
+        {/* Linked Case */}
+        {caseData.linked_case_id && (
+          <GlassPanel variant="surface">
+            <h3 className="text-text-primary font-semibold mb-3 flex items-center gap-2">
+              <LinkIcon className="w-4 h-4" />
+              Linked Case
+            </h3>
+            <div
+              onClick={() => navigate(`/cases/${caseData.linked_case_id}`)}
+              className="flex items-center justify-between p-3 rounded-lg bg-bg-elevated border border-glass-border hover:bg-white/[0.02] cursor-pointer transition-colors"
+            >
+              <span className="font-mono text-brand-accent">{caseData.linked_case_id}</span>
+            </div>
+          </GlassPanel>
+        )}
+      </div>
+
+      {/* Right Column */}
+      <div className="w-2/3 flex flex-col gap-4 overflow-auto">
+        {/* Processing Timeline */}
+        <GlassPanel variant="surface" className="flex-1">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-text-primary font-semibold text-lg">Processing Timeline</h3>
+            <Button
+              onClick={() => setAuditorOpen(true)}
+              variant="outline"
+              size="sm"
+              className="border-brand-primary/30 text-brand-primary hover:bg-brand-primary/10"
+            >
+              Open Auditor
+            </Button>
+          </div>
+
+          {runsLoading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 bg-white/5" />
+              ))}
+            </div>
+          ) : agentSteps.length > 0 ? (
+            <div className="space-y-4">
+              {agentSteps.map((step) => (
+                <div key={step.step_number} className="relative">
+                  {/* Timeline connector */}
+                  {step.step_number < agentSteps.length && (
+                    <div className="absolute left-3 top-10 bottom-0 w-px bg-glass-border" />
+                  )}
+
+                  <div className="flex gap-4">
+                    {/* Agent dot */}
+                    <div className="relative flex-shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-brand-primary/20 border-2 border-brand-primary flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-brand-primary" />
+                      </div>
+                    </div>
+
+                    {/* Step content */}
+                    <div className="flex-1 pb-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <AgentBadge agent={step.agent_name} showModel />
+                        <Badge variant="outline" className="text-xs">
+                          {step.step_type}
+                        </Badge>
+                        <span className="text-text-muted text-sm">
+                          {formatDuration(step.duration_ms)}
+                        </span>
+                      </div>
+
+                      {step.output_summary && (
+                        <p className="text-text-secondary text-sm mb-2">{step.output_summary}</p>
+                      )}
+
+                      {step.tools_called && step.tools_called.length > 0 && (
+                        <div className="flex gap-2 mb-2 flex-wrap">
+                          {step.tools_called.map((tool, idx) => (
+                            <Badge key={idx} variant="secondary" className="text-xs">
+                              {tool}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+
+                      {step.reasoning && (
+                        <div>
+                          <button
+                            onClick={() => toggleStep(step.step_number)}
+                            className="flex items-center gap-1 text-brand-accent text-sm hover:text-brand-accent/80 transition-colors"
+                          >
+                            {expandedSteps.has(step.step_number) ? (
+                              <ChevronDown className="w-4 h-4" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4" />
+                            )}
+                            Reasoning
+                          </button>
+                          {expandedSteps.has(step.step_number) && (
+                            <div className="mt-2 p-3 rounded-lg bg-bg-elevated border border-glass-border">
+                              <p className="text-text-secondary text-sm leading-relaxed">
+                                {step.reasoning}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-text-muted text-center py-8">No processing steps available</p>
+          )}
+        </GlassPanel>
+
+        {/* Audit Trail */}
+        <GlassPanel variant="surface">
+          <h3 className="text-text-primary font-semibold text-lg mb-4">Audit Trail</h3>
+
+          {ledgerLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-20 bg-white/5" />
+              ))}
+            </div>
+          ) : ledger && ledger.length > 0 ? (
+            <ScrollArea className="h-96">
               <div className="space-y-3">
                 {ledger.map((entry) => (
-                  <AuditEntry key={entry.ledger_id} entry={entry} />
+                  <div
+                    key={entry.ledger_id}
+                    className="p-4 rounded-lg bg-bg-elevated border border-glass-border"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <AgentBadge agent={entry.agent_name} />
+                        <Badge variant="outline" className="text-xs">
+                          {entry.action}
+                        </Badge>
+                      </div>
+                      <span className="text-text-muted text-xs font-mono">
+                        {formatDate(entry.timestamp)}
+                      </span>
+                    </div>
+
+                    {entry.decision && (
+                      <p className="text-text-secondary text-sm mb-2">{entry.decision}</p>
+                    )}
+
+                    {entry.confidence !== undefined && (
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-text-muted text-xs">Confidence:</span>
+                        <div className="flex-1 h-1.5 bg-bg-base rounded-full overflow-hidden max-w-xs">
+                          <div
+                            className={cn(
+                              'h-full transition-all',
+                              entry.confidence >= 0.8
+                                ? 'bg-green-500'
+                                : entry.confidence >= 0.6
+                                ? 'bg-yellow-500'
+                                : 'bg-red-500'
+                            )}
+                            style={{ width: `${entry.confidence * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-text-secondary text-xs">
+                          {(entry.confidence * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                    )}
+
+                    {entry.state_changes && entry.state_changes.length > 0 && (
+                      <div className="mt-3 space-y-1">
+                        {entry.state_changes.map((change, idx) => (
+                          <div key={idx} className="text-xs">
+                            <span className="text-text-muted">{change.field}:</span>{' '}
+                            <span className="text-red-400">{change.before || 'null'}</span>
+                            {' → '}
+                            <span className="text-green-400">{change.after || 'null'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
-            )}
-          </GlassCard>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ============================================
-// Sub-components
-// ============================================
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between text-sm">
-      <span className="text-[var(--text-tertiary)]">{label}</span>
-      <span className="font-medium text-[var(--text-primary)]">{value}</span>
-    </div>
-  )
-}
-
-function TimelineStep({
-  step,
-  isActive,
-}: {
-  step: AgentStep
-  isActive: boolean
-}) {
-  const agentInfo = AGENTS[step.agent_name as AgentName]
-  const Icon = STEP_ICONS[step.agent_name] ?? Brain
-  const agentColor = agentInfo?.color ?? 'var(--text-secondary)'
-
-  return (
-    <div className="relative flex gap-3 py-2 pl-1">
-      {/* Timeline dot */}
-      <div
-        className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border ${
-          isActive ? 'animate-pulse' : ''
-        }`}
-        style={{
-          backgroundColor: `${agentColor}15`,
-          borderColor: `${agentColor}40`,
-          color: agentColor,
-        }}
-      >
-        <Icon className="h-4 w-4" />
+            </ScrollArea>
+          ) : (
+            <p className="text-text-muted text-center py-8">No audit trail available</p>
+          )}
+        </GlassPanel>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold" style={{ color: agentColor }}>
-            {agentInfo?.displayName ?? step.agent_name}
-          </span>
-          <Badge variant="default">{step.step_type}</Badge>
-          {agentInfo?.model === 'OPUS' && (
-            <Badge variant="info">OPUS</Badge>
-          )}
-          {step.duration_ms && (
-            <span className="text-xs text-[var(--text-tertiary)]">
-              {step.duration_ms}ms
-            </span>
-          )}
-        </div>
-
-        {step.output_summary && (
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">{step.output_summary}</p>
-        )}
-
-        {step.reasoning && (
-          <p className="mt-1 text-xs leading-relaxed text-[var(--text-tertiary)]">
-            {step.reasoning}
-          </p>
-        )}
-
-        {step.tools_called && step.tools_called.length > 0 && (
-          <div className="mt-1.5 flex flex-wrap gap-1">
-            {step.tools_called.map((tool) => (
-              <span
-                key={tool}
-                className="rounded bg-[rgba(0,0,0,0.04)] px-1.5 py-0.5 text-[10px] text-[var(--text-tertiary)]"
-              >
-                {tool}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function AuditEntry({ entry }: { entry: LedgerEntry }) {
-  const agentInfo = AGENTS[entry.agent_name as AgentName]
-  const agentColor = agentInfo?.color ?? 'var(--text-secondary)'
-
-  const actionVariant =
-    entry.action === 'WRITEBACK_EXECUTED'
-      ? 'success'
-      : entry.action === 'ERROR_OCCURRED'
-        ? 'error'
-        : entry.action === 'HUMAN_REVIEW_REQUESTED'
-          ? 'warning'
-          : 'default'
-
-  return (
-    <div className="rounded-lg border border-[rgba(0,0,0,0.06)] bg-[rgba(0,0,0,0.02)] p-3">
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold" style={{ color: agentColor }}>
-            {agentInfo?.displayName ?? entry.agent_name}
-          </span>
-          <Badge variant={actionVariant}>{entry.action.replace(/_/g, ' ')}</Badge>
-        </div>
-        <span className="text-xs text-[var(--text-tertiary)]">
-          {new Date(entry.timestamp).toLocaleTimeString()}
-        </span>
-      </div>
-
-      {entry.action_description && (
-        <p className="mt-1.5 text-sm text-[var(--text-secondary)]">{entry.action_description}</p>
-      )}
-
-      {entry.reasoning && (
-        <p className="mt-1 text-xs leading-relaxed text-[var(--text-tertiary)]">{entry.reasoning}</p>
-      )}
-
-      {/* Decision + Confidence */}
-      {(entry.decision || entry.confidence != null) && (
-        <div className="mt-2 flex items-center gap-3">
-          {entry.decision && (
-            <span className="text-xs font-medium text-[var(--text-primary)]">
-              Decision: {entry.decision}
-            </span>
-          )}
-          {entry.confidence != null && (
-            <span className="text-xs text-[var(--text-tertiary)]">
-              Confidence: {(entry.confidence * 100).toFixed(0)}%
-            </span>
-          )}
-        </div>
-      )}
-
-      {/* Policies */}
-      {entry.policies_evaluated && entry.policies_evaluated.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {entry.policies_evaluated.map((pol) => (
-            <span
-              key={pol}
-              className={`rounded px-1.5 py-0.5 text-[10px] ${
-                entry.policy_violations?.some((v) => v.includes(pol))
-                  ? 'bg-[rgba(239,68,68,0.15)] text-[var(--status-error)]'
-                  : 'bg-[rgba(34,197,94,0.15)] text-[var(--status-success)]'
-              }`}
-            >
-              {pol} {entry.policy_violations?.some((v) => v.includes(pol)) ? 'FAIL' : 'PASS'}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* State changes */}
-      {entry.state_changes && entry.state_changes.length > 0 && (
-        <div className="mt-2 space-y-1">
-          {entry.state_changes.map((change, i) => (
-            <div key={i} className="flex items-center gap-2 text-[10px]">
-              <span className="text-[var(--text-tertiary)]">{change.field}:</span>
-              <span className="text-[var(--status-error)]">{change.before ?? 'null'}</span>
-              <span className="text-[var(--text-tertiary)]">&rarr;</span>
-              <span className="text-[var(--status-success)]">{change.after ?? 'null'}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Hash chain */}
-      {entry.entry_hash && (
-        <div className="mt-2 text-[10px] font-mono text-[var(--text-tertiary)] opacity-50">
-          Hash: {entry.entry_hash.slice(0, 16)}...
-        </div>
-      )}
+      {/* Auditor View */}
+      <AuditorView caseId={caseId ?? ''} open={auditorOpen} onOpenChange={setAuditorOpen} />
     </div>
   )
 }

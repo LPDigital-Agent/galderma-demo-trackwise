@@ -3,5 +3,7 @@
 // Layout Components - Barrel Export
 // ============================================
 
-export { TopBar } from './TopBar'
 export { AppLayout } from './AppLayout'
+export { Sidebar } from './Sidebar'
+export { StatusBar } from './StatusBar'
+export { CommandPalette } from './CommandPalette'

@@ -1,188 +1,186 @@
-// ============================================
-// Galderma TrackWise AI Autopilot Demo
-// Cases Page - Cases List
-// ============================================
-
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FileText, Plus, Filter, Link2 } from 'lucide-react'
-import { GlassCard, Button, SeverityBadge, Badge } from '@/components/ui'
-import { CreateCaseModal } from '@/components/CreateCaseModal'
+import { FileText, Plus, Link as LinkIcon } from 'lucide-react'
 import { useCases } from '@/hooks'
+import { StatusBadge, SeverityBadge, EmptyState } from '@/components/domain'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
+import { CreateCaseModal } from '@/components/overlays/CreateCaseModal'
 import type { CaseStatus, CaseSeverity } from '@/types'
 
-const STATUS_FILTERS: { value: CaseStatus | 'ALL'; label: string }[] = [
-  { value: 'ALL', label: 'All' },
-  { value: 'OPEN', label: 'Open' },
-  { value: 'IN_PROGRESS', label: 'In Progress' },
-  { value: 'PENDING_REVIEW', label: 'Pending Review' },
-  { value: 'RESOLVED', label: 'Resolved' },
-  { value: 'CLOSED', label: 'Closed' },
-]
-
-const SEVERITY_FILTERS: { value: CaseSeverity | 'ALL'; label: string }[] = [
-  { value: 'ALL', label: 'All' },
-  { value: 'LOW', label: 'Low' },
-  { value: 'MEDIUM', label: 'Medium' },
-  { value: 'HIGH', label: 'High' },
-  { value: 'CRITICAL', label: 'Critical' },
-]
-
-/**
- * Cases Page
- *
- * List and manage cases with filtering capabilities.
- *
- * Features:
- * - Filter by status and severity
- * - Grid layout with case cards
- * - Create new case (modal placeholder)
- * - Real-time updates via TanStack Query
- *
- * Performance:
- * - Optimistic updates for mutations
- * - Virtualized list for large datasets (future)
- */
-export function Cases() {
+export default function Cases() {
   const navigate = useNavigate()
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'ALL'>('ALL')
   const [severityFilter, setSeverityFilter] = useState<CaseSeverity | 'ALL'>('ALL')
-  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [createModalOpen, setCreateModalOpen] = useState(false)
 
   const { data, isLoading } = useCases({
     status: statusFilter === 'ALL' ? undefined : statusFilter,
     severity: severityFilter === 'ALL' ? undefined : severityFilter,
+    page: 1,
+    page_size: 20,
   })
 
-  const cases = data?.cases ?? []
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Cases</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            {data?.total ?? 0} total cases
-          </p>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-semibold text-text-primary">Cases</h1>
+          {data && (
+            <Badge
+              variant="outline"
+              className="bg-brand-primary/10 border-brand-primary/20 text-brand-primary"
+            >
+              {data.total}
+            </Badge>
+          )}
         </div>
-        <Button variant="primary" size="md" onClick={() => setShowCreateModal(true)}>
-          <Plus className="h-4 w-4" />
-          Create Case
+        <Button
+          onClick={() => setCreateModalOpen(true)}
+          className="bg-brand-primary hover:bg-brand-primary/90 text-white"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          New Case
         </Button>
       </div>
 
       {/* Filters */}
-      <GlassCard>
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-[var(--text-secondary)]" />
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Filters</h2>
-          </div>
+      <div className="flex gap-3 mb-6">
+        <Select
+          value={statusFilter}
+          onValueChange={(value) => setStatusFilter(value as CaseStatus | 'ALL')}
+        >
+          <SelectTrigger className="w-[180px] bg-glass-bg border-glass-border">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All Statuses</SelectItem>
+            <SelectItem value="OPEN">Open</SelectItem>
+            <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+            <SelectItem value="PENDING_REVIEW">Pending Review</SelectItem>
+            <SelectItem value="RESOLVED">Resolved</SelectItem>
+            <SelectItem value="CLOSED">Closed</SelectItem>
+          </SelectContent>
+        </Select>
 
-          {/* Status Filter */}
-          <div>
-            <p className="mb-2 text-xs font-medium text-[var(--text-secondary)]">Status</p>
-            <div className="flex flex-wrap gap-2">
-              {STATUS_FILTERS.map(({ value, label }) => (
-                <Button
-                  key={value}
-                  variant={statusFilter === value ? 'primary' : 'secondary'}
-                  size="sm"
-                  onClick={() => setStatusFilter(value)}
+        <Select
+          value={severityFilter}
+          onValueChange={(value) => setSeverityFilter(value as CaseSeverity | 'ALL')}
+        >
+          <SelectTrigger className="w-[180px] bg-glass-bg border-glass-border">
+            <SelectValue placeholder="Filter by severity" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All Severities</SelectItem>
+            <SelectItem value="LOW">Low</SelectItem>
+            <SelectItem value="MEDIUM">Medium</SelectItem>
+            <SelectItem value="HIGH">High</SelectItem>
+            <SelectItem value="CRITICAL">Critical</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Table */}
+      <div className="flex-1 rounded-lg border border-glass-border bg-glass-bg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="border-glass-border hover:bg-transparent">
+              <TableHead className="text-text-secondary font-medium">Case ID</TableHead>
+              <TableHead className="text-text-secondary font-medium">Product</TableHead>
+              <TableHead className="text-text-secondary font-medium">Status</TableHead>
+              <TableHead className="text-text-secondary font-medium">Severity</TableHead>
+              <TableHead className="text-text-secondary font-medium">Type</TableHead>
+              <TableHead className="text-text-secondary font-medium">Created</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              // Loading skeletons
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i} className="border-glass-border">
+                  <TableCell><Skeleton className="h-4 w-24 bg-white/5" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32 bg-white/5" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-20 bg-white/5" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-16 bg-white/5" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24 bg-white/5" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-28 bg-white/5" /></TableCell>
+                </TableRow>
+              ))
+            ) : data && data.cases.length > 0 ? (
+              data.cases.map((caseItem) => (
+                <TableRow
+                  key={caseItem.case_id}
+                  onClick={() => navigate(`/cases/${caseItem.case_id}`)}
+                  className="border-glass-border hover:bg-white/[0.02] cursor-pointer transition-colors"
                 >
-                  {label}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Severity Filter */}
-          <div>
-            <p className="mb-2 text-xs font-medium text-[var(--text-secondary)]">Severity</p>
-            <div className="flex flex-wrap gap-2">
-              {SEVERITY_FILTERS.map(({ value, label }) => (
-                <Button
-                  key={value}
-                  variant={severityFilter === value ? 'primary' : 'secondary'}
-                  size="sm"
-                  onClick={() => setSeverityFilter(value)}
-                >
-                  {label}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </GlassCard>
-
-      {/* Cases Grid */}
-      {isLoading ? (
-        <div className="py-12 text-center">
-          <p className="text-sm text-[var(--text-secondary)]">Loading cases...</p>
-        </div>
-      ) : cases.length === 0 ? (
-        <GlassCard>
-          <div className="py-12 text-center">
-            <FileText className="mx-auto h-12 w-12 text-[var(--text-tertiary)]" />
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">No cases found</p>
-          </div>
-        </GlassCard>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
-          {cases.map((caseItem) => (
-            <GlassCard key={caseItem.case_id} variant="hover" className="flex flex-col" onClick={() => navigate(`/cases/${caseItem.case_id}`)}>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="default">
+                  <TableCell className="font-mono text-brand-accent">
+                    <div className="flex items-center gap-2">
                       {caseItem.case_id}
-                    </Badge>
+                      {caseItem.linked_case_id && (
+                        <LinkIcon className="w-3 h-3 text-text-muted" />
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-text-primary">
+                    <div className="flex flex-col">
+                      <span className="font-medium">{caseItem.product_brand}</span>
+                      <span className="text-sm text-text-secondary">{caseItem.product_name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge status={caseItem.status} />
+                  </TableCell>
+                  <TableCell>
                     <SeverityBadge severity={caseItem.severity} />
-                  </div>
-                  <h3 className="mt-2 font-semibold text-[var(--text-primary)]">
-                    {caseItem.product_brand} - {caseItem.product_name}
-                  </h3>
-                </div>
-              </div>
+                  </TableCell>
+                  <TableCell className="text-text-secondary">
+                    {caseItem.case_type.replace('_', ' ')}
+                  </TableCell>
+                  <TableCell className="text-text-secondary font-mono text-sm">
+                    {formatDate(caseItem.created_at)}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : null}
+          </TableBody>
+        </Table>
 
-              <p className="mt-2 line-clamp-2 text-sm text-[var(--text-secondary)]">
-                {caseItem.complaint_text}
-              </p>
-
-              <div className="mt-4 flex items-center justify-between border-t border-[rgba(0,0,0,0.06)] pt-3">
-                <div className="flex items-center gap-2">
-                  <Badge
-                    variant={
-                      caseItem.status === 'CLOSED'
-                        ? 'success'
-                        : caseItem.status === 'OPEN'
-                          ? 'warning'
-                          : 'default'
-                    }
-                  >
-                    {caseItem.status.replace(/_/g, ' ')}
-                  </Badge>
-                  {caseItem.linked_case_id && (
-                    <Link2 className="h-3.5 w-3.5 text-[var(--brand-primary)]" aria-label="Linked case" />
-                  )}
-                </div>
-                <p className="text-xs text-[var(--text-tertiary)]">
-                  {new Date(caseItem.created_at).toLocaleDateString()}
-                </p>
-              </div>
-            </GlassCard>
-          ))}
-        </div>
-      )}
+        {!isLoading && data && data.cases.length === 0 && (
+          <div className="flex items-center justify-center h-64">
+            <EmptyState
+              icon={FileText}
+              title="No cases found"
+              description="Try adjusting your filters or create a new case"
+              action={
+                <Button
+                  onClick={() => setCreateModalOpen(true)}
+                  className="bg-brand-primary hover:bg-brand-primary/90 text-white"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Case
+                </Button>
+              }
+            />
+          </div>
+        )}
+      </div>
 
       {/* Create Case Modal */}
-      {showCreateModal && (
-        <CreateCaseModal
-          onClose={() => setShowCreateModal(false)}
-          onSuccess={(caseId) => navigate(`/cases/${caseId}`)}
-        />
-      )}
+      <CreateCaseModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
     </div>
   )
 }

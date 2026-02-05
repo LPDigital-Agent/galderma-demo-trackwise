@@ -49,11 +49,6 @@ variable "simulator_runtime_id" {
   type        = string
 }
 
-variable "simulator_endpoint_arn" {
-  description = "AgentCore Simulator Endpoint ARN"
-  type        = string
-}
-
 # ============================================
 # Data Sources
 # ============================================
@@ -103,8 +98,7 @@ resource "aws_iam_role_policy" "agentcore_invoke" {
         ]
         Resource = [
           "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:runtime/${var.simulator_runtime_id}",
-          "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:runtime/${var.simulator_runtime_id}/*",
-          var.simulator_endpoint_arn
+          "arn:aws:bedrock-agentcore:${var.aws_region}:${data.aws_caller_identity.current.account_id}:runtime/${var.simulator_runtime_id}/*"
         ]
       }
     ]

@@ -290,10 +290,6 @@ output "agentcore_agent_runtime_ids" {
   value       = module.agentcore_runtime.agent_runtime_ids
 }
 
-output "agentcore_agent_endpoint_arns" {
-  description = "AgentCore Agent Runtime Endpoint ARNs"
-  value       = module.agentcore_runtime.agent_endpoint_arns
-}
 
 output "agentcore_orchestrator_arn" {
   description = "Observer (orchestrator) agent ARN"
@@ -318,10 +314,6 @@ output "agentcore_simulator_runtime_arn" {
   value       = module.agentcore_runtime.simulator_runtime_arn
 }
 
-output "agentcore_simulator_endpoint_arn" {
-  description = "TrackWise Simulator AgentCore Endpoint ARN"
-  value       = module.agentcore_runtime.simulator_endpoint_arn
-}
 
 # ============================================
 # Module: CloudFront Distribution
@@ -349,13 +341,11 @@ module "cloudfront" {
 module "api_proxy" {
   source = "../../modules/api-proxy"
 
-  name_prefix            = local.name_prefix
-  environment            = var.environment
-  aws_region             = var.aws_region
-  simulator_runtime_id   = module.agentcore_runtime.simulator_runtime_id
-  simulator_endpoint_arn = module.agentcore_runtime.simulator_endpoint_arn
-
-  depends_on = [module.agentcore_runtime]
+  name_prefix          = local.name_prefix
+  environment          = var.environment
+  aws_region           = var.aws_region
+  simulator_runtime_id = module.agentcore_runtime.simulator_runtime_id
+  depends_on           = [module.agentcore_runtime]
 }
 
 # Frontend

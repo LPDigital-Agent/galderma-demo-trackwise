@@ -491,24 +491,6 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
 }
 
 # ============================================
-# AgentCore Agent Runtime Endpoints
-# ============================================
-resource "aws_bedrockagentcore_agent_runtime_endpoint" "agents" {
-  for_each = var.agents
-
-  # AgentCore names max 48 chars: gtw_dev_recurring_detector_ep = 30 chars ✓
-  name             = "${local.short_prefix}_${replace(each.key, "-", "_")}_ep"
-  agent_runtime_id = aws_bedrockagentcore_agent_runtime.agents[each.key].agent_runtime_id
-  description      = "Endpoint for ${each.key} agent"
-
-  tags = {
-    Name        = "${var.name_prefix}-${each.key}-endpoint"
-    Agent       = each.key
-    Environment = var.environment
-  }
-}
-
-# ============================================
 # TrackWise Simulator (Backend on AgentCore Runtime)
 # ============================================
 # The simulator runs on AgentCore Runtime (NOT ECS!) to maintain 100% AgentCore architecture
@@ -685,19 +667,6 @@ resource "aws_bedrockagentcore_agent_runtime" "simulator" {
   ]
 }
 
-# Simulator Endpoint
-resource "aws_bedrockagentcore_agent_runtime_endpoint" "simulator" {
-  name             = "${local.short_prefix}_simulator_ep"
-  agent_runtime_id = aws_bedrockagentcore_agent_runtime.simulator.agent_runtime_id
-  description      = "Endpoint for TrackWise Simulator"
-
-  tags = {
-    Name        = "${var.name_prefix}-simulator-endpoint"
-    Component   = "simulator"
-    Environment = var.environment
-  }
-}
-
 # ============================================
 # Outputs
 # ============================================
@@ -711,11 +680,6 @@ output "agent_runtime_ids" {
   value       = { for k, v in aws_bedrockagentcore_agent_runtime.agents : k => v.agent_runtime_id }
 }
 
-output "agent_endpoint_arns" {
-  description = "Map of agent names to AgentCore Runtime Endpoint ARNs"
-  value       = { for k, v in aws_bedrockagentcore_agent_runtime_endpoint.agents : k => v.agent_runtime_endpoint_arn }
-}
-
 output "agent_execution_role_arns" {
   description = "Map of agent names to IAM execution role ARNs"
   value       = { for k, v in aws_iam_role.agent_execution : k => v.arn }
@@ -724,11 +688,6 @@ output "agent_execution_role_arns" {
 output "orchestrator_arn" {
   description = "ARN of the Observer (orchestrator) agent"
   value       = aws_bedrockagentcore_agent_runtime.agents["observer"].agent_runtime_arn
-}
-
-output "orchestrator_endpoint_arn" {
-  description = "ARN of the Observer (orchestrator) agent endpoint"
-  value       = aws_bedrockagentcore_agent_runtime_endpoint.agents["observer"].agent_runtime_endpoint_arn
 }
 
 # Simulator Outputs
@@ -742,7 +701,3 @@ output "simulator_runtime_id" {
   value       = aws_bedrockagentcore_agent_runtime.simulator.agent_runtime_id
 }
 
-output "simulator_endpoint_arn" {
-  description = "ARN of the TrackWise Simulator endpoint"
-  value       = aws_bedrockagentcore_agent_runtime_endpoint.simulator.agent_runtime_endpoint_arn
-}

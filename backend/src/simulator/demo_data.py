@@ -225,13 +225,13 @@ def _generate_case_ledger(
         ),
         "timestamp": _time_offset(base_time, t),
         "reasoning": (
-            f"Weighted similarity score: 0.94 (product: 1.0, category: 1.0, semantic: 0.82). "
-            f"Pattern PKG-SEAL-001 matched with HIGH confidence. "
-            f"Recommendation: AUTO_CLOSE"
+            "Weighted similarity score: 0.94 (product: 1.0, category: 1.0, semantic: 0.82). "
+            "Pattern PKG-SEAL-001 matched with HIGH confidence. "
+            "Recommendation: AUTO_CLOSE"
             if is_recurring
-            else f"No patterns matched above 0.75 threshold. "
-            f"Similarity scores below threshold for all known patterns. "
-            f"Recommendation: HUMAN_REVIEW"
+            else "No patterns matched above 0.75 threshold. "
+            "Similarity scores below threshold for all known patterns. "
+            "Recommendation: HUMAN_REVIEW"
         ),
         "decision": "AUTO_CLOSE" if is_recurring else "HUMAN_REVIEW",
         "confidence": 0.94 if is_recurring else 0.45,
@@ -282,7 +282,7 @@ def _generate_case_ledger(
     # 3. Compliance Checked (Guardian)
     entry_id = _deterministic_id(f"{case.case_id}-compliance", "led-")
     entry_hash = hashlib.sha256(f"{entry_id}{prev_hash}".encode()).hexdigest()
-    severity_pass = case.severity in ("LOW", CaseSeverity.LOW)
+    severity_pass = case.severity in ("LOW", "MEDIUM")
     entries.append({
         "ledger_id": entry_id,
         "run_id": run_id,
@@ -407,10 +407,10 @@ def _get_input_summary(agent: str, case: Case) -> str:
         "observer": f"EventEnvelope: CaseCreated for {case.case_id}",
         "case_understanding": f"Case data: {case.product_brand} {case.product_name}, '{case.complaint_text[:60]}...'",
         "recurring_detector": f"CaseAnalysis: {case.category or 'PACKAGING'}, severity={case.severity}",
-        "compliance_guardian": f"PatternMatchResult: confidence=0.94, recommendation=AUTO_CLOSE",
+        "compliance_guardian": "PatternMatchResult: confidence=0.94, recommendation=AUTO_CLOSE",
         "resolution_composer": f"ComplianceDecision: APPROVE, case_id={case.case_id}",
         "inquiry_bridge": f"FactoryComplaintClosed: {case.case_id}, linked_case_id={case.linked_case_id}",
-        "writeback": f"ResolutionPackage: 4 languages, code=PKG-REPLACE-001",
+        "writeback": "ResolutionPackage: 4 languages, code=PKG-REPLACE-001",
     }
     return summaries.get(agent, f"Processing {case.case_id}")
 
@@ -418,12 +418,12 @@ def _get_input_summary(agent: str, case: Case) -> str:
 def _get_output_summary(agent: str, case: Case) -> str:
     """Generate output summary for an agent step."""
     summaries = {
-        "observer": f"Routed to case_understanding agent",
+        "observer": "Routed to case_understanding agent",
         "case_understanding": f"Category: {case.category or 'PACKAGING'}, Severity: {case.severity}, Recommendation: AUTO_CLOSE",
-        "recurring_detector": f"Pattern PKG-SEAL-001 matched (confidence: 0.94)",
-        "compliance_guardian": f"APPROVED - All 5 policies passed",
-        "resolution_composer": f"Resolution composed in PT/EN/ES/FR (quality: 0.95)",
-        "inquiry_bridge": f"Cascade closure approved for linked inquiry",
+        "recurring_detector": "Pattern PKG-SEAL-001 matched (confidence: 0.94)",
+        "compliance_guardian": "APPROVED - All 5 policies passed",
+        "resolution_composer": "Resolution composed in PT/EN/ES/FR (quality: 0.95)",
+        "inquiry_bridge": "Cascade closure approved for linked inquiry",
         "writeback": f"Case {case.case_id} closed successfully in TrackWise",
     }
     return summaries.get(agent, f"Step completed for {case.case_id}")

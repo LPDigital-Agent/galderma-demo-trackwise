@@ -4,13 +4,13 @@
 # ============================================
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class RunStatus(str, Enum):
+class RunStatus(StrEnum):
     """Status of an agent run."""
 
     STARTED = "STARTED"
@@ -21,7 +21,7 @@ class RunStatus(str, Enum):
     CANCELLED = "CANCELLED"
 
 
-class StepType(str, Enum):
+class StepType(StrEnum):
     """Type of agent step in a run."""
 
     OBSERVE = "OBSERVE"

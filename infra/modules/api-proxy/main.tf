@@ -433,7 +433,7 @@ resource "aws_lambda_function" "api_proxy" {
 # ============================================
 resource "aws_lambda_function_url" "api_proxy" {
   function_name      = aws_lambda_function.api_proxy.function_name
-  authorization_type = "NONE"  # Public access for demo
+  authorization_type = "NONE" # Public access for demo
 
   cors {
     allow_credentials = false

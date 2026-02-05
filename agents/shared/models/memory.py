@@ -4,13 +4,13 @@
 # ============================================
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class MemoryStrategy(str, Enum):
+class MemoryStrategy(StrEnum):
     """AgentCore Memory strategies."""
 
     RECURRING_PATTERNS = "RecurringPatterns"

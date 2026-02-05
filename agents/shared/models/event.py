@@ -4,13 +4,13 @@
 # ============================================
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class EventType(str, Enum):
+class EventType(StrEnum):
     """TrackWise event types from simulator."""
 
     # Case lifecycle events

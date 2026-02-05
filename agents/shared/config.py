@@ -7,13 +7,13 @@
 # Uses pydantic-settings for environment variable loading.
 # ============================================
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class ExecutionMode(str, Enum):
+class ExecutionMode(StrEnum):
     """Agent execution modes."""
 
     OBSERVE = "OBSERVE"  # Read-only, just watch and report
@@ -21,7 +21,7 @@ class ExecutionMode(str, Enum):
     ACT = "ACT"  # Full autonomy for low-risk decisions
 
 
-class ModelId(str, Enum):
+class ModelId(StrEnum):
     """Available Claude model IDs via Bedrock."""
 
     # Claude 4.5 family (REQUIRED by CLAUDE.md)

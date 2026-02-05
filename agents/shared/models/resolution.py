@@ -3,12 +3,12 @@
 # Resolution Models - Multilingual Resolutions
 # ============================================
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class ResolutionLanguage(str, Enum):
+class ResolutionLanguage(StrEnum):
     """Supported languages for resolutions."""
 
     PT = "PT"  # Portuguese

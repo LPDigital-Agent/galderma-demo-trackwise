@@ -10,7 +10,7 @@
 
 import uuid
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -25,7 +25,7 @@ def generate_ulid() -> str:
 # ============================================
 # Enums
 # ============================================
-class CaseStatus(str, Enum):
+class CaseStatus(StrEnum):
     """Case status in TrackWise workflow."""
     OPEN = "OPEN"
     IN_PROGRESS = "IN_PROGRESS"
@@ -34,7 +34,7 @@ class CaseStatus(str, Enum):
     CLOSED = "CLOSED"
 
 
-class CaseSeverity(str, Enum):
+class CaseSeverity(StrEnum):
     """Case severity levels."""
     LOW = "LOW"
     MEDIUM = "MEDIUM"
@@ -42,14 +42,14 @@ class CaseSeverity(str, Enum):
     CRITICAL = "CRITICAL"
 
 
-class CaseType(str, Enum):
+class CaseType(StrEnum):
     """Type of case in TrackWise."""
     COMPLAINT = "COMPLAINT"
     INQUIRY = "INQUIRY"
     ADVERSE_EVENT = "ADVERSE_EVENT"
 
 
-class ComplaintCategory(str, Enum):
+class ComplaintCategory(StrEnum):
     """Complaint categories per Galderma taxonomy."""
     PACKAGING = "PACKAGING"
     QUALITY = "QUALITY"
@@ -60,7 +60,7 @@ class ComplaintCategory(str, Enum):
     OTHER = "OTHER"
 
 
-class EventType(str, Enum):
+class EventType(StrEnum):
     """Event types emitted by TrackWise Simulator."""
     CASE_CREATED = "CaseCreated"
     CASE_UPDATED = "CaseUpdated"

@@ -4,12 +4,12 @@
 # ============================================
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class CaseStatus(str, Enum):
+class CaseStatus(StrEnum):
     """Status of a TrackWise case."""
 
     OPEN = "OPEN"
@@ -19,14 +19,14 @@ class CaseStatus(str, Enum):
     CLOSED = "CLOSED"
 
 
-class CaseType(str, Enum):
+class CaseType(StrEnum):
     """Type of TrackWise case."""
 
     COMPLAINT = "COMPLAINT"
     INQUIRY = "INQUIRY"
 
 
-class Severity(str, Enum):
+class Severity(StrEnum):
     """Severity level for cases."""
 
     LOW = "LOW"
@@ -35,7 +35,7 @@ class Severity(str, Enum):
     CRITICAL = "CRITICAL"
 
 
-class ComplaintCategory(str, Enum):
+class ComplaintCategory(StrEnum):
     """Category of complaint."""
 
     PRODUCT_QUALITY = "PRODUCT_QUALITY"

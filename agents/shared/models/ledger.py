@@ -4,13 +4,13 @@
 # ============================================
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class LedgerAction(str, Enum):
+class LedgerAction(StrEnum):
     """Action types recorded in the decision ledger."""
 
     CASE_ANALYZED = "CASE_ANALYZED"

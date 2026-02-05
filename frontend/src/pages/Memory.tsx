@@ -58,7 +58,7 @@ export function Memory() {
 
       {/* Strategy Tabs */}
       <GlassCard>
-        <div className="flex gap-2 border-b border-[var(--glass-border)] pb-3">
+        <div className="flex gap-2 border-b border-[rgba(0,0,0,0.06)] pb-3">
           {MEMORY_STRATEGIES.map((strategy) => (
             <Button
               key={strategy.value}

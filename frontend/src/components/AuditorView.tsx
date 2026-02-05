@@ -42,7 +42,7 @@ export function AuditorView({ caseData, ledger, run, onClose }: AuditorViewProps
   const hashChainValid = verifyHashChain(ledger)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/30 backdrop-blur-md">
       <div className="my-8 w-full max-w-4xl">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
@@ -59,7 +59,7 @@ export function AuditorView({ caseData, ledger, run, onClose }: AuditorViewProps
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[rgba(255,255,255,0.1)] hover:text-[var(--text-primary)]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[rgba(0,0,0,0.06)] hover:text-[var(--text-primary)]"
           >
             <X className="h-5 w-5" />
           </button>
@@ -227,7 +227,7 @@ function AuditDecisionCard({ entry, index }: { entry: LedgerEntry; index: number
 
       {/* Decision */}
       {entry.decision && (
-        <div className="mt-3 rounded-lg bg-[rgba(255,255,255,0.03)] p-3">
+        <div className="mt-3 rounded-lg bg-[rgba(0,0,0,0.03)] p-3">
           <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
             Decision
           </p>
@@ -287,10 +287,10 @@ function AuditDecisionCard({ entry, index }: { entry: LedgerEntry; index: number
           <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
             State Changes
           </p>
-          <div className="overflow-hidden rounded-lg border border-[var(--glass-border)]">
+          <div className="overflow-hidden rounded-lg border border-[rgba(0,0,0,0.06)]">
             <table className="w-full">
               <thead>
-                <tr className="bg-[rgba(255,255,255,0.03)]">
+                <tr className="bg-[rgba(0,0,0,0.02)]">
                   <th className="px-3 py-1.5 text-left text-[10px] font-medium text-[var(--text-tertiary)]">
                     Field
                   </th>
@@ -302,7 +302,7 @@ function AuditDecisionCard({ entry, index }: { entry: LedgerEntry; index: number
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--glass-border)]">
+              <tbody className="divide-y divide-[rgba(0,0,0,0.06)]">
                 {entry.state_changes.map((change, i) => (
                   <tr key={i}>
                     <td className="px-3 py-1.5 text-xs font-medium text-[var(--text-primary)]">
@@ -323,7 +323,7 @@ function AuditDecisionCard({ entry, index }: { entry: LedgerEntry; index: number
       )}
 
       {/* Model + Hash */}
-      <div className="mt-3 flex items-center justify-between border-t border-[var(--glass-border)] pt-2">
+      <div className="mt-3 flex items-center justify-between border-t border-[rgba(0,0,0,0.06)] pt-2">
         <div className="flex items-center gap-3 text-[10px] text-[var(--text-tertiary)]">
           {entry.model_id && (
             <span className="flex items-center gap-1">

@@ -6,8 +6,8 @@
 /**
  * Core UI Components
  *
- * Glassmorphism design system components following
- * Apple TV/tvOS design language principles.
+ * Liquid Glass design system components following
+ * Apple Liquid Glass design language principles.
  */
 
 // Layout Components
@@ -34,3 +34,10 @@ export type { LanguageToggleProps } from './LanguageToggle'
 
 export { ModeToggle } from './ModeToggle'
 export type { ModeToggleProps } from './ModeToggle'
+
+// Feedback Components
+export { Skeleton } from './Skeleton'
+export type { SkeletonProps } from './Skeleton'
+
+export { EmptyState } from './EmptyState'
+export type { EmptyStateProps } from './EmptyState'

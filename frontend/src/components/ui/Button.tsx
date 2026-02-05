@@ -1,65 +1,18 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// Button Component - Interactive Button
+// Button Component — Apple Liquid Glass Pill
 // ============================================
 
 import { cn } from '@/lib/utils'
 import type { ReactNode, ButtonHTMLAttributes } from 'react'
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
-  /**
-   * Button visual variant
-   * - primary: brand color, for main actions
-   * - secondary: glass background, for secondary actions
-   * - ghost: transparent, for tertiary actions
-   * - danger: red, for destructive actions
-   */
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
-  /**
-   * Button size
-   */
   size?: 'sm' | 'md' | 'lg'
-  /**
-   * Additional CSS classes
-   */
   className?: string
-  /**
-   * Button content
-   */
   children: ReactNode
 }
 
-/**
- * Button Component
- *
- * Interactive button with multiple variants and sizes.
- * Supports all native button attributes.
- *
- * @example
- * ```tsx
- * <Button variant="primary" size="md" onClick={() => console.log('clicked')}>
- *   Primary Action
- * </Button>
- *
- * <Button variant="secondary" size="sm" disabled>
- *   Secondary Action
- * </Button>
- *
- * <Button variant="danger" onClick={handleDelete}>
- *   Delete
- * </Button>
- * ```
- *
- * Accessibility:
- * - Keyboard navigable (Tab)
- * - Focus visible ring
- * - Disabled state with aria-disabled
- * - Proper contrast ratios
- *
- * Performance:
- * - CSS transitions for smooth interactions
- * - Hardware-accelerated transforms
- */
 export function Button({
   variant = 'primary',
   size = 'md',
@@ -74,35 +27,36 @@ export function Button({
       type={type}
       disabled={disabled}
       className={cn(
-        // Base styles
+        // Base styles — Liquid Glass pill shape
         'inline-flex items-center justify-center gap-2',
-        'font-medium rounded-[var(--border-radius-sm)]',
-        'transition-all duration-150',
+        'font-medium rounded-[var(--border-radius-pill)]',
+        'transition-all duration-200',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         'focus-visible:ring-offset-[var(--bg-base)]',
         'disabled:cursor-not-allowed disabled:opacity-50',
+        'active:scale-[0.98]',
         // Size variants
         {
-          'px-3 py-1.5 text-xs': size === 'sm',
-          'px-4 py-2 text-sm': size === 'md',
-          'px-6 py-3 text-base': size === 'lg',
+          'px-3.5 py-1.5 text-xs': size === 'sm',
+          'px-5 py-2 text-sm': size === 'md',
+          'px-7 py-3 text-base': size === 'lg',
         },
         // Variant styles
         {
-          // Primary: brand color
-          'bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-secondary)] active:bg-[var(--brand-secondary)] focus-visible:ring-[var(--brand-primary)] disabled:hover:bg-[var(--brand-primary)]':
+          // Primary: Galderma teal with subtle gradient
+          'bg-[var(--brand-primary)] text-white shadow-md hover:shadow-lg hover:brightness-110 focus-visible:ring-[var(--brand-primary)] disabled:hover:bg-[var(--brand-primary)]':
             variant === 'primary',
 
-          // Secondary: glass background with border
-          'bg-transparent text-[var(--text-primary)] border border-[var(--glass-border)] hover:bg-[var(--glass-hover)] active:bg-[rgba(255,255,255,0.08)] focus-visible:ring-[var(--glass-border)] disabled:hover:bg-transparent':
+          // Secondary: white glass with border
+          'bg-[rgba(255,255,255,0.5)] text-[var(--text-primary)] border border-[rgba(0,0,0,0.08)] shadow-sm backdrop-blur-sm hover:bg-[rgba(255,255,255,0.7)] hover:shadow-md focus-visible:ring-[var(--brand-primary)] disabled:hover:bg-[rgba(255,255,255,0.5)]':
             variant === 'secondary',
 
-          // Ghost: transparent, no border
-          'bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)] active:bg-[rgba(255,255,255,0.08)] focus-visible:ring-[var(--glass-border)] disabled:hover:bg-transparent disabled:hover:text-[var(--text-secondary)]':
+          // Ghost: transparent
+          'bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[rgba(0,0,0,0.04)] focus-visible:ring-[var(--brand-primary)] disabled:hover:bg-transparent disabled:hover:text-[var(--text-secondary)]':
             variant === 'ghost',
 
-          // Danger: red for destructive actions
-          'bg-[var(--status-error)] text-white hover:bg-[#DC2626] active:bg-[#B91C1C] focus-visible:ring-[var(--status-error)] disabled:hover:bg-[var(--status-error)]':
+          // Danger: red
+          'bg-[var(--status-error)] text-white shadow-md hover:shadow-lg hover:brightness-110 focus-visible:ring-[var(--status-error)] disabled:hover:bg-[var(--status-error)]':
             variant === 'danger',
         },
         className

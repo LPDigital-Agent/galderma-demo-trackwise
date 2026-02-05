@@ -130,7 +130,7 @@ export function Ledger() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-y border-[var(--glass-border)] bg-[rgba(255,255,255,0.02)]">
+                <tr className="border-y border-[rgba(0,0,0,0.06)] bg-[rgba(0,0,0,0.02)]">
                   <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
                     Timestamp
                   </th>
@@ -154,7 +154,7 @@ export function Ledger() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--glass-border)]">
+              <tbody className="divide-y divide-[rgba(0,0,0,0.06)]">
                 {entries.map((entry) => (
                   <LedgerRow
                     key={entry.ledger_id}
@@ -193,7 +193,7 @@ function LedgerRow({
             : 'default'
 
   return (
-    <tr className="hover:bg-[rgba(255,255,255,0.02)]">
+    <tr className="hover:bg-[rgba(0,0,0,0.02)]">
       <td className="whitespace-nowrap px-4 py-3 text-xs text-[var(--text-tertiary)]">
         {new Date(entry.timestamp).toLocaleString()}
       </td>

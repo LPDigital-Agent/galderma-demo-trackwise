@@ -1,6 +1,6 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// TopBar Component - Navigation Bar
+// TopBar Component — Liquid Glass Navigation
 // ============================================
 
 import { NavLink } from 'react-router-dom'
@@ -12,20 +12,9 @@ import { cn } from '@/lib/utils'
 /**
  * TopBar Component
  *
- * Main navigation bar with glassmorphism design.
- * Includes logo, navigation links, and utility controls.
- *
- * Features:
- * - Sticky positioning at top
- * - Glass effect with backdrop blur
- * - Active link highlighting
- * - Connection status indicator
- * - Mode and language toggles
- *
- * Accessibility:
- * - Keyboard navigable (Tab)
- * - Active link indication via aria-current
- * - Proper heading hierarchy (h1 for logo)
+ * Liquid Glass navigation bar with pill-shaped tab group.
+ * The nav items sit inside a subtle container pill, with
+ * the active tab rendered as a white raised pill.
  */
 export function TopBar() {
   const { isConnected } = useWebSocket()
@@ -41,19 +30,19 @@ export function TopBar() {
 
   return (
     <header
-      className="sticky top-0 z-50 w-full border-b border-[var(--glass-border)]"
+      className="sticky top-0 z-50 w-full border-b border-[rgba(255,255,255,0.5)]"
       style={{
-        background: 'var(--glass-bg)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
+        background: 'rgba(255,255,255,0.6)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
       }}
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-6">
         {/* Left: Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)]"
+              className="flex h-9 w-9 items-center justify-center rounded-[var(--border-radius-sm)]"
               style={{
                 background: 'linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%)',
               }}
@@ -61,7 +50,7 @@ export function TopBar() {
               <span className="text-sm font-bold text-white">G</span>
             </div>
             <h1 className="flex flex-col leading-none">
-              <span className="text-xs font-semibold tracking-wider text-[var(--text-secondary)]">
+              <span className="text-[10px] font-semibold tracking-[0.12em] text-[var(--text-secondary)]">
                 GALDERMA
               </span>
               <span className="text-sm font-bold text-[var(--text-primary)]">
@@ -71,25 +60,29 @@ export function TopBar() {
           </div>
         </div>
 
-        {/* Center: Navigation */}
-        <nav className="flex items-center gap-1" aria-label="Main navigation">
+        {/* Center: Glass Pill Navigation */}
+        <nav
+          className="flex items-center gap-0.5 rounded-full bg-[rgba(0,0,0,0.04)] border border-[rgba(0,0,0,0.06)] p-1"
+          aria-label="Main navigation"
+        >
           {navLinks.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-[var(--border-radius-sm)]',
-                  'transition-all duration-150',
-                  'hover:bg-[var(--glass-hover)]',
-                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border)]',
+                  'flex items-center gap-1.5 px-3 py-1.5',
+                  'text-xs font-medium leading-tight',
+                  'rounded-full',
+                  'transition-all duration-200',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)]',
                   isActive
-                    ? 'text-[var(--text-primary)] bg-[var(--glass-hover)]'
-                    : 'text-[var(--text-secondary)]'
+                    ? 'bg-white text-[var(--text-primary)] shadow-sm'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[rgba(0,0,0,0.04)]'
                 )
               }
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-3.5 w-3.5" />
               <span className="hidden md:inline">{label}</span>
             </NavLink>
           ))}
@@ -97,13 +90,13 @@ export function TopBar() {
 
         {/* Right: Controls */}
         <div className="flex items-center gap-3">
-          {/* Connection Status */}
+          {/* Connection Status Pill */}
           <div
-            className="flex items-center gap-2 px-3 py-1.5 rounded-[var(--border-radius-sm)]"
-            style={{
-              background: 'var(--glass-bg)',
-              border: '1px solid var(--glass-border)',
-            }}
+            className={cn(
+              'flex items-center gap-2 px-3 py-1.5 rounded-full',
+              'bg-[rgba(255,255,255,0.6)] border border-[rgba(0,0,0,0.06)]',
+              'backdrop-blur-sm'
+            )}
             title={isConnected ? 'Connected to WebSocket' : 'Disconnected'}
           >
             <div
@@ -112,7 +105,7 @@ export function TopBar() {
                 isConnected ? 'bg-[var(--status-success)]' : 'bg-[var(--status-error)]'
               )}
             />
-            <span className="hidden text-xs text-[var(--text-secondary)] sm:inline">
+            <span className="hidden text-xs font-medium text-[var(--text-secondary)] sm:inline">
               {isConnected ? 'Live' : 'Offline'}
             </span>
           </div>

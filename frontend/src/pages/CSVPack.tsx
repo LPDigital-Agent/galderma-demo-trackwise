@@ -213,7 +213,7 @@ export function CSVPack() {
                   return (
                     <div
                       key={type}
-                      className="flex items-center gap-3 rounded-[var(--border-radius-sm)] border border-[var(--glass-border)] p-3"
+                      className="flex items-center gap-3 rounded-[var(--border-radius-sm)] border border-[rgba(0,0,0,0.06)] p-3"
                     >
                       <Icon className="h-5 w-5" style={{ color }} />
                       <span className="text-sm text-[var(--text-primary)]">{name}</span>
@@ -272,7 +272,7 @@ function ArtifactCard({
 
       <p className="mt-3 text-sm text-[var(--text-secondary)]">{artifact.description}</p>
 
-      <div className="mt-4 flex items-center justify-between border-t border-[var(--glass-border)] pt-3">
+      <div className="mt-4 flex items-center justify-between border-t border-[rgba(0,0,0,0.06)] pt-3">
         <span className="text-xs text-[var(--text-tertiary)]">{artifact.artifact_type}</span>
         <Button variant="ghost" size="sm" onClick={onDownload}>
           <Download className="h-3.5 w-3.5" />

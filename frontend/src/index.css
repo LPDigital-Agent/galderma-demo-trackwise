@@ -1,48 +1,49 @@
 /* ============================================
    Galderma TrackWise AI Autopilot Demo
-   Global Styles - Dark Glassmorphism Theme
+   Global Styles — Apple Liquid Glass Theme
    ============================================ */
 
 @import 'tailwindcss';
 
 /* ============================================
    CSS Custom Properties (Design Tokens)
-   Based on UI_DESIGN_SYSTEM.md
+   Apple Liquid Glass + Galderma Branding
    ============================================ */
 :root {
-  /* Background Colors */
-  --bg-base: #0A0A0C;
-  --bg-surface: #0F0F14;
-  --bg-elevated: #16161E;
-  --bg-overlay: rgba(15, 15, 20, 0.8);
+  /* Background Colors (Light theme) */
+  --bg-base: #F2F4F7;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #FFFFFF;
+  --bg-overlay: rgba(255, 255, 255, 0.85);
 
-  /* Glass Colors - Proper Glassmorphism (from UI_DESIGN_SYSTEM.md) */
-  --glass-bg: rgba(15, 15, 20, 0.55);
-  --glass-bg-subtle: rgba(15, 15, 20, 0.35);
-  --glass-bg-strong: rgba(15, 15, 20, 0.75);
-  --glass-bg-solid: rgba(15, 15, 20, 0.92);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-border-subtle: rgba(255, 255, 255, 0.04);
-  --glass-border-strong: rgba(255, 255, 255, 0.16);
-  --glass-hover: rgba(15, 15, 20, 0.65);
+  /* Glass Colors — Liquid Glass (white translucent) */
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.25);
+  --glass-bg-strong: rgba(255, 255, 255, 0.65);
+  --glass-bg-solid: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-border-subtle: rgba(255, 255, 255, 0.3);
+  --glass-border-strong: rgba(255, 255, 255, 0.7);
+  --glass-hover: rgba(255, 255, 255, 0.55);
 
-  /* Text Colors */
-  --text-primary: #FAFAFA;
-  --text-secondary: #A1A1AA;
-  --text-muted: #71717A;
-  --text-dimmed: #52525B;
+  /* Text Colors (Dark on light) */
+  --text-primary: #1A1A2E;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  --text-dimmed: #A0AEC0;
+  --text-tertiary: #718096;
 
-  /* Brand Colors - Galderma (Teal palette from UI_DESIGN_SYSTEM.md) */
+  /* Brand Colors — Galderma */
   --brand-primary: #00A4B4;
   --brand-secondary: #003C71;
   --brand-accent: #00B8C9;
-  --brand-accent-muted: rgba(0, 164, 180, 0.15);
+  --brand-accent-muted: rgba(0, 164, 180, 0.12);
 
-  /* Status Colors */
-  --status-success: #22C55E;
-  --status-warning: #F59E0B;
-  --status-error: #EF4444;
-  --status-info: #3B82F6;
+  /* Status Colors (darker for light-bg contrast) */
+  --status-success: #16A34A;
+  --status-warning: #D97706;
+  --status-error: #DC2626;
+  --status-info: #2563EB;
 
   /* Agent Colors (for network visualization) */
   --agent-observer: #8B5CF6;
@@ -56,27 +57,40 @@
   --agent-csv-pack: #14B8A6;
 
   /* Severity Colors */
-  --severity-low: #22C55E;
-  --severity-medium: #F59E0B;
-  --severity-high: #F97316;
-  --severity-critical: #EF4444;
+  --severity-low: #16A34A;
+  --severity-medium: #D97706;
+  --severity-high: #EA580C;
+  --severity-critical: #DC2626;
 
   /* Mode Colors */
-  --mode-observe: #3B82F6;
-  --mode-train: #F59E0B;
-  --mode-act: #22C55E;
+  --mode-observe: #2563EB;
+  --mode-train: #D97706;
+  --mode-act: #16A34A;
 
   /* Glassmorphism Properties */
   --blur-amount: 16px;
-  --border-radius-sm: 8px;
-  --border-radius-md: 12px;
-  --border-radius-lg: 16px;
-  --border-radius-xl: 24px;
+  --border-radius-sm: 10px;
+  --border-radius-md: 14px;
+  --border-radius-lg: 20px;
+  --border-radius-xl: 28px;
+  --border-radius-pill: 9999px;
 
-  /* Shadows */
-  --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.3);
-  --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 20px rgba(0, 163, 224, 0.2);
+  /* Shadows (light theme appropriate) */
+  --shadow-glass:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-elevated:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(0, 164, 180, 0.15);
+
+  /* Liquid Glass Specular Highlight */
+  --glass-highlight: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    transparent 60%
+  );
 }
 
 /* ============================================
@@ -102,7 +116,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Background gradient - Enhanced for glassmorphism visibility */
+/* Colorful gradient background for Liquid Glass refraction */
 body::before {
   content: '';
   position: fixed;
@@ -111,10 +125,10 @@ body::before {
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(ellipse 100% 80% at 50% -30%, rgba(0, 164, 180, 0.25), transparent 70%),
-    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(0, 60, 113, 0.2), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(0, 164, 180, 0.15), transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(15, 15, 20, 0.8), transparent);
+    radial-gradient(ellipse 80% 60% at 10% 0%, rgba(0, 164, 180, 0.15), transparent 50%),
+    radial-gradient(ellipse 60% 50% at 90% 20%, rgba(0, 60, 113, 0.12), transparent 50%),
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(0, 184, 201, 0.10), transparent 50%),
+    linear-gradient(180deg, #EDF2F7 0%, #F7FAFC 50%, #EBF4FF 100%);
   pointer-events: none;
   z-index: -1;
 }
@@ -138,21 +152,21 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /* ============================================
-   Glass Card Utilities
+   Liquid Glass Utilities
    ============================================ */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--blur-amount));
-  -webkit-backdrop-filter: blur(var(--blur-amount));
+  backdrop-filter: blur(var(--blur-amount)) saturate(180%) brightness(1.1);
+  -webkit-backdrop-filter: blur(var(--blur-amount)) saturate(180%) brightness(1.1);
   border: 1px solid var(--glass-border);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-glass);
@@ -160,20 +174,37 @@ body::before {
 
 .glass-hover:hover {
   background: var(--glass-hover);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: var(--glass-border-strong);
 }
 
 .glass-surface {
   background: var(--bg-surface);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: var(--border-radius-lg);
 }
 
 .glass-elevated {
   background: var(--bg-elevated);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-elevated);
+}
+
+/* Specular highlight layer */
+.glass-highlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-highlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--glass-highlight);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
 }
 
 /* ============================================
@@ -181,10 +212,10 @@ body::before {
    ============================================ */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(0, 163, 224, 0.3);
+    box-shadow: 0 0 5px rgba(0, 164, 180, 0.2);
   }
   50% {
-    box-shadow: 0 0 20px rgba(0, 163, 224, 0.5);
+    box-shadow: 0 0 20px rgba(0, 164, 180, 0.35);
   }
 }
 
@@ -210,6 +241,24 @@ body::before {
   }
 }
 
+@keyframes liquid-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
@@ -220,6 +269,16 @@ body::before {
 
 .animate-slide-in-right {
   animation: slide-in-right 0.3s ease-out;
+}
+
+.animate-liquid-in {
+  animation: liquid-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }
 
 /* ============================================
@@ -233,57 +292,53 @@ body::before {
 }
 
 /* ============================================
-   Status Badge Colors
+   Status Badge Colors (light-bg optimized)
    ============================================ */
 .badge-success {
-  background: rgba(34, 197, 94, 0.15);
+  background: rgba(22, 163, 74, 0.1);
   color: var(--status-success);
-  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .badge-warning {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(217, 119, 6, 0.1);
   color: var(--status-warning);
-  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .badge-error {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(220, 38, 38, 0.1);
   color: var(--status-error);
-  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .badge-info {
-  background: rgba(59, 130, 246, 0.15);
+  background: rgba(37, 99, 235, 0.1);
   color: var(--status-info);
-  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 /* ============================================
    Tailwind v4 Theme Extension
    ============================================ */
 @theme {
-  --color-bg-base: #0A0A0C;
-  --color-bg-surface: #0F0F14;
-  --color-bg-elevated: #16161E;
+  --color-bg-base: #F2F4F7;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-elevated: #FFFFFF;
 
-  --color-glass-bg: rgba(255, 255, 255, 0.03);
-  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-bg: rgba(255, 255, 255, 0.45);
+  --color-glass-border: rgba(255, 255, 255, 0.5);
 
-  --color-brand-primary: #00A3E0;
-  --color-brand-secondary: #0077B6;
-  --color-brand-accent: #48D1CC;
+  --color-brand-primary: #00A4B4;
+  --color-brand-secondary: #003C71;
+  --color-brand-accent: #00B8C9;
 
-  --color-text-primary: #FAFAFA;
-  --color-text-secondary: #A1A1AA;
-  --color-text-muted: #71717A;
+  --color-text-primary: #1A1A2E;
+  --color-text-secondary: #4A5568;
+  --color-text-muted: #718096;
 
-  --color-severity-low: #22C55E;
-  --color-severity-medium: #F59E0B;
-  --color-severity-high: #F97316;
-  --color-severity-critical: #EF4444;
+  --color-severity-low: #16A34A;
+  --color-severity-medium: #D97706;
+  --color-severity-high: #EA580C;
+  --color-severity-critical: #DC2626;
 
-  --color-mode-observe: #3B82F6;
-  --color-mode-train: #F59E0B;
-  --color-mode-act: #22C55E;
+  --color-mode-observe: #2563EB;
+  --color-mode-train: #D97706;
+  --color-mode-act: #16A34A;
 }

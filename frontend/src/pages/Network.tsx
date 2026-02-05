@@ -93,7 +93,7 @@ export function Network() {
 
       // Border ring for OPUS agents
       if (node.model === 'OPUS') {
-        ctx.strokeStyle = 'rgba(255,255,255,0.6)'
+        ctx.strokeStyle = 'rgba(26,26,46,0.4)'
         ctx.lineWidth = 1.5
         ctx.stroke()
       }
@@ -102,7 +102,7 @@ export function Network() {
       ctx.font = `${fontSize}px sans-serif`
       ctx.textAlign = 'center'
       ctx.textBaseline = 'top'
-      ctx.fillStyle = 'rgba(255,255,255,0.85)'
+      ctx.fillStyle = 'rgba(26,26,46,0.85)'
       ctx.fillText(node.displayName, x, y + size + 3)
 
       // Model badge
@@ -127,7 +127,7 @@ export function Network() {
       ctx.beginPath()
       ctx.moveTo(source.x, source.y ?? 0)
       ctx.lineTo(target.x, target.y ?? 0)
-      ctx.strokeStyle = 'rgba(255,255,255,0.1)'
+      ctx.strokeStyle = 'rgba(0,0,0,0.1)'
       ctx.lineWidth = 1
       ctx.stroke()
 
@@ -147,7 +147,7 @@ export function Network() {
       ctx.lineTo(arrowX - nx * arrowSize + ny * arrowSize * 0.5, arrowY - ny * arrowSize - nx * arrowSize * 0.5)
       ctx.lineTo(arrowX - nx * arrowSize - ny * arrowSize * 0.5, arrowY - ny * arrowSize + nx * arrowSize * 0.5)
       ctx.closePath()
-      ctx.fillStyle = 'rgba(255,255,255,0.25)'
+      ctx.fillStyle = 'rgba(0,0,0,0.2)'
       ctx.fill()
 
       // Label on hover scale
@@ -156,7 +156,7 @@ export function Network() {
         const midY = ((source.y ?? 0) + (target.y ?? 0)) / 2
         ctx.font = `${8 / globalScale}px sans-serif`
         ctx.textAlign = 'center'
-        ctx.fillStyle = 'rgba(255,255,255,0.3)'
+        ctx.fillStyle = 'rgba(0,0,0,0.25)'
         ctx.fillText(link.label, midX, midY - 4)
       }
     },

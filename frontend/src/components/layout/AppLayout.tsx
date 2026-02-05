@@ -1,36 +1,32 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// AppLayout Component - Main Layout Wrapper
+// AppLayout Component — Main Layout Wrapper
 // ============================================
 
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { TopBar } from './TopBar'
 import { useRealtimeSync } from '@/hooks'
 
 /**
  * AppLayout Component
  *
- * Main layout wrapper for the application.
- * Includes TopBar and content area with proper spacing.
- *
- * Features:
- * - Sticky TopBar at top
- * - Scrollable content area
- * - Consistent padding
- * - Flexible height (full viewport)
- *
- * Usage:
- * Used as parent route in React Router to wrap all pages.
+ * Main layout wrapper with Liquid Glass page transitions.
+ * Each route change triggers a subtle entrance animation.
  */
 export function AppLayout() {
+  const location = useLocation()
+
   // Bridge WebSocket events to TanStack Query cache invalidation
   useRealtimeSync()
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--bg-base)]">
+    <div className="flex min-h-screen flex-col">
       <TopBar />
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto px-6 py-8">
+        <div
+          key={location.pathname}
+          className="container mx-auto px-6 py-8 animate-liquid-in"
+        >
           <Outlet />
         </div>
       </main>

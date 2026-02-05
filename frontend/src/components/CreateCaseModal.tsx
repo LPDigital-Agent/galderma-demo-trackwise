@@ -68,7 +68,7 @@ export function CreateCaseModal({ onClose, onSuccess }: CreateCaseModalProps) {
   }, [complaintText, product, customerName, caseType, createCase, onSuccess, onClose])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md">
       <GlassCard variant="elevated" className="w-full max-w-lg">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between">
@@ -78,7 +78,7 @@ export function CreateCaseModal({ onClose, onSuccess }: CreateCaseModalProps) {
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[rgba(255,255,255,0.1)] hover:text-[var(--text-primary)]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:bg-[rgba(0,0,0,0.06)] hover:text-[var(--text-primary)]"
           >
             <X className="h-5 w-5" />
           </button>
@@ -93,10 +93,10 @@ export function CreateCaseModal({ onClose, onSuccess }: CreateCaseModalProps) {
             <select
               value={selectedProduct}
               onChange={(e) => setSelectedProduct(Number(e.target.value))}
-              className="w-full rounded-lg border border-[var(--glass-border)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--brand-primary)] focus:outline-none"
+              className="w-full rounded-lg border border-[rgba(0,0,0,0.12)] bg-white px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--brand-primary)] focus:outline-none"
             >
               {PRODUCTS.map((p, i) => (
-                <option key={i} value={i} className="bg-[#1a1a2e]">
+                <option key={i} value={i} className="bg-white">
                   {p.brand} — {p.name}
                 </option>
               ))}
@@ -131,7 +131,7 @@ export function CreateCaseModal({ onClose, onSuccess }: CreateCaseModalProps) {
               type="text"
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
-              className="w-full rounded-lg border border-[var(--glass-border)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--brand-primary)] focus:outline-none"
+              className="w-full rounded-lg border border-[rgba(0,0,0,0.12)] bg-white px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--brand-primary)] focus:outline-none"
               placeholder="Customer name"
             />
           </div>
@@ -145,7 +145,7 @@ export function CreateCaseModal({ onClose, onSuccess }: CreateCaseModalProps) {
               value={complaintText}
               onChange={(e) => setComplaintText(e.target.value)}
               rows={4}
-              className="w-full rounded-lg border border-[var(--glass-border)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--brand-primary)] focus:outline-none"
+              className="w-full rounded-lg border border-[rgba(0,0,0,0.12)] bg-white px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--brand-primary)] focus:outline-none"
               placeholder="Describe the complaint, inquiry, or adverse event..."
             />
           </div>

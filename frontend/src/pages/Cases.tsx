@@ -150,7 +150,7 @@ export function Cases() {
                 {caseItem.complaint_text}
               </p>
 
-              <div className="mt-4 flex items-center justify-between border-t border-[var(--glass-border)] pt-3">
+              <div className="mt-4 flex items-center justify-between border-t border-[rgba(0,0,0,0.06)] pt-3">
                 <div className="flex items-center gap-2">
                   <Badge
                     variant={

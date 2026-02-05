@@ -209,8 +209,8 @@ export function CaseDetail() {
                 <div
                   className="rounded-lg border p-3"
                   style={{
-                    borderColor: caseData.status === 'CLOSED' ? 'rgba(34,197,94,0.4)' : 'rgba(245,158,11,0.4)',
-                    backgroundColor: caseData.status === 'CLOSED' ? 'rgba(34,197,94,0.05)' : 'rgba(245,158,11,0.05)',
+                    borderColor: caseData.status === 'CLOSED' ? 'rgba(22,163,74,0.3)' : 'rgba(217,119,6,0.3)',
+                    backgroundColor: caseData.status === 'CLOSED' ? 'rgba(22,163,74,0.06)' : 'rgba(217,119,6,0.06)',
                   }}
                 >
                   <div className="flex items-center justify-between">
@@ -230,7 +230,7 @@ export function CaseDetail() {
 
                 {/* Arrow connector */}
                 <div className="flex items-center justify-center gap-2 py-1">
-                  <div className="h-px flex-1 bg-[var(--glass-border)]" />
+                  <div className="h-px flex-1 bg-[rgba(0,0,0,0.08)]" />
                   <div className="flex items-center gap-1 text-xs text-[var(--brand-primary)]">
                     <ArrowRight className="h-3.5 w-3.5" />
                     <span className="font-medium">
@@ -238,16 +238,16 @@ export function CaseDetail() {
                     </span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </div>
-                  <div className="h-px flex-1 bg-[var(--glass-border)]" />
+                  <div className="h-px flex-1 bg-[rgba(0,0,0,0.08)]" />
                 </div>
 
                 {/* Linked case */}
                 <Link
                   to={`/cases/${caseData.linked_case_id}`}
-                  className="block rounded-lg border p-3 transition-colors hover:bg-[rgba(255,255,255,0.03)]"
+                  className="block rounded-lg border p-3 transition-colors hover:bg-[rgba(0,0,0,0.02)]"
                   style={{
-                    borderColor: linkedCase?.status === 'CLOSED' ? 'rgba(34,197,94,0.4)' : 'rgba(245,158,11,0.4)',
-                    backgroundColor: linkedCase?.status === 'CLOSED' ? 'rgba(34,197,94,0.05)' : 'rgba(245,158,11,0.05)',
+                    borderColor: linkedCase?.status === 'CLOSED' ? 'rgba(22,163,74,0.3)' : 'rgba(217,119,6,0.3)',
+                    backgroundColor: linkedCase?.status === 'CLOSED' ? 'rgba(22,163,74,0.06)' : 'rgba(217,119,6,0.06)',
                   }}
                 >
                   <div className="flex items-center justify-between">
@@ -297,7 +297,7 @@ export function CaseDetail() {
               )}
 
               {/* All languages preview */}
-              <div className="mt-4 space-y-2 border-t border-[var(--glass-border)] pt-3">
+              <div className="mt-4 space-y-2 border-t border-[rgba(0,0,0,0.06)] pt-3">
                 <p className="text-xs font-medium text-[var(--text-tertiary)]">All languages:</p>
                 {(['EN', 'PT', 'ES', 'FR'] as const).map((lang) => {
                   const text = getResolutionForLanguage(caseData, lang)
@@ -355,7 +355,7 @@ export function CaseDetail() {
             ) : (
               <div className="relative">
                 {/* Vertical timeline line */}
-                <div className="absolute left-5 top-2 bottom-2 w-px bg-[var(--glass-border)]" />
+                <div className="absolute left-5 top-2 bottom-2 w-px bg-[rgba(0,0,0,0.08)]" />
 
                 <div className="space-y-1">
                   {steps.map((step, index) => (
@@ -429,8 +429,8 @@ function TimelineStep({
           isActive ? 'animate-pulse' : ''
         }`}
         style={{
-          backgroundColor: `${agentColor}20`,
-          borderColor: `${agentColor}60`,
+          backgroundColor: `${agentColor}15`,
+          borderColor: `${agentColor}40`,
           color: agentColor,
         }}
       >
@@ -469,7 +469,7 @@ function TimelineStep({
             {step.tools_called.map((tool) => (
               <span
                 key={tool}
-                className="rounded bg-[rgba(255,255,255,0.05)] px-1.5 py-0.5 text-[10px] text-[var(--text-tertiary)]"
+                className="rounded bg-[rgba(0,0,0,0.04)] px-1.5 py-0.5 text-[10px] text-[var(--text-tertiary)]"
               >
                 {tool}
               </span>
@@ -495,7 +495,7 @@ function AuditEntry({ entry }: { entry: LedgerEntry }) {
           : 'default'
 
   return (
-    <div className="rounded-lg border border-[var(--glass-border)] bg-[rgba(255,255,255,0.02)] p-3">
+    <div className="rounded-lg border border-[rgba(0,0,0,0.06)] bg-[rgba(0,0,0,0.02)] p-3">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold" style={{ color: agentColor }}>

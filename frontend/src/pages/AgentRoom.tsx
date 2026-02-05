@@ -162,8 +162,8 @@ export function AgentRoom() {
               return (
                 <div
                   key={`${event.timestamp}-${index}`}
-                  className={`flex items-start gap-3 border-b border-[var(--glass-border)] pb-3 last:border-0 ${
-                    event.case_id ? 'cursor-pointer hover:bg-[rgba(255,255,255,0.02)] rounded-md -mx-2 px-2' : ''
+                  className={`flex items-start gap-3 border-b border-[rgba(0,0,0,0.06)] pb-3 last:border-0 ${
+                    event.case_id ? 'cursor-pointer hover:bg-[rgba(0,0,0,0.02)] rounded-md -mx-2 px-2' : ''
                   }`}
                   onClick={event.case_id ? () => navigate(`/cases/${event.case_id}`) : undefined}
                 >

@@ -349,6 +349,54 @@ async def delete_case(case_id: str) -> dict[str, Any]:
     return {"success": True, "deleted": case_id}
 
 
+# --- Runs (Simulated for demo) ---
+@app.get("/api/runs", tags=["Runs"])
+async def list_runs(
+    case_id: str | None = Query(None),
+    status: str | None = Query(None),
+) -> list[dict[str, Any]]:
+    """List agent runs. Generates simulated run data for demo cases."""
+    from .simulator.demo_data import generate_runs_for_cases
+
+    cases = list(simulator_api._cases.values())
+    if case_id:
+        cases = [c for c in cases if c.case_id == case_id]
+    return generate_runs_for_cases(cases, status_filter=status)
+
+
+@app.get("/api/runs/{run_id}", tags=["Runs"])
+async def get_run(run_id: str) -> dict[str, Any]:
+    """Get a single run by ID."""
+    from .simulator.demo_data import generate_runs_for_cases
+
+    cases = list(simulator_api._cases.values())
+    runs = generate_runs_for_cases(cases)
+    for run in runs:
+        if run["run_id"] == run_id:
+            return run
+    raise HTTPException(status_code=404, detail=f"Run not found: {run_id}")
+
+
+# --- Ledger (Simulated for demo) ---
+@app.get("/api/ledger", tags=["Ledger"])
+async def list_ledger(
+    case_id: str | None = Query(None),
+    run_id: str | None = Query(None),
+    agent_name: str | None = Query(None),
+    limit: int = Query(100, ge=1, le=1000),
+) -> list[dict[str, Any]]:
+    """List ledger entries. Generates simulated audit trail for demo cases."""
+    from .simulator.demo_data import generate_ledger_for_cases
+
+    cases = list(simulator_api._cases.values())
+    if case_id:
+        cases = [c for c in cases if c.case_id == case_id]
+    entries = generate_ledger_for_cases(cases, agent_filter=agent_name)
+    if run_id:
+        entries = [e for e in entries if e["run_id"] == run_id]
+    return entries[:limit]
+
+
 # --- Events ---
 @app.get("/api/events", response_model=list[EventEnvelope], tags=["Events"])
 async def list_events(
@@ -371,6 +419,55 @@ async def create_batch(batch_data: BatchCreate) -> BatchResult:
 async def get_stats() -> dict[str, int]:
     """Get simulator statistics."""
     return simulator_api.get_stats()
+
+
+@app.get("/api/stats/executive", tags=["Statistics"])
+async def get_executive_stats() -> dict[str, Any]:
+    """Executive dashboard metrics for the demo.
+
+    Returns:
+        ai_closed_count: Number of cases closed by AI agents
+        human_hours_saved: Estimated human hours saved (15 min per case)
+        risks_avoided: Number of compliance risks caught
+    """
+    from .simulator.models import CaseStatus
+
+    cases = list(simulator_api._cases.values())
+    closed_cases = [c for c in cases if c.status == CaseStatus.CLOSED]
+
+    # Cases closed by AI = cases with processed_by_agent set, or all closed for demo
+    ai_closed = [c for c in closed_cases if c.processed_by_agent] or closed_cases
+    ai_closed_count = len(ai_closed)
+
+    # Estimated 15 minutes per case for human processing
+    human_hours_saved = round(ai_closed_count * 15 / 60, 1)
+
+    # Risks avoided = compliance checks that blocked or escalated
+    # For demo, count HIGH/CRITICAL cases that were properly escalated
+    from .simulator.models import CaseSeverity
+    risks_avoided = len([
+        c for c in cases
+        if c.severity in (CaseSeverity.HIGH, CaseSeverity.CRITICAL)
+    ])
+
+    return {
+        "ai_closed_count": ai_closed_count,
+        "human_hours_saved": human_hours_saved,
+        "risks_avoided": risks_avoided,
+        "total_cases": len(cases),
+        "open_cases": len([c for c in cases if c.status == CaseStatus.OPEN]),
+        "closed_cases": len(closed_cases),
+    }
+
+
+# --- CSV Pack ---
+@app.post("/api/csv-pack", tags=["CSV Pack"])
+async def generate_csv_pack() -> dict[str, Any]:
+    """Generate a CSV (Computer System Validation) compliance pack."""
+    from .simulator.demo_data import generate_csv_pack
+
+    cases = list(simulator_api._cases.values())
+    return generate_csv_pack(cases)
 
 
 # --- Demo Reset ---

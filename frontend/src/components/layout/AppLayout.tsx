@@ -5,6 +5,7 @@
 
 import { Outlet } from 'react-router-dom'
 import { TopBar } from './TopBar'
+import { useRealtimeSync } from '@/hooks'
 
 /**
  * AppLayout Component
@@ -22,6 +23,9 @@ import { TopBar } from './TopBar'
  * Used as parent route in React Router to wrap all pages.
  */
 export function AppLayout() {
+  // Bridge WebSocket events to TanStack Query cache invalidation
+  useRealtimeSync()
+
   return (
     <div className="flex min-h-screen flex-col bg-[var(--bg-base)]">
       <TopBar />

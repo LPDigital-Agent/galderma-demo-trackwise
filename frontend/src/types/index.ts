@@ -217,6 +217,31 @@ export const AGENTS: Record<AgentName, AgentInfo> = {
 // ============================================
 // Run Types
 // ============================================
+export type StepType =
+  | 'OBSERVE'
+  | 'THINK'
+  | 'LEARN'
+  | 'ACT'
+  | 'TOOL_CALL'
+  | 'A2A_CALL'
+  | 'HUMAN_REVIEW'
+  | 'ERROR'
+
+export interface AgentStep {
+  step_number: number
+  agent_name: AgentName
+  step_type: StepType
+  input_summary?: string
+  output_summary?: string
+  reasoning?: string
+  tools_called?: string[]
+  started_at: string
+  completed_at?: string
+  duration_ms?: number
+  tokens_used?: number
+  model_id?: string
+}
+
 export interface Run {
   run_id: string
   case_id: string
@@ -227,6 +252,7 @@ export interface Run {
   completed_at?: string
   duration_ms?: number
   agents_invoked: AgentName[]
+  agent_steps?: AgentStep[]
   result?: string
   error?: string
 }
@@ -250,16 +276,52 @@ export interface MemoryEntry {
 // ============================================
 // Ledger Types
 // ============================================
+export type LedgerAction =
+  | 'CASE_ANALYZED'
+  | 'PATTERN_MATCHED'
+  | 'PATTERN_CREATED'
+  | 'COMPLIANCE_CHECKED'
+  | 'RESOLUTION_GENERATED'
+  | 'WRITEBACK_EXECUTED'
+  | 'HUMAN_REVIEW_REQUESTED'
+  | 'HUMAN_APPROVED'
+  | 'HUMAN_REJECTED'
+  | 'MEMORY_UPDATED'
+  | 'CASE_ESCALATED'
+  | 'ERROR_OCCURRED'
+
+export interface StateChange {
+  field: string
+  before: string | null
+  after: string | null
+}
+
 export interface LedgerEntry {
   ledger_id: string
   run_id: string
   case_id: string
-  agent: AgentName
-  action: string
-  input_hash: string
-  output_hash: string
+  agent_name: AgentName
+  action: LedgerAction
+  action_description?: string
   timestamp: string
-  metadata?: Record<string, unknown>
+  reasoning?: string
+  decision?: string
+  confidence?: number
+  state_changes?: StateChange[]
+  policies_evaluated?: string[]
+  policy_violations?: string[]
+  model_id?: string
+  tokens_used?: number
+  latency_ms?: number
+  memory_strategy?: MemoryStrategy
+  memory_pattern_id?: string
+  requires_human_action?: boolean
+  human_actor?: string
+  human_action_taken?: string
+  error_type?: string
+  error_message?: string
+  entry_hash?: string
+  previous_hash?: string
 }
 
 // ============================================

@@ -4,8 +4,10 @@
 // ============================================
 
 import { useState } from 'react'
-import { FileText, Plus, Filter } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { FileText, Plus, Filter, Link2 } from 'lucide-react'
 import { GlassCard, Button, SeverityBadge, Badge } from '@/components/ui'
+import { CreateCaseModal } from '@/components/CreateCaseModal'
 import { useCases } from '@/hooks'
 import type { CaseStatus, CaseSeverity } from '@/types'
 
@@ -42,8 +44,10 @@ const SEVERITY_FILTERS: { value: CaseSeverity | 'ALL'; label: string }[] = [
  * - Virtualized list for large datasets (future)
  */
 export function Cases() {
+  const navigate = useNavigate()
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'ALL'>('ALL')
   const [severityFilter, setSeverityFilter] = useState<CaseSeverity | 'ALL'>('ALL')
+  const [showCreateModal, setShowCreateModal] = useState(false)
 
   const { data, isLoading } = useCases({
     status: statusFilter === 'ALL' ? undefined : statusFilter,
@@ -62,7 +66,7 @@ export function Cases() {
             {data?.total ?? 0} total cases
           </p>
         </div>
-        <Button variant="primary" size="md">
+        <Button variant="primary" size="md" onClick={() => setShowCreateModal(true)}>
           <Plus className="h-4 w-4" />
           Create Case
         </Button>
@@ -127,7 +131,7 @@ export function Cases() {
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
           {cases.map((caseItem) => (
-            <GlassCard key={caseItem.case_id} variant="hover" className="flex flex-col">
+            <GlassCard key={caseItem.case_id} variant="hover" className="flex flex-col" onClick={() => navigate(`/cases/${caseItem.case_id}`)}>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
@@ -147,17 +151,22 @@ export function Cases() {
               </p>
 
               <div className="mt-4 flex items-center justify-between border-t border-[var(--glass-border)] pt-3">
-                <Badge
-                  variant={
-                    caseItem.status === 'CLOSED'
-                      ? 'success'
-                      : caseItem.status === 'OPEN'
-                        ? 'warning'
-                        : 'default'
-                  }
-                >
-                  {caseItem.status.replace(/_/g, ' ')}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge
+                    variant={
+                      caseItem.status === 'CLOSED'
+                        ? 'success'
+                        : caseItem.status === 'OPEN'
+                          ? 'warning'
+                          : 'default'
+                    }
+                  >
+                    {caseItem.status.replace(/_/g, ' ')}
+                  </Badge>
+                  {caseItem.linked_case_id && (
+                    <Link2 className="h-3.5 w-3.5 text-[var(--brand-primary)]" aria-label="Linked case" />
+                  )}
+                </div>
                 <p className="text-xs text-[var(--text-tertiary)]">
                   {new Date(caseItem.created_at).toLocaleDateString()}
                 </p>
@@ -165,6 +174,14 @@ export function Cases() {
             </GlassCard>
           ))}
         </div>
+      )}
+
+      {/* Create Case Modal */}
+      {showCreateModal && (
+        <CreateCaseModal
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={(caseId) => navigate(`/cases/${caseId}`)}
+        />
       )}
     </div>
   )

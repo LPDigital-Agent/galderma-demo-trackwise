@@ -5,7 +5,7 @@
 
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AppLayout } from '@/components/layout'
-import { AgentRoom, Cases, Network, Memory, Ledger, CSVPack } from '@/pages'
+import { AgentRoom, Cases, CaseDetail, Network, Memory, Ledger, CSVPack } from '@/pages'
 
 /**
  * App Component
@@ -33,6 +33,7 @@ function App() {
         <Route index element={<Navigate to="/agent-room" replace />} />
         <Route path="agent-room" element={<AgentRoom />} />
         <Route path="cases" element={<Cases />} />
+        <Route path="cases/:caseId" element={<CaseDetail />} />
         <Route path="network" element={<Network />} />
         <Route path="memory" element={<Memory />} />
         <Route path="ledger" element={<Ledger />} />

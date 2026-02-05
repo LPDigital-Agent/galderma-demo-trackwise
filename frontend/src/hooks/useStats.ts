@@ -26,6 +26,19 @@ export function useStats() {
   })
 }
 
+// Executive dashboard stats
+export const executiveKeys = {
+  all: ['executive-stats'] as const,
+}
+
+export function useExecutiveStats() {
+  return useQuery({
+    queryKey: executiveKeys.all,
+    queryFn: api.getExecutiveStats,
+    refetchInterval: 5000,
+  })
+}
+
 // Create batch mutation
 export function useCreateBatch() {
   const queryClient = useQueryClient()

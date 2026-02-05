@@ -6,6 +6,7 @@
 import axios from 'axios'
 
 import type {
+  AgentName,
   BatchCreate,
   BatchResult,
   Case,
@@ -16,6 +17,8 @@ import type {
   CaseType,
   CaseUpdate,
   EventEnvelope,
+  LedgerEntry,
+  Run,
   Statistics,
 } from '@/types'
 
@@ -79,6 +82,35 @@ export async function deleteCase(caseId: string): Promise<void> {
 }
 
 // ============================================
+// Runs API
+// ============================================
+export async function getRuns(params?: {
+  case_id?: string
+  status?: string
+}): Promise<Run[]> {
+  const response = await api.get<Run[]>('/runs', { params })
+  return response.data
+}
+
+export async function getRun(runId: string): Promise<Run> {
+  const response = await api.get<Run>(`/runs/${runId}`)
+  return response.data
+}
+
+// ============================================
+// Ledger API
+// ============================================
+export async function getLedgerEntries(params?: {
+  case_id?: string
+  run_id?: string
+  agent_name?: AgentName
+  limit?: number
+}): Promise<LedgerEntry[]> {
+  const response = await api.get<LedgerEntry[]>('/ledger', { params })
+  return response.data
+}
+
+// ============================================
 // Events API
 // ============================================
 export async function getEvents(params?: {
@@ -102,6 +134,48 @@ export async function createBatch(data: BatchCreate): Promise<BatchResult> {
 // ============================================
 export async function getStats(): Promise<Statistics> {
   const response = await api.get<Statistics>('/stats')
+  return response.data
+}
+
+export interface ExecutiveStats {
+  ai_closed_count: number
+  human_hours_saved: number
+  risks_avoided: number
+  total_cases: number
+  open_cases: number
+  closed_cases: number
+}
+
+export async function getExecutiveStats(): Promise<ExecutiveStats> {
+  const response = await api.get<ExecutiveStats>('/stats/executive')
+  return response.data
+}
+
+// ============================================
+// CSV Pack API
+// ============================================
+export interface CSVPackArtifact {
+  artifact_id: string
+  artifact_type: string
+  title: string
+  description: string
+  status: string
+  [key: string]: unknown
+}
+
+export interface CSVPackResult {
+  pack_id: string
+  generated_at: string
+  total_cases_analyzed: number
+  closed_cases: number
+  total_ledger_entries: number
+  artifacts: CSVPackArtifact[]
+  compliance_standard: string
+  status: string
+}
+
+export async function generateCSVPack(): Promise<CSVPackResult> {
+  const response = await api.post<CSVPackResult>('/csv-pack')
   return response.data
 }
 

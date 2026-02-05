@@ -32,11 +32,11 @@ export function useCases(params?: {
 }
 
 // Get single case
-export function useCase(caseId: string) {
+export function useCase(caseId: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: caseKeys.detail(caseId),
     queryFn: () => api.getCase(caseId),
-    enabled: !!caseId,
+    enabled: (options?.enabled ?? true) && !!caseId,
   })
 }
 

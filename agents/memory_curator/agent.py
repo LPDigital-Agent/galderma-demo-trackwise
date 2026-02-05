@@ -292,6 +292,8 @@ def update_pattern_confidence(
     # Write updated pattern
     write_result = memory_write(
         strategy=strategy,
+        name=updated_pattern.get("name", f"Pattern {pattern_id}"),
+        description=updated_pattern.get("description", f"Updated pattern in {strategy}"),
         pattern_id=pattern_id,
         content=updated_pattern,
     )
@@ -350,6 +352,8 @@ def create_new_pattern(
 
     result = memory_write(
         strategy=strategy,
+        name=new_pattern.get("name", f"Corrected pattern {pattern_id}"),
+        description=new_pattern.get("description", f"Human-corrected pattern in {strategy}"),
         pattern_id=pattern_id,
         content=new_pattern,
     )
@@ -420,6 +424,8 @@ def archive_low_confidence(
 
     write_result = memory_write(
         strategy=strategy,
+        name=archived_pattern.get("name", f"Archived pattern {pattern_id}"),
+        description=archived_pattern.get("description", f"Archived pattern in {strategy}"),
         pattern_id=pattern_id,
         content=archived_pattern,
     )

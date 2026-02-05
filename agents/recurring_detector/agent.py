@@ -444,6 +444,8 @@ def write_new_pattern(
         # Write to AgentCore Memory
         result = memory_write(
             strategy="RecurringPatterns",
+            name=pattern.get("name", f"Recurring pattern {pattern.get('pattern_id', 'unknown')}"),
+            description=pattern.get("description", f"Recurring complaint pattern for {pattern.get('product', 'unknown')}"),
             pattern_id=pattern["pattern_id"],
             content=pattern,
         )

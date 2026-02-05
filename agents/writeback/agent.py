@@ -369,6 +369,8 @@ def log_success(
     # Write to ResolutionTemplates memory
     result = memory_write(
         strategy="ResolutionTemplates",
+        name=pattern.get("name", f"Resolution for {pattern.get('product', 'unknown')}"),
+        description=pattern.get("description", f"Successful resolution template for {pattern.get('category', 'unknown')} - {pattern.get('product', 'unknown')}"),
         pattern_id=pattern["pattern_id"],
         content=pattern,
     )

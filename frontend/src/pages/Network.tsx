@@ -9,6 +9,8 @@ import {
   Background,
   Controls,
   MiniMap,
+  Handle,
+  Position,
   type Node,
   type Edge,
   type NodeTypes,
@@ -41,6 +43,12 @@ function AgentNode({ data }: { data: AgentNodeData }) {
         boxShadow: `0 0 20px ${agentInfo.color}20`,
       }}
     >
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="!w-2 !h-2 !border-0 !rounded-full"
+        style={{ backgroundColor: agentInfo.color }}
+      />
       <div className="flex items-center gap-2 mb-2">
         <div
           className="w-3 h-3 rounded-full shrink-0"
@@ -64,6 +72,12 @@ function AgentNode({ data }: { data: AgentNodeData }) {
       >
         {agentInfo.model}
       </Badge>
+      <Handle
+        type="source"
+        position={Position.Right}
+        className="!w-2 !h-2 !border-0 !rounded-full"
+        style={{ backgroundColor: agentInfo.color }}
+      />
     </div>
   )
 }
@@ -150,35 +164,35 @@ export default function NetworkPage() {
         source: 'observer',
         target: 'case_understanding',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
       },
       {
         id: 'e-case_understanding-recurring_detector',
         source: 'case_understanding',
         target: 'recurring_detector',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
       },
       {
         id: 'e-recurring_detector-compliance_guardian',
         source: 'recurring_detector',
         target: 'compliance_guardian',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
       },
       {
         id: 'e-compliance_guardian-resolution_composer',
         source: 'compliance_guardian',
         target: 'resolution_composer',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
       },
       {
         id: 'e-resolution_composer-writeback',
         source: 'resolution_composer',
         target: 'writeback',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
       },
       // Inquiry bridge path
       {
@@ -186,14 +200,14 @@ export default function NetworkPage() {
         source: 'observer',
         target: 'inquiry_bridge',
         animated: true,
-        style: { stroke: 'rgba(236, 72, 153, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(236, 72, 153, 0.5)', strokeWidth: 2 },
       },
       {
         id: 'e-inquiry_bridge-resolution_composer',
         source: 'inquiry_bridge',
         target: 'resolution_composer',
         animated: true,
-        style: { stroke: 'rgba(236, 72, 153, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(236, 72, 153, 0.5)', strokeWidth: 2 },
       },
       // Memory curator path
       {
@@ -201,14 +215,14 @@ export default function NetworkPage() {
         source: 'recurring_detector',
         target: 'memory_curator',
         animated: true,
-        style: { stroke: 'rgba(99, 102, 241, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(99, 102, 241, 0.5)', strokeWidth: 2 },
       },
       {
         id: 'e-memory_curator-resolution_composer',
         source: 'memory_curator',
         target: 'resolution_composer',
         animated: true,
-        style: { stroke: 'rgba(99, 102, 241, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(99, 102, 241, 0.5)', strokeWidth: 2 },
       },
       // CSV Pack path
       {
@@ -216,7 +230,7 @@ export default function NetworkPage() {
         source: 'writeback',
         target: 'csv_pack',
         animated: true,
-        style: { stroke: 'rgba(20, 184, 166, 0.3)', strokeWidth: 2 },
+        style: { stroke: 'rgba(20, 184, 166, 0.5)', strokeWidth: 2 },
       },
     ],
     []
@@ -231,9 +245,9 @@ export default function NetworkPage() {
   }, [])
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-h-[600px]">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-[var(--glass-border)]">
+      <div className="pb-4 border-b border-[var(--glass-border)]">
         <h1 className="text-2xl font-bold text-[var(--text-primary)]">Network</h1>
         <p className="text-sm text-[var(--text-secondary)] mt-1">
           Agent mesh architecture - 9 agents connected via A2A protocol
@@ -241,12 +255,7 @@ export default function NetworkPage() {
       </div>
 
       {/* React Flow Canvas */}
-      <div
-        className="flex-1 bg-[var(--bg-base)]"
-        style={{
-          height: 'calc(100vh - 120px)',
-        }}
-      >
+      <div className="flex-1 min-h-[500px] bg-[var(--bg-base)]">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -289,7 +298,31 @@ export default function NetworkPage() {
           cursor: pointer;
         }
         .react-flow-dark .react-flow__edge-path {
-          stroke: rgba(255, 255, 255, 0.3);
+          stroke: rgba(255, 255, 255, 0.5);
+        }
+        .react-flow-dark .react-flow__controls {
+          background: var(--bg-elevated);
+          border: 1px solid var(--glass-border);
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        .react-flow-dark .react-flow__controls button {
+          background: var(--bg-elevated);
+          color: var(--text-secondary);
+          border: none;
+          border-bottom: 1px solid var(--glass-border);
+        }
+        .react-flow-dark .react-flow__controls button:hover {
+          background: var(--bg-surface);
+          color: var(--text-primary);
+        }
+        .react-flow-dark .react-flow__controls button svg {
+          fill: currentColor;
+        }
+        .react-flow-dark .react-flow__minimap {
+          background: var(--bg-elevated) !important;
+          border: 1px solid var(--glass-border) !important;
+          border-radius: 8px;
         }
         .react-flow-dark .react-flow__attribution {
           background: var(--bg-elevated);
@@ -298,6 +331,9 @@ export default function NetworkPage() {
           border-radius: 4px;
           padding: 2px 6px;
           font-size: 10px;
+        }
+        .react-flow-dark .react-flow__attribution a {
+          color: var(--text-muted);
         }
       `}</style>
     </div>

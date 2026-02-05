@@ -43,7 +43,7 @@ export function AppLayout() {
           {/* Animate route transitions with key */}
           <div
             key={location.pathname}
-            className="mx-auto max-w-7xl px-8 py-6 animate-fade-in"
+            className="mx-auto max-w-7xl px-8 py-6 h-full animate-fade-in"
           >
             <Outlet />
           </div>

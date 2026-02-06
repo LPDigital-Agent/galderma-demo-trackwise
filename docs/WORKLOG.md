@@ -121,287 +121,51 @@ Full frontend rebuild with shadcn/ui, React Flow, Motion v12, cmdk command palet
 Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, removed redundant endpoints.
 
 ---
-## Turn Log — 2026-02-06 01:54:00 UTC
 
-**User:** (no user message captured)
+## 2026-02-06: Floating Panel Architecture for Liquid Glass UI
 
-**Assistant:** (no assistant response captured)
+**Commit:** `4c04e93` — `✨ feat(frontend): Implement floating panel architecture for full Liquid Glass UI`
 
----
-
-## Turn Log — 2026-02-06 01:56:52 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:13:47 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
+**Changes:**
+- Converted fixed sidebar/statusbar to floating glass panels over wallpaper background
+- Sidebar: translucent floating panel with rounded corners, detached from viewport edges
+- StatusBar: floating bottom bar with glass treatment
+- Updated sidebarStore with persist middleware for collapsed state
+- Button component updated with Liquid Glass gradient variants
+- CommandPalette glass overlay refinements
+- CSS index.css updates for floating panel positioning and glass utilities
 
 ---
 
-## Turn Log — 2026-02-06 02:15:40 UTC
+## 2026-02-06: Auto-populate Demo Data on AgentCore Cold Start
 
-**User:** (no user message captured)
+**Commit:** `ed598fa` — `🐛 fix(backend): Auto-populate demo data on AgentCore cold start`
 
-**Assistant:** (no assistant response captured)
+**Changes (3 files):**
+- **`backend/src/main.py`**: Added 4-line guard clause at top of `invocations()` handler to auto-populate Galderma demo scenario when `_cases` dict is empty on cold start
+- **`frontend/public/assets/galderma-logo.svg`**: Widened viewBox from `240` to `300` to prevent "GALDERMA" text clipping
+- **`frontend/src/components/layout/Sidebar.tsx`**: Removed `overflow-hidden` from logo container
 
----
+**Root Cause:** AgentCore Runtime uses `@agentcore_app.entrypoint` handler pattern (like Lambda) — it never starts the ASGI server, so FastAPI's `lifespan()` context manager never executes. Demo data population lived exclusively in `lifespan()`, leaving `simulator_api._cases` permanently empty on deployed containers.
 
-## Turn Log — 2026-02-06 02:15:48 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:15:59 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
+**Verification:** All 13 backend tests pass. Deployed via GH Actions to production.
 
 ---
 
-## Turn Log — 2026-02-06 02:16:06 UTC
+## 2026-02-06: Fix API Base URL for Production
 
-**User:** (no user message captured)
+**Commit:** `15c3a90` — `🐛 fix(frontend): Append /api prefix to production API base URL`
 
-**Assistant:** (no assistant response captured)
+**Changes (1 file):**
+- **`frontend/src/api/client.ts`**: Fixed production API URL construction to append `/api` prefix. Lambda proxy routes all expect `/api/` prefixed paths, but the frontend was hitting the root path directly, causing 404 errors.
 
----
+**Root Cause:** `VITE_API_URL` env var contains the Lambda Function URL without `/api` suffix. The frontend's axios client used this as-is, resulting in requests to `/cases` instead of `/api/cases`.
 
-## Turn Log — 2026-02-06 02:16:15 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
+**Verification:** All API calls return 200 OK after deployment.
 
 ---
 
-## Turn Log — 2026-02-06 02:16:17 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:16:19 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:16:26 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:16:30 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:16:32 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:16:34 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:16:38 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:16:43 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:17:44 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:17:59 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:18:29 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:19:27 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:23:50 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:24:16 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:33:40 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:33:51 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:33:54 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:33:56 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:34:20 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:34:25 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:34:40 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:34:44 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:35:17 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:44:30 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:50:12 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:54:18 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 02:55:38 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 03:10:23 UTC
+## Turn Log — 2026-02-06 03:25:20 UTC
 
 **User:** (no user message captured)
 

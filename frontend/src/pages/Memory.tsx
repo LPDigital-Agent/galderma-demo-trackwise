@@ -47,7 +47,7 @@ export default function Memory() {
   return (
     <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div>
+      <div className="glass-float p-5 lg:p-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-[var(--brand-primary)]/10 flex items-center justify-center">
             <Brain className="w-5 h-5 text-[var(--brand-primary)]" />

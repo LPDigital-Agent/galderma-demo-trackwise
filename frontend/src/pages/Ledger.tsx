@@ -85,8 +85,8 @@ export default function Ledger() {
   return (
     <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div>
-        <div className="flex items-center justify-between">
+      <div className="glass-float p-5 lg:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
@@ -106,7 +106,7 @@ export default function Ledger() {
         </div>
 
         {/* Filters */}
-        <div className="mt-4 flex items-center gap-4">
+        <div className="mt-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm text-[var(--text-secondary)]">{t.agentFilter}</span>
             <Select value={selectedAgent} onValueChange={(value) => setSelectedAgent(value as AgentName | 'all')}>

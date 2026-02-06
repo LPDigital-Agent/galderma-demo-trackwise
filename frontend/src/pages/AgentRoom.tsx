@@ -95,38 +95,40 @@ export default function AgentRoom() {
   return (
     <div className="space-y-[var(--float-gap)]">
       {/* Header Section */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-text-primary tracking-tight">{t.title}</h1>
-          <p className="text-text-secondary mt-1">{t.subtitle}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={handleCreateScenario}
-            disabled={createScenario.isPending}
-            className="bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold shadow-lg shadow-brand-primary/15"
-          >
-            <Sparkles className="mr-2 h-4 w-4" />
-            {createScenario.isPending ? t.creatingScenario : t.createScenario}
-          </Button>
-          <Button
-            onClick={handleCreateBatch}
-            disabled={createBatch.isPending}
-            variant="outline"
-            className="font-medium"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            {createBatch.isPending ? t.creating : t.createBatch}
-          </Button>
-          <Button
-            onClick={handleResetDemo}
-            disabled={resetDemo.isPending}
-            variant="destructive"
-            className="font-medium"
-          >
-            <RotateCcw className="mr-2 h-4 w-4" />
-            {resetDemo.isPending ? t.resetting : t.resetDemo}
-          </Button>
+      <div className="glass-float p-5 lg:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-text-primary tracking-tight">{t.title}</h1>
+            <p className="text-text-secondary mt-1">{t.subtitle}</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              onClick={handleCreateScenario}
+              disabled={createScenario.isPending}
+              className="font-semibold"
+            >
+              <Sparkles className="mr-2 h-4 w-4" />
+              {createScenario.isPending ? t.creatingScenario : t.createScenario}
+            </Button>
+            <Button
+              onClick={handleCreateBatch}
+              disabled={createBatch.isPending}
+              variant="outline"
+              className="font-medium"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              {createBatch.isPending ? t.creating : t.createBatch}
+            </Button>
+            <Button
+              onClick={handleResetDemo}
+              disabled={resetDemo.isPending}
+              variant="destructive"
+              className="font-medium"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              {resetDemo.isPending ? t.resetting : t.resetDemo}
+            </Button>
+          </div>
         </div>
       </div>
 

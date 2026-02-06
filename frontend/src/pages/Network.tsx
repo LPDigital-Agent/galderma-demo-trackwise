@@ -248,7 +248,7 @@ export default function NetworkPage() {
   return (
     <div className="flex flex-col h-full min-h-[600px] gap-[var(--float-gap)]">
       {/* Header */}
-      <div>
+      <div className="glass-float p-5 lg:p-6">
         <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
         <p className="text-sm text-[var(--text-secondary)] mt-1">
           {t.subtitle}

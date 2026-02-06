@@ -58,7 +58,9 @@ export function CommandPalette() {
     // Handle actions
     switch (value) {
       case 'toggle-sidebar':
-        useSidebarStore.getState().toggle()
+        if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+          useSidebarStore.getState().toggle()
+        }
         break
       case 'reset':
         toast.success(t.toasts.resetRequested)

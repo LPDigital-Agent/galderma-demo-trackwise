@@ -18,24 +18,31 @@ export function AppLayout() {
   const location = useLocation()
 
   return (
-    <div className="relative h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden">
       {/* Sidebar — floating overlay */}
       <Sidebar />
 
-      {/* Main Content — full width, panels float over wallpaper */}
-      <main className="h-full flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto">
+      {/* Main Content — offset to keep persistent menu/status visible */}
+      <main
+        className={`
+          relative z-10 h-screen overflow-hidden
+          px-[var(--float-margin)] pt-[var(--float-margin)]
+          pb-[calc(var(--float-margin)+var(--status-height))]
+          lg:pl-[calc(var(--float-margin)*2+var(--sidebar-width))]
+        `}
+      >
+        <div className="h-full overflow-y-auto">
           <div
             key={location.pathname}
-            className="mx-auto max-w-7xl px-[var(--float-margin)] py-[var(--float-margin)] h-full animate-fade-in"
+            className="mx-auto max-w-[1600px] min-h-full animate-fade-in"
           >
             <Outlet />
           </div>
         </div>
-
-        {/* StatusBar — floating glass pill */}
-        <StatusBar />
       </main>
+
+      {/* StatusBar — floating glass pill */}
+      <StatusBar />
 
       {/* Command Palette (Cmd+K) */}
       <CommandPalette />

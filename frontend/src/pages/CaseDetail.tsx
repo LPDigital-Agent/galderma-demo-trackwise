@@ -64,13 +64,13 @@ export default function CaseDetail() {
 
   if (caseLoading) {
     return (
-      <div className="flex gap-[var(--float-gap)] h-full">
-        <div className="w-1/3 space-y-[var(--float-gap)]">
+      <div className="flex flex-col lg:flex-row gap-[var(--float-gap)] h-full">
+        <div className="lg:w-1/3 space-y-[var(--float-gap)]">
           <Skeleton className="h-10 w-32 bg-white/15" />
           <Skeleton className="h-64 bg-white/15" />
           <Skeleton className="h-48 bg-white/15" />
         </div>
-        <div className="w-2/3 space-y-[var(--float-gap)]">
+        <div className="lg:w-2/3 space-y-[var(--float-gap)]">
           <Skeleton className="h-96 bg-white/15" />
         </div>
       </div>
@@ -97,18 +97,20 @@ export default function CaseDetail() {
   const resolutionText = getResolutionForLanguage(caseData, language)
 
   return (
-    <div className="flex gap-[var(--float-gap)] h-full overflow-hidden">
+    <div className="flex flex-col lg:flex-row gap-[var(--float-gap)] h-full overflow-hidden">
       {/* Left Column */}
-      <div className="w-1/3 flex flex-col gap-[var(--float-gap)] overflow-auto">
+      <div className="lg:w-1/3 flex flex-col gap-[var(--float-gap)] overflow-auto">
         {/* Back Button */}
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/cases')}
-          className="w-fit text-text-secondary hover:text-text-primary"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {t.backToCases}
-        </Button>
+        <div className="glass-float p-2 w-fit">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/cases')}
+            className="w-fit text-text-secondary hover:text-text-primary"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {t.backToCases}
+          </Button>
+        </div>
 
         {/* Case Info Card */}
         <GlassPanel variant="floating">
@@ -233,7 +235,7 @@ export default function CaseDetail() {
       </div>
 
       {/* Right Column */}
-      <div className="w-2/3 flex flex-col gap-[var(--float-gap)] overflow-auto">
+      <div className="lg:w-2/3 flex flex-col gap-[var(--float-gap)] overflow-auto">
         {/* Processing Timeline */}
         <GlassPanel variant="floating" className="flex-1">
           <div className="flex items-center justify-between mb-4">

@@ -38,34 +38,31 @@ export default function Cases() {
   return (
     <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="glass-float p-5 lg:p-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-3xl font-semibold text-text-primary">{t.title}</h1>
           {data && (
             <Badge
               variant="outline"
-              className="bg-brand-primary/8 backdrop-blur-sm border-brand-primary/15 text-brand-primary"
+              className="bg-brand-primary/12 border-brand-primary/30 text-brand-primary"
             >
               {data.total}
             </Badge>
           )}
         </div>
-        <Button
-          onClick={() => setCreateModalOpen(true)}
-          className="bg-brand-primary hover:bg-brand-primary/90 text-white"
-        >
+        <Button onClick={() => setCreateModalOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           {t.newCase}
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3">
+      <div className="glass-float p-4 flex flex-wrap gap-3">
         <Select
           value={statusFilter}
           onValueChange={(value) => setStatusFilter(value as CaseStatus | 'ALL')}
         >
-          <SelectTrigger className="w-[180px] bg-glass-bg border-glass-border">
+          <SelectTrigger className="w-[180px]">
             <SelectValue placeholder={t.filters.filterByStatus} />
           </SelectTrigger>
           <SelectContent>
@@ -82,7 +79,7 @@ export default function Cases() {
           value={severityFilter}
           onValueChange={(value) => setSeverityFilter(value as CaseSeverity | 'ALL')}
         >
-          <SelectTrigger className="w-[180px] bg-glass-bg border-glass-border">
+          <SelectTrigger className="w-[180px]">
             <SelectValue placeholder={t.filters.filterBySeverity} />
           </SelectTrigger>
           <SelectContent>

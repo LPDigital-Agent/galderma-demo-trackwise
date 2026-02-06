@@ -27,7 +27,7 @@ const ROUTE_META: Array<{ matcher: RegExp; meta: ShellRouteMeta }> = [
     meta: {
       title: 'Casos',
       subtitle: 'Triagem, status e andamento operacional',
-      showGlobalRail: true,
+      showGlobalRail: false,
     },
   },
   {
@@ -35,7 +35,7 @@ const ROUTE_META: Array<{ matcher: RegExp; meta: ShellRouteMeta }> = [
     meta: {
       title: 'Detalhe do Caso',
       subtitle: 'Resumo da execução, trilha e resolução',
-      showGlobalRail: true,
+      showGlobalRail: false,
     },
   },
   {
@@ -43,7 +43,7 @@ const ROUTE_META: Array<{ matcher: RegExp; meta: ShellRouteMeta }> = [
     meta: {
       title: 'Rede',
       subtitle: 'Topologia A2A e fluxo entre agentes',
-      showGlobalRail: true,
+      showGlobalRail: false,
     },
   },
   {
@@ -51,7 +51,7 @@ const ROUTE_META: Array<{ matcher: RegExp; meta: ShellRouteMeta }> = [
     meta: {
       title: 'Memória',
       subtitle: 'Padrões, templates e políticas ativas',
-      showGlobalRail: true,
+      showGlobalRail: false,
     },
   },
   {
@@ -59,7 +59,7 @@ const ROUTE_META: Array<{ matcher: RegExp; meta: ShellRouteMeta }> = [
     meta: {
       title: 'Registro',
       subtitle: 'Trilha auditável das decisões de agentes',
-      showGlobalRail: true,
+      showGlobalRail: false,
     },
   },
   {
@@ -67,7 +67,7 @@ const ROUTE_META: Array<{ matcher: RegExp; meta: ShellRouteMeta }> = [
     meta: {
       title: 'Pacote CSV',
       subtitle: 'Artefatos de conformidade e validação',
-      showGlobalRail: true,
+      showGlobalRail: false,
     },
   },
 ]
@@ -75,7 +75,7 @@ const ROUTE_META: Array<{ matcher: RegExp; meta: ShellRouteMeta }> = [
 const DEFAULT_META: ShellRouteMeta = {
   title: 'TrackWise AI',
   subtitle: 'Plataforma de execução assistida por agentes',
-  showGlobalRail: true,
+  showGlobalRail: false,
 }
 
 export function getShellRouteMeta(pathname: string): ShellRouteMeta {

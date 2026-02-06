@@ -19,7 +19,7 @@ function KpiCard({ item }: { item: KpiItem }) {
     <article className="glass-card p-4 lg:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-xs font-medium text-[var(--lg-text-tertiary)] tracking-[0.02em] uppercase">
+          <p className="text-xs font-medium text-[var(--lg-text-tertiary)] tracking-[0.04em] uppercase">
             {item.label}
           </p>
           <p className="text-3xl lg:text-[2.15rem] font-semibold tracking-tight text-[var(--lg-text-primary)]">
@@ -29,8 +29,7 @@ function KpiCard({ item }: { item: KpiItem }) {
         </div>
 
         <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/50"
-          style={{ background: `color-mix(in oklab, ${item.accent} 16%, white 84%)` }}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/8"
         >
           <Icon className="h-5 w-5" style={{ color: item.accent }} />
         </div>
@@ -67,7 +66,7 @@ export function GlobalKpiDeck({
       value: aiClosedCount.toLocaleString(),
       sublabel: t.metrics.aiClosedSublabel(totalCases.toLocaleString()),
       icon: CheckCircle2,
-      accent: 'var(--lg-accent-emerald)',
+      accent: 'var(--system-green)',
     },
     {
       id: 'hours-saved',
@@ -75,7 +74,7 @@ export function GlobalKpiDeck({
       value: humanHoursSaved.toLocaleString(),
       sublabel: t.metrics.hoursSavedSublabel,
       icon: Zap,
-      accent: 'var(--lg-accent-cyan)',
+      accent: 'var(--system-teal)',
     },
     {
       id: 'risks-avoided',
@@ -83,7 +82,7 @@ export function GlobalKpiDeck({
       value: risksAvoided.toLocaleString(),
       sublabel: t.metrics.risksAvoidedSublabel,
       icon: Shield,
-      accent: 'var(--lg-accent-violet)',
+      accent: 'var(--system-indigo)',
     },
   ]
 

@@ -1,6 +1,6 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// Sidebar Component - Liquid Glass Navigation Shell
+// Sidebar Component - Apple Liquid Glass Navigation
 // ============================================
 
 import { useEffect } from 'react'
@@ -40,8 +40,8 @@ function SidebarBody({ onNavigate, onClose, showCloseButton = false }: SidebarBo
       <div className="px-5 pb-4 pt-5">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 rounded-2xl border border-white/60 bg-white/35 px-2.5 py-1">
-              <img src="/assets/galderma-logo.svg" alt="Galderma" className="h-4 object-contain object-left" />
+            <div className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/8 px-2.5 py-1">
+              <img src="/assets/galderma-logo.svg" alt="Galderma" className="h-4 object-contain object-left brightness-0 invert" />
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--lg-text-tertiary)]">TrackWise</p>
@@ -62,7 +62,7 @@ function SidebarBody({ onNavigate, onClose, showCloseButton = false }: SidebarBo
       </div>
 
       <nav className="flex-1 px-3 py-2">
-        <ul className="space-y-1.5">
+        <ul className="space-y-1">
           {NAV_ITEMS.map(({ icon: Icon, label, route }) => (
             <li key={route}>
               <NavLink
@@ -70,11 +70,10 @@ function SidebarBody({ onNavigate, onClose, showCloseButton = false }: SidebarBo
                 onClick={onNavigate}
                 className={({ isActive }) =>
                   cn(
-                    'group relative flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-all duration-[220ms]',
-                    'before:absolute before:inset-x-1 before:bottom-0 before:h-px before:bg-white/30 before:content-[""]',
+                    'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200',
                     isActive
-                      ? 'glass-control text-[var(--lg-text-primary)] shadow-[0_10px_24px_rgba(15,24,40,0.16)]'
-                      : 'text-[var(--lg-text-secondary)] hover:bg-white/30 hover:text-[var(--lg-text-primary)]'
+                      ? 'bg-white/18 text-[var(--lg-text-primary)] shadow-[0_4px_16px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.15)]'
+                      : 'text-[var(--lg-text-secondary)] hover:bg-white/10 hover:text-[var(--lg-text-primary)]'
                   )
                 }
               >
@@ -82,20 +81,20 @@ function SidebarBody({ onNavigate, onClose, showCloseButton = false }: SidebarBo
                   <>
                     <span
                       className={cn(
-                        'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border transition-all duration-[220ms]',
+                        'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-all duration-200',
                         isActive
-                          ? 'border-white/75 bg-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]'
-                          : 'border-white/40 bg-white/30 group-hover:border-white/60 group-hover:bg-white/45'
+                          ? 'border-white/25 bg-white/15'
+                          : 'border-white/10 bg-white/6 group-hover:border-white/18 group-hover:bg-white/10'
                       )}
                     >
                       <Icon
                         className={cn(
                           'h-4 w-4',
-                          isActive ? 'text-[var(--brand-secondary)]' : 'text-[var(--lg-text-secondary)]'
+                          isActive ? 'text-[var(--system-blue)]' : 'text-[var(--lg-text-secondary)]'
                         )}
                       />
                     </span>
-                    <span className="truncate text-[0.98rem] font-medium">{label}</span>
+                    <span className="truncate text-[0.94rem] font-medium">{label}</span>
                   </>
                 )}
               </NavLink>
@@ -105,9 +104,9 @@ function SidebarBody({ onNavigate, onClose, showCloseButton = false }: SidebarBo
       </nav>
 
       <div className="px-5 pb-5 pt-2">
-        <div className="glass-control rounded-2xl px-3 py-2 text-center">
+        <div className="rounded-xl border border-white/10 bg-white/6 px-3 py-2 text-center">
           <p className="text-xs font-medium text-[var(--lg-text-secondary)]">TrackWise AI Autopilot</p>
-          <p className="text-[11px] text-[var(--lg-text-tertiary)]">Liquid Glass v2</p>
+          <p className="text-[11px] text-[var(--lg-text-tertiary)]">Liquid Glass v3</p>
         </div>
       </div>
     </>
@@ -150,7 +149,7 @@ export function Sidebar() {
       <AnimatePresence>
         {isOpen ? (
           <motion.div
-            className="fixed inset-0 z-50 bg-[var(--bg-overlay)] backdrop-blur-md lg:hidden"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

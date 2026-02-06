@@ -88,8 +88,8 @@ export default function CSVPack() {
       <div className="glass-shell p-5 lg:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
+            <h1 className="text-2xl font-bold text-[var(--lg-text-primary)]">{t.title}</h1>
+            <p className="text-sm text-[var(--lg-text-secondary)] mt-1">
               {t.subtitle}
             </p>
           </div>
@@ -143,24 +143,24 @@ export default function CSVPack() {
             <GlassPanel variant="shell" className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                  <h2 className="text-lg font-semibold text-[var(--lg-text-primary)]">
                     {t.packGenerated}
                   </h2>
-                  <p className="text-sm text-[var(--text-secondary)] mt-1">
+                  <p className="text-sm text-[var(--lg-text-secondary)] mt-1">
                     {t.readyForAudit}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge
                     variant="outline"
-                    className="bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30"
+                    className="bg-green-500/10 backdrop-blur-sm text-green-400 border-green-400/30"
                   >
                     <CheckCircle2 className="w-3 h-3 mr-1" />
                     {t.auditReady}
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30"
+                    className="bg-green-500/10 backdrop-blur-sm text-green-400 border-green-400/30"
                   >
                     {result.status}
                   </Badge>
@@ -169,7 +169,7 @@ export default function CSVPack() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                 <div>
-                  <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">
+                  <div className="text-xs text-[var(--lg-text-tertiary)] uppercase tracking-wide">
                     {t.summary.packId}
                   </div>
                   <div className="text-sm font-mono text-[var(--brand-secondary)] mt-1">
@@ -177,26 +177,26 @@ export default function CSVPack() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">
+                  <div className="text-xs text-[var(--lg-text-tertiary)] uppercase tracking-wide">
                     {t.summary.generatedAt}
                   </div>
-                  <div className="text-sm text-[var(--text-primary)] mt-1">
+                  <div className="text-sm text-[var(--lg-text-primary)] mt-1">
                     {formatDate(result.generated_at)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">
+                  <div className="text-xs text-[var(--lg-text-tertiary)] uppercase tracking-wide">
                     {t.summary.casesAnalyzed}
                   </div>
-                  <div className="text-sm font-mono text-[var(--text-primary)] mt-1">
+                  <div className="text-sm font-mono text-[var(--lg-text-primary)] mt-1">
                     {result.total_cases_analyzed}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">
+                  <div className="text-xs text-[var(--lg-text-tertiary)] uppercase tracking-wide">
                     {t.summary.complianceStandard}
                   </div>
-                  <div className="text-sm font-mono text-[var(--text-primary)] mt-1">
+                  <div className="text-sm font-mono text-[var(--lg-text-primary)] mt-1">
                     {result.compliance_standard}
                   </div>
                 </div>
@@ -204,18 +204,18 @@ export default function CSVPack() {
 
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div>
-                  <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">
+                  <div className="text-xs text-[var(--lg-text-tertiary)] uppercase tracking-wide">
                     {t.summary.closedCases}
                   </div>
-                  <div className="text-sm font-mono text-green-600 mt-1">
+                  <div className="text-sm font-mono text-green-400 mt-1">
                     {result.closed_cases}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">
+                  <div className="text-xs text-[var(--lg-text-tertiary)] uppercase tracking-wide">
                     {t.summary.totalLedgerEntries}
                   </div>
-                  <div className="text-sm font-mono text-[var(--text-primary)] mt-1">
+                  <div className="text-sm font-mono text-[var(--lg-text-primary)] mt-1">
                     {result.total_ledger_entries}
                   </div>
                 </div>
@@ -224,7 +224,7 @@ export default function CSVPack() {
 
             {/* Artifacts Grid */}
             <div>
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+              <h3 className="text-lg font-semibold text-[var(--lg-text-primary)] mb-4">
                 {t.complianceArtifacts} ({result.artifacts.length})
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -234,17 +234,17 @@ export default function CSVPack() {
                     <GlassPanel
                       key={artifact.artifact_id}
                       variant="card"
-                      className="p-5 transition-all hover:-translate-y-[1px] hover:shadow-[0_18px_28px_rgba(15,24,40,0.18)]"
+                      className="p-5 transition-all hover:-translate-y-[1px] hover:shadow-[0_18px_28px_rgba(0,0,0,0.35)]"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-2xl border border-white/60 bg-white/50 backdrop-blur-sm flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-2xl border border-white/15 bg-white/8 backdrop-blur-sm flex items-center justify-center shrink-0">
                           <Icon className="w-5 h-5 text-[var(--brand-primary)]" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
+                          <h4 className="text-sm font-semibold text-[var(--lg-text-primary)] mb-1">
                             {artifact.title}
                           </h4>
-                          <p className="text-xs text-[var(--text-secondary)] mb-3 line-clamp-2">
+                          <p className="text-xs text-[var(--lg-text-secondary)] mb-3 line-clamp-2">
                             {artifact.description}
                           </p>
                           <div className="flex items-center justify-between">
@@ -253,8 +253,8 @@ export default function CSVPack() {
                               className={cn(
                                 'text-[10px]',
                                 artifact.status === 'COMPLETE'
-                                  ? 'bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30'
-                                  : 'bg-amber-500/10 backdrop-blur-sm text-amber-600 border-amber-300/30'
+                                  ? 'bg-green-500/10 backdrop-blur-sm text-green-400 border-green-400/30'
+                                  : 'bg-amber-500/10 backdrop-blur-sm text-amber-400 border-amber-400/30'
                               )}
                             >
                               {artifact.status}
@@ -271,14 +271,14 @@ export default function CSVPack() {
                           </div>
                         </div>
                       </div>
-                      <div className="mt-3 pt-3 border-t border-[var(--glass-border)]">
+                      <div className="mt-3 pt-3 border-t border-[var(--lg-border-soft)]">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-[var(--text-muted)]">{t.artifactId}</span>
+                          <span className="text-[var(--lg-text-tertiary)]">{t.artifactId}</span>
                         <span className="font-mono text-[var(--brand-secondary)]">{artifact.artifact_id}</span>
                         </div>
                         <div className="flex items-center justify-between text-xs mt-1">
-                          <span className="text-[var(--text-muted)]">{t.type}</span>
-                          <span className="font-mono text-[var(--text-secondary)]">{artifact.artifact_type}</span>
+                          <span className="text-[var(--lg-text-tertiary)]">{t.type}</span>
+                          <span className="font-mono text-[var(--lg-text-secondary)]">{artifact.artifact_type}</span>
                         </div>
                       </div>
                     </GlassPanel>
@@ -294,10 +294,10 @@ export default function CSVPack() {
                   <Rocket className="w-4 h-4 text-[var(--brand-accent)]" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                  <h3 className="text-lg font-semibold text-[var(--lg-text-primary)]">
                     {t.extensibility.title}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-sm text-[var(--lg-text-secondary)]">
                     {t.extensibility.description}
                   </p>
                 </div>
@@ -306,10 +306,10 @@ export default function CSVPack() {
                 {t.extensibility.items.map((item) => (
                   <div key={item.name} className="glass-control flex items-center justify-between p-3 rounded-xl">
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-[var(--text-primary)]">
+                      <div className="text-sm font-medium text-[var(--lg-text-primary)]">
                         {item.name}
                       </div>
-                      <div className="text-xs text-[var(--text-secondary)] mt-0.5">
+                      <div className="text-xs text-[var(--lg-text-secondary)] mt-0.5">
                         {item.description}
                       </div>
                     </div>
@@ -318,8 +318,8 @@ export default function CSVPack() {
                       className={cn(
                         'ml-4 shrink-0 text-[10px]',
                         item.status === 'EM DESENVOLVIMENTO'
-                          ? 'bg-amber-500/10 backdrop-blur-sm text-amber-600 border-amber-300/30'
-                          : 'bg-blue-500/10 backdrop-blur-sm text-blue-600 border-blue-300/30'
+                          ? 'bg-amber-500/10 backdrop-blur-sm text-amber-400 border-amber-400/30'
+                          : 'bg-blue-500/10 backdrop-blur-sm text-blue-400 border-blue-400/30'
                       )}
                     >
                       {item.status}

@@ -23,12 +23,12 @@ import { toast } from 'sonner'
 // Action Badge Helper
 // ============================================
 function getActionColor(action: string): string {
-  if (action.includes('APPROVED') || action.includes('GENERATED')) return 'bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30'
-  if (action.includes('REVIEW') || action.includes('PENDING')) return 'bg-amber-500/10 backdrop-blur-sm text-amber-600 border-amber-300/30'
-  if (action.includes('REJECTED') || action.includes('ERROR') || action.includes('ESCALATED')) return 'bg-red-500/10 backdrop-blur-sm text-red-600 border-red-300/30'
-  if (action.includes('PATTERN')) return 'bg-cyan-500/10 backdrop-blur-sm text-cyan-600 border-cyan-300/30'
-  if (action.includes('COMPLIANCE')) return 'bg-purple-500/10 backdrop-blur-sm text-purple-600 border-purple-300/30'
-  return 'bg-gray-500/10 backdrop-blur-sm text-gray-600 border-gray-300/30'
+  if (action.includes('APPROVED') || action.includes('GENERATED')) return 'bg-green-500/10 backdrop-blur-sm text-green-400 border-green-400/30'
+  if (action.includes('REVIEW') || action.includes('PENDING')) return 'bg-amber-500/10 backdrop-blur-sm text-amber-400 border-amber-400/30'
+  if (action.includes('REJECTED') || action.includes('ERROR') || action.includes('ESCALATED')) return 'bg-red-500/10 backdrop-blur-sm text-red-400 border-red-400/30'
+  if (action.includes('PATTERN')) return 'bg-cyan-500/10 backdrop-blur-sm text-cyan-400 border-cyan-400/30'
+  if (action.includes('COMPLIANCE')) return 'bg-purple-500/10 backdrop-blur-sm text-purple-400 border-purple-400/30'
+  return 'bg-gray-500/10 backdrop-blur-sm text-gray-400 border-gray-400/30'
 }
 
 // ============================================
@@ -65,7 +65,7 @@ export default function Ledger() {
   const getConfidenceDisplay = (confidence?: number) => {
     if (!confidence) return null
     const percent = Math.round(confidence * 100)
-    const colorClass = confidence >= 0.8 ? 'text-green-600' : confidence >= 0.5 ? 'text-amber-600' : 'text-red-600'
+    const colorClass = confidence >= 0.8 ? 'text-green-400' : confidence >= 0.5 ? 'text-amber-400' : 'text-red-400'
     return <span className={cn('font-mono', colorClass)}>{percent}%</span>
   }
 
@@ -88,8 +88,8 @@ export default function Ledger() {
       <div className="glass-shell p-5 lg:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
+            <h1 className="text-2xl font-bold text-[var(--lg-text-primary)]">{t.title}</h1>
+            <p className="text-sm text-[var(--lg-text-secondary)] mt-1">
               {t.subtitle}
             </p>
           </div>
@@ -108,7 +108,7 @@ export default function Ledger() {
         {/* Filters */}
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-[var(--text-secondary)]">{t.agentFilter}</span>
+            <span className="text-sm text-[var(--lg-text-secondary)]">{t.agentFilter}</span>
             <Select value={selectedAgent} onValueChange={(value) => setSelectedAgent(value as AgentName | 'all')}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue />
@@ -164,7 +164,7 @@ export default function Ledger() {
                     )}
                     onClick={() => navigate(`/cases/${entry.case_id}`)}
                   >
-                    <TableCell className="font-mono text-xs text-[var(--text-secondary)]">
+                    <TableCell className="font-mono text-xs text-[var(--lg-text-secondary)]">
                       {formatTimestamp(entry.timestamp)}
                     </TableCell>
                     <TableCell>
@@ -175,7 +175,7 @@ export default function Ledger() {
                         {entry.action.replace(/_/g, ' ')}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--text-secondary)] max-w-md truncate">
+                    <TableCell className="text-sm text-[var(--lg-text-secondary)] max-w-md truncate">
                       {entry.decision || entry.action_description || '—'}
                     </TableCell>
                     <TableCell className="text-right">
@@ -190,7 +190,7 @@ export default function Ledger() {
                     >
                       {entry.case_id}
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-[var(--text-muted)]">
+                    <TableCell className="font-mono text-xs text-[var(--lg-text-tertiary)]">
                       {entry.entry_hash ? `${entry.entry_hash.slice(0, 8)}...` : '—'}
                     </TableCell>
                   </TableRow>

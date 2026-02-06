@@ -33,7 +33,6 @@ export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
 
-  // Listen for Cmd+K / Ctrl+K
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -47,7 +46,6 @@ export function CommandPalette() {
   }, [])
 
   const handleSelect = (value: string) => {
-    // Check if it's a page navigation
     const page = PAGES.find((p) => p.route === value)
     if (page) {
       navigate(value)
@@ -55,7 +53,6 @@ export function CommandPalette() {
       return
     }
 
-    // Handle actions
     switch (value) {
       case 'toggle-sidebar':
         if (typeof window !== 'undefined' && window.innerWidth < 1024) {
@@ -81,7 +78,7 @@ export function CommandPalette() {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/30 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 bg-black/45 backdrop-blur-lg animate-fade-in"
       onClick={() => setIsOpen(false)}
     >
       <div
@@ -91,29 +88,28 @@ export function CommandPalette() {
         <Command
           className={cn(
             'rounded-2xl overflow-hidden',
-            'bg-[var(--glass-bg)] backdrop-blur-3xl border-[0.5px] border-[var(--glass-border)]',
+            'bg-white/12 backdrop-blur-3xl border-[0.5px] border-white/20',
             'shadow-[var(--shadow-elevated)]'
           )}
         >
           <Command.Input
             placeholder={t.searchPlaceholder}
             className={cn(
-              'w-full px-4 py-3 text-sm',
-              'bg-transparent border-b border-[var(--glass-border)]',
-              'text-[var(--text-primary)] placeholder:text-[var(--text-muted)]',
+              'w-full px-4 py-3.5 text-sm',
+              'bg-transparent border-b border-white/12',
+              'text-[var(--lg-text-primary)] placeholder:text-[var(--lg-text-tertiary)]',
               'outline-none'
             )}
           />
 
           <Command.List className="max-h-[400px] overflow-y-auto p-2">
-            <Command.Empty className="py-6 text-center text-sm text-[var(--text-muted)]">
+            <Command.Empty className="py-6 text-center text-sm text-[var(--lg-text-tertiary)]">
               {t.noResults}
             </Command.Empty>
 
-            {/* Pages Group */}
             <Command.Group
               heading={t.pages}
-              className="text-xs text-[var(--text-muted)] px-2 py-1.5 font-medium"
+              className="text-xs text-[var(--lg-text-tertiary)] px-2 py-1.5 font-medium"
             >
               {PAGES.map(({ icon: Icon, label, route }) => (
                 <Command.Item
@@ -122,10 +118,10 @@ export function CommandPalette() {
                   onSelect={handleSelect}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer',
-                    'text-sm text-[var(--text-secondary)]',
-                    'hover:bg-white/20 hover:text-[var(--text-primary)]',
+                    'text-sm text-[var(--lg-text-secondary)]',
+                    'hover:bg-white/10 hover:text-[var(--lg-text-primary)]',
                     'transition-colors duration-150',
-                    'aria-selected:bg-white/25 aria-selected:text-[var(--text-primary)]'
+                    'aria-selected:bg-white/15 aria-selected:text-[var(--lg-text-primary)]'
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -134,10 +130,9 @@ export function CommandPalette() {
               ))}
             </Command.Group>
 
-            {/* Actions Group */}
             <Command.Group
               heading={t.actions}
-              className="text-xs text-[var(--text-muted)] px-2 py-1.5 font-medium mt-2"
+              className="text-xs text-[var(--lg-text-tertiary)] px-2 py-1.5 font-medium mt-2"
             >
               {ACTIONS.map(({ icon: Icon, label, action }) => (
                 <Command.Item
@@ -146,10 +141,10 @@ export function CommandPalette() {
                   onSelect={handleSelect}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer',
-                    'text-sm text-[var(--text-secondary)]',
-                    'hover:bg-white/20 hover:text-[var(--text-primary)]',
+                    'text-sm text-[var(--lg-text-secondary)]',
+                    'hover:bg-white/10 hover:text-[var(--lg-text-primary)]',
                     'transition-colors duration-150',
-                    'aria-selected:bg-white/25 aria-selected:text-[var(--text-primary)]'
+                    'aria-selected:bg-white/15 aria-selected:text-[var(--lg-text-primary)]'
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />

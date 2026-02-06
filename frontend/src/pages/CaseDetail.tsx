@@ -66,12 +66,12 @@ export default function CaseDetail() {
     return (
       <div className="flex flex-col lg:flex-row gap-[var(--float-gap)] h-full">
         <div className="lg:w-1/3 space-y-[var(--float-gap)]">
-          <Skeleton className="h-10 w-32 bg-white/15" />
-          <Skeleton className="h-64 bg-white/15" />
-          <Skeleton className="h-48 bg-white/15" />
+          <Skeleton className="h-10 w-32 bg-white/10" />
+          <Skeleton className="h-64 bg-white/10" />
+          <Skeleton className="h-48 bg-white/10" />
         </div>
         <div className="lg:w-2/3 space-y-[var(--float-gap)]">
-          <Skeleton className="h-96 bg-white/15" />
+          <Skeleton className="h-96 bg-white/10" />
         </div>
       </div>
     )
@@ -81,7 +81,7 @@ export default function CaseDetail() {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <p className="text-text-secondary">{t.notFound}</p>
+          <p className="text-[var(--lg-text-secondary)]">{t.notFound}</p>
           <Button
             onClick={() => navigate('/cases')}
             variant="outline"
@@ -116,90 +116,90 @@ export default function CaseDetail() {
         <GlassPanel variant="shell">
           <div className="space-y-4">
             <div>
-              <p className="text-text-muted text-sm mb-1">{t.labels.caseId}</p>
-              <p className="font-mono text-brand-accent text-lg">{caseData.case_id}</p>
+              <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.caseId}</p>
+              <p className="font-mono text-[var(--brand-accent)] text-lg">{caseData.case_id}</p>
             </div>
 
-            <Separator className="bg-glass-border" />
+            <Separator className="bg-[var(--lg-border-soft)]" />
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-text-muted text-sm mb-1">{t.labels.status}</p>
+                <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.status}</p>
                 <StatusBadge status={caseData.status} />
               </div>
               <div>
-                <p className="text-text-muted text-sm mb-1">{t.labels.severity}</p>
+                <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.severity}</p>
                 <SeverityBadge severity={caseData.severity} />
               </div>
             </div>
 
-            <Separator className="bg-glass-border" />
+            <Separator className="bg-[var(--lg-border-soft)]" />
 
             <div>
-              <p className="text-text-muted text-sm mb-1">{t.labels.productBrand}</p>
-              <p className="text-text-primary font-medium">{caseData.product_brand}</p>
+              <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.productBrand}</p>
+              <p className="text-[var(--lg-text-primary)] font-medium">{caseData.product_brand}</p>
             </div>
 
             <div>
-              <p className="text-text-muted text-sm mb-1">{t.labels.productName}</p>
-              <p className="text-text-primary">{caseData.product_name}</p>
+              <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.productName}</p>
+              <p className="text-[var(--lg-text-primary)]">{caseData.product_name}</p>
             </div>
 
             {caseData.lot_number && (
               <div>
-                <p className="text-text-muted text-sm mb-1">{t.labels.lotNumber}</p>
-                <p className="font-mono text-text-primary">{caseData.lot_number}</p>
+                <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.lotNumber}</p>
+                <p className="font-mono text-[var(--lg-text-primary)]">{caseData.lot_number}</p>
               </div>
             )}
 
-            <Separator className="bg-glass-border" />
+            <Separator className="bg-[var(--lg-border-soft)]" />
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-text-muted text-sm mb-1">{t.labels.type}</p>
-                <p className="text-text-primary">{caseData.case_type.replace('_', ' ')}</p>
+                <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.type}</p>
+                <p className="text-[var(--lg-text-primary)]">{caseData.case_type.replace('_', ' ')}</p>
               </div>
               {caseData.category && (
                 <div>
-                  <p className="text-text-muted text-sm mb-1">{t.labels.category}</p>
-                  <p className="text-text-primary">{caseData.category}</p>
+                  <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.category}</p>
+                  <p className="text-[var(--lg-text-primary)]">{caseData.category}</p>
                 </div>
               )}
             </div>
 
-            <Separator className="bg-glass-border" />
+            <Separator className="bg-[var(--lg-border-soft)]" />
 
             <div>
-              <p className="text-text-muted text-sm mb-1">{t.labels.customer}</p>
-              <p className="text-text-primary font-medium">{caseData.customer_name}</p>
+              <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.customer}</p>
+              <p className="text-[var(--lg-text-primary)] font-medium">{caseData.customer_name}</p>
               {caseData.customer_email && (
-                <p className="text-text-secondary text-sm">{caseData.customer_email}</p>
+                <p className="text-[var(--lg-text-secondary)] text-sm">{caseData.customer_email}</p>
               )}
               {caseData.customer_phone && (
-                <p className="text-text-secondary text-sm">{caseData.customer_phone}</p>
+                <p className="text-[var(--lg-text-secondary)] text-sm">{caseData.customer_phone}</p>
               )}
             </div>
 
-            <Separator className="bg-glass-border" />
+            <Separator className="bg-[var(--lg-border-soft)]" />
 
             <div>
-              <p className="text-text-muted text-sm mb-1">{t.labels.created}</p>
-              <p className="text-text-secondary text-sm font-mono">{formatDate(caseData.created_at)}</p>
+              <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.created}</p>
+              <p className="text-[var(--lg-text-secondary)] text-sm font-mono">{formatDate(caseData.created_at)}</p>
             </div>
           </div>
         </GlassPanel>
 
         {/* Complaint Text */}
         <GlassPanel variant="card">
-          <h3 className="text-text-primary font-semibold mb-3">{t.complaint}</h3>
-          <p className="text-text-secondary leading-relaxed">{caseData.complaint_text}</p>
+          <h3 className="text-[var(--lg-text-primary)] font-semibold mb-3">{t.complaint}</h3>
+          <p className="text-[var(--lg-text-secondary)] leading-relaxed">{caseData.complaint_text}</p>
         </GlassPanel>
 
         {/* Resolution Text */}
         {resolutionText && (
           <GlassPanel variant="card">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-text-primary font-semibold">{t.resolution}</h3>
+              <h3 className="text-[var(--lg-text-primary)] font-semibold">{t.resolution}</h3>
               <Select value={language} onValueChange={(val) => setLanguage(val as Language)}>
                 <SelectTrigger className="w-[120px] h-8">
                   <SelectValue />
@@ -213,22 +213,22 @@ export default function CaseDetail() {
                 </SelectContent>
               </Select>
             </div>
-            <p className="text-text-secondary leading-relaxed">{resolutionText}</p>
+            <p className="text-[var(--lg-text-secondary)] leading-relaxed">{resolutionText}</p>
           </GlassPanel>
         )}
 
         {/* Linked Case */}
         {caseData.linked_case_id && (
           <GlassPanel variant="card">
-            <h3 className="text-text-primary font-semibold mb-3 flex items-center gap-2">
+            <h3 className="text-[var(--lg-text-primary)] font-semibold mb-3 flex items-center gap-2">
               <LinkIcon className="w-4 h-4" />
               {t.linkedCase}
             </h3>
             <div
               onClick={() => navigate(`/cases/${caseData.linked_case_id}`)}
-              className="glass-control flex items-center justify-between p-3 rounded-xl hover:bg-white/55 cursor-pointer transition-colors"
+              className="glass-control flex items-center justify-between p-3 rounded-xl hover:bg-white/10 cursor-pointer transition-colors"
             >
-              <span className="font-mono text-brand-accent">{caseData.linked_case_id}</span>
+              <span className="font-mono text-[var(--brand-accent)]">{caseData.linked_case_id}</span>
             </div>
           </GlassPanel>
         )}
@@ -239,12 +239,12 @@ export default function CaseDetail() {
         {/* Processing Timeline */}
         <GlassPanel variant="shell" className="flex-1">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-text-primary font-semibold text-lg">{t.processingTimeline}</h3>
+            <h3 className="text-[var(--lg-text-primary)] font-semibold text-lg">{t.processingTimeline}</h3>
             <Button
               onClick={() => setAuditorOpen(true)}
               variant="outline"
               size="sm"
-              className="border-brand-primary/30 text-brand-primary hover:bg-brand-primary/10"
+              className="border-white/15 text-[var(--brand-primary)] hover:bg-white/10"
             >
               {t.openAuditor}
             </Button>
@@ -253,7 +253,7 @@ export default function CaseDetail() {
           {runsLoading ? (
             <div className="space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-24 bg-white/15" />
+                <Skeleton key={i} className="h-24 bg-white/10" />
               ))}
             </div>
           ) : agentSteps.length > 0 ? (
@@ -262,14 +262,14 @@ export default function CaseDetail() {
                 <div key={step.step_number} className="relative">
                   {/* Timeline connector */}
                   {step.step_number < agentSteps.length && (
-                    <div className="absolute left-3 top-10 bottom-0 w-px bg-glass-border" />
+                    <div className="absolute left-3 top-10 bottom-0 w-px bg-[var(--lg-border-soft)]" />
                   )}
 
                   <div className="flex gap-4">
                     {/* Agent dot */}
                     <div className="relative flex-shrink-0">
-                      <div className="w-6 h-6 rounded-full bg-brand-primary/15 backdrop-blur-sm border-[1.5px] border-brand-primary/60 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-brand-primary" />
+                      <div className="w-6 h-6 rounded-full bg-white/10 backdrop-blur-sm border-[1.5px] border-[var(--brand-primary)]/40 flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-[var(--brand-primary)]" />
                       </div>
                     </div>
 
@@ -280,13 +280,13 @@ export default function CaseDetail() {
                         <Badge variant="outline" className="text-xs">
                           {step.step_type}
                         </Badge>
-                        <span className="text-text-muted text-sm">
+                        <span className="text-[var(--lg-text-tertiary)] text-sm">
                           {formatDuration(step.duration_ms)}
                         </span>
                       </div>
 
                       {step.output_summary && (
-                        <p className="text-text-secondary text-sm mb-2">{step.output_summary}</p>
+                        <p className="text-[var(--lg-text-secondary)] text-sm mb-2">{step.output_summary}</p>
                       )}
 
                       {step.tools_called && step.tools_called.length > 0 && (
@@ -303,7 +303,7 @@ export default function CaseDetail() {
                         <div>
                           <button
                             onClick={() => toggleStep(step.step_number)}
-                            className="flex items-center gap-1 text-brand-accent text-sm hover:text-brand-accent/80 transition-colors"
+                            className="flex items-center gap-1 text-[var(--brand-accent)] text-sm hover:text-[var(--brand-accent)]/80 transition-colors"
                           >
                             {expandedSteps.has(step.step_number) ? (
                               <ChevronDown className="w-4 h-4" />
@@ -314,7 +314,7 @@ export default function CaseDetail() {
                           </button>
                           {expandedSteps.has(step.step_number) && (
                             <div className="glass-control mt-2 p-3 rounded-xl">
-                              <p className="text-text-secondary text-sm leading-relaxed">
+                              <p className="text-[var(--lg-text-secondary)] text-sm leading-relaxed">
                                 {step.reasoning}
                               </p>
                             </div>
@@ -327,18 +327,18 @@ export default function CaseDetail() {
               ))}
             </div>
           ) : (
-            <p className="text-text-muted text-center py-8">{t.noProcessingSteps}</p>
+            <p className="text-[var(--lg-text-tertiary)] text-center py-8">{t.noProcessingSteps}</p>
           )}
         </GlassPanel>
 
         {/* Audit Trail */}
         <GlassPanel variant="shell">
-          <h3 className="text-text-primary font-semibold text-lg mb-4">{t.auditTrail}</h3>
+          <h3 className="text-[var(--lg-text-primary)] font-semibold text-lg mb-4">{t.auditTrail}</h3>
 
           {ledgerLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-20 bg-white/15" />
+                <Skeleton key={i} className="h-20 bg-white/10" />
               ))}
             </div>
           ) : ledger && ledger.length > 0 ? (
@@ -356,19 +356,19 @@ export default function CaseDetail() {
                           {entry.action}
                         </Badge>
                       </div>
-                      <span className="text-text-muted text-xs font-mono">
+                      <span className="text-[var(--lg-text-tertiary)] text-xs font-mono">
                         {formatDate(entry.timestamp)}
                       </span>
                     </div>
 
                     {entry.decision && (
-                      <p className="text-text-secondary text-sm mb-2">{entry.decision}</p>
+                      <p className="text-[var(--lg-text-secondary)] text-sm mb-2">{entry.decision}</p>
                     )}
 
                     {entry.confidence !== undefined && (
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-text-muted text-xs">{t.confidence}</span>
-                        <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden max-w-xs">
+                        <span className="text-[var(--lg-text-tertiary)] text-xs">{t.confidence}</span>
+                        <div className="flex-1 h-1.5 bg-white/15 rounded-full overflow-hidden max-w-xs">
                           <div
                             className={cn(
                               'h-full transition-all',
@@ -381,7 +381,7 @@ export default function CaseDetail() {
                             style={{ width: `${entry.confidence * 100}%` }}
                           />
                         </div>
-                        <span className="text-text-secondary text-xs">
+                        <span className="text-[var(--lg-text-secondary)] text-xs">
                           {(entry.confidence * 100).toFixed(0)}%
                         </span>
                       </div>
@@ -391,10 +391,10 @@ export default function CaseDetail() {
                       <div className="mt-3 space-y-1">
                         {entry.state_changes.map((change, idx) => (
                           <div key={idx} className="text-xs">
-                            <span className="text-text-muted">{change.field}:</span>{' '}
-                            <span className="text-red-600">{change.before || 'null'}</span>
+                            <span className="text-[var(--lg-text-tertiary)]">{change.field}:</span>{' '}
+                            <span className="text-red-400">{change.before || 'null'}</span>
                             {' → '}
-                            <span className="text-green-600">{change.after || 'null'}</span>
+                            <span className="text-green-400">{change.after || 'null'}</span>
                           </div>
                         ))}
                       </div>
@@ -404,7 +404,7 @@ export default function CaseDetail() {
               </div>
             </ScrollArea>
           ) : (
-            <p className="text-text-muted text-center py-8">{t.noAuditTrail}</p>
+            <p className="text-[var(--lg-text-tertiary)] text-center py-8">{t.noAuditTrail}</p>
           )}
         </GlassPanel>
       </div>

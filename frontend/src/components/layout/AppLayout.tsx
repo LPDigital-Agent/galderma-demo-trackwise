@@ -1,6 +1,6 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// AppLayout Component - Liquid Glass Shell
+// AppLayout Component - Apple Liquid Glass Shell
 // ============================================
 
 import { useMemo } from 'react'
@@ -115,7 +115,7 @@ export function AppLayout() {
 
       <StatusBar />
       <CommandPalette />
-      <Toaster theme="light" position="bottom-right" richColors />
+      <Toaster theme="dark" position="bottom-right" richColors />
     </div>
   )
 }

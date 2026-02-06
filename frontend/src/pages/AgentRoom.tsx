@@ -153,7 +153,7 @@ export default function AgentRoom() {
       <GlassPanel variant="shell" className="space-y-4 p-5 lg:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="inline-flex items-center gap-2">
-            <div className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-white/50">
+            <div className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/8">
               <Activity className="h-4 w-4 text-[var(--brand-primary)]" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--lg-text-primary)]">{t.activityTimeline}</h3>

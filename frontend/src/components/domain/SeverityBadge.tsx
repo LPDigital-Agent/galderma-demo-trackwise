@@ -18,26 +18,26 @@ const severityConfig = {
   LOW: {
     color: 'green',
     bgClass: 'bg-green-500/10 backdrop-blur-sm',
-    textClass: 'text-green-600',
-    borderClass: 'border-green-300/30',
+    textClass: 'text-green-400',
+    borderClass: 'border-green-400/30',
   },
   MEDIUM: {
     color: 'amber',
     bgClass: 'bg-amber-500/10 backdrop-blur-sm',
-    textClass: 'text-amber-600',
-    borderClass: 'border-amber-300/30',
+    textClass: 'text-amber-400',
+    borderClass: 'border-amber-400/30',
   },
   HIGH: {
     color: 'orange',
     bgClass: 'bg-orange-500/10 backdrop-blur-sm',
-    textClass: 'text-orange-600',
-    borderClass: 'border-orange-300/30',
+    textClass: 'text-orange-400',
+    borderClass: 'border-orange-400/30',
   },
   CRITICAL: {
     color: 'red',
     bgClass: 'bg-red-500/10 backdrop-blur-sm',
-    textClass: 'text-red-600',
-    borderClass: 'border-red-300/30',
+    textClass: 'text-red-400',
+    borderClass: 'border-red-400/30',
   },
 } as const
 

@@ -119,13 +119,13 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[600px] sm:w-[700px] bg-bg-surface backdrop-blur-3xl border-glass-border overflow-y-auto">
+      <SheetContent className="w-[600px] sm:w-[700px] bg-white/8 backdrop-blur-3xl border-[var(--lg-border-soft)] overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="text-text-primary flex items-center gap-2">
-            <Shield className="w-5 h-5 text-brand-primary" />
+          <SheetTitle className="text-[var(--lg-text-primary)] flex items-center gap-2">
+            <Shield className="w-5 h-5 text-[var(--brand-primary)]" />
             {t.title}
           </SheetTitle>
-          <SheetDescription className="text-text-secondary">
+          <SheetDescription className="text-[var(--lg-text-secondary)]">
             {t.subtitle}
           </SheetDescription>
         </SheetHeader>
@@ -150,63 +150,63 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               >
                 <div className="flex items-center gap-2 mb-2">
                   <Hash className="w-4 h-4" />
-                  <span className="text-sm font-semibold text-text-primary">
+                  <span className="text-sm font-semibold text-[var(--lg-text-primary)]">
                     {integrity?.valid ? t.integrity.chainValid : t.integrity.unverified}
                   </span>
                 </div>
                 {integrity?.valid ? (
                   <div className="space-y-1">
-                    <p className="text-xs text-text-secondary">
+                    <p className="text-xs text-[var(--lg-text-secondary)]">
                       {t.integrity.firstHash}{' '}
-                      <span className="font-mono text-text-primary">
+                      <span className="font-mono text-[var(--lg-text-primary)]">
                         {integrity.firstHash?.substring(0, 16)}...
                       </span>
                     </p>
-                    <p className="text-xs text-text-secondary">
+                    <p className="text-xs text-[var(--lg-text-secondary)]">
                       {t.integrity.lastHash}{' '}
-                      <span className="font-mono text-text-primary">
+                      <span className="font-mono text-[var(--lg-text-primary)]">
                         {integrity.lastHash?.substring(0, 16)}...
                       </span>
                     </p>
                   </div>
                 ) : (
-                  <p className="text-xs text-text-secondary">
+                  <p className="text-xs text-[var(--lg-text-secondary)]">
                     {t.integrity.missingHashes}
                   </p>
                 )}
               </div>
 
               {/* Policy Summary */}
-              <div className="p-4 rounded-lg bg-glass-bg backdrop-blur-xl border-[0.5px] border-glass-border">
+              <div className="p-4 rounded-lg bg-white/8 backdrop-blur-xl border-[0.5px] border-[var(--lg-border-soft)]">
                 <div className="flex items-center gap-2 mb-3">
-                  <TrendingUp className="w-4 h-4 text-brand-primary" />
-                  <span className="text-sm font-semibold text-text-primary">{t.policySummary}</span>
+                  <TrendingUp className="w-4 h-4 text-[var(--brand-primary)]" />
+                  <span className="text-sm font-semibold text-[var(--lg-text-primary)]">{t.policySummary}</span>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-text-primary">
+                    <p className="text-2xl font-bold text-[var(--lg-text-primary)]">
                       {policySummary.evaluated}
                     </p>
-                    <p className="text-xs text-text-muted">{t.evaluated}</p>
+                    <p className="text-xs text-[var(--lg-text-tertiary)]">{t.evaluated}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-green-600">{policySummary.passed}</p>
-                    <p className="text-xs text-text-muted">{t.passed}</p>
+                    <p className="text-2xl font-bold text-green-400">{policySummary.passed}</p>
+                    <p className="text-xs text-[var(--lg-text-tertiary)]">{t.passed}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-red-600">{policySummary.violated}</p>
-                    <p className="text-xs text-text-muted">{t.violated}</p>
+                    <p className="text-2xl font-bold text-red-400">{policySummary.violated}</p>
+                    <p className="text-xs text-[var(--lg-text-tertiary)]">{t.violated}</p>
                   </div>
                 </div>
                 {policySummary.violations.length > 0 && (
                   <div className="mt-3">
                     <Separator className="bg-glass-border mb-3" />
-                    <p className="text-xs text-text-muted mb-2">{t.violations}</p>
+                    <p className="text-xs text-[var(--lg-text-tertiary)] mb-2">{t.violations}</p>
                     <div className="space-y-1">
                       {policySummary.violations.map((violation, idx) => (
                         <div key={idx} className="flex items-start gap-2">
-                          <XCircle className="w-3 h-3 text-red-600 mt-0.5 flex-shrink-0" />
-                          <p className="text-xs text-text-secondary">{violation}</p>
+                          <XCircle className="w-3 h-3 text-red-400 mt-0.5 flex-shrink-0" />
+                          <p className="text-xs text-[var(--lg-text-secondary)]">{violation}</p>
                         </div>
                       ))}
                     </div>
@@ -217,14 +217,14 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               {/* Decision Cards */}
               {decisionEntries.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-text-primary mb-3">
+                  <h3 className="text-sm font-semibold text-[var(--lg-text-primary)] mb-3">
                     {t.criticalDecisions}
                   </h3>
                   <div className="space-y-3">
                     {decisionEntries.map((entry) => (
                       <div
                         key={entry.ledger_id}
-                        className="p-4 rounded-lg bg-glass-bg backdrop-blur-xl border-[0.5px] border-glass-border"
+                        className="p-4 rounded-lg bg-white/8 backdrop-blur-xl border-[0.5px] border-[var(--lg-border-soft)]"
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
@@ -233,20 +233,20 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                               {entry.action}
                             </Badge>
                           </div>
-                          <span className="text-xs text-text-muted font-mono">
+                          <span className="text-xs text-[var(--lg-text-tertiary)] font-mono">
                             {formatDate(entry.timestamp)}
                           </span>
                         </div>
 
                         {entry.decision && (
-                          <p className="text-sm text-text-secondary mb-3">{entry.decision}</p>
+                          <p className="text-sm text-[var(--lg-text-secondary)] mb-3">{entry.decision}</p>
                         )}
 
                         {entry.confidence !== undefined && (
                           <div className="mb-3">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs text-text-muted">{t.confidence}</span>
-                              <span className="text-xs text-text-secondary">
+                              <span className="text-xs text-[var(--lg-text-tertiary)]">{t.confidence}</span>
+                              <span className="text-xs text-[var(--lg-text-secondary)]">
                                 {(entry.confidence * 100).toFixed(0)}%
                               </span>
                             </div>
@@ -270,8 +270,8 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                           <div className="space-y-1">
                             {entry.policies_evaluated.map((policy, idx) => (
                               <div key={idx} className="flex items-start gap-2">
-                                <CheckCircle2 className="w-3 h-3 text-green-600 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-text-secondary">{policy}</p>
+                                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-[var(--lg-text-secondary)]">{policy}</p>
                               </div>
                             ))}
                           </div>
@@ -281,8 +281,8 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                           <div className="space-y-1 mt-2">
                             {entry.policy_violations.map((violation, idx) => (
                               <div key={idx} className="flex items-start gap-2">
-                                <XCircle className="w-3 h-3 text-red-600 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-text-secondary">{violation}</p>
+                                <XCircle className="w-3 h-3 text-red-400 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-[var(--lg-text-secondary)]">{violation}</p>
                               </div>
                             ))}
                           </div>
@@ -296,26 +296,26 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               {/* State Changes Table */}
               {stateChanges.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-text-primary mb-3">{t.stateChanges}</h3>
-                  <div className="rounded-lg border border-glass-border overflow-hidden">
+                  <h3 className="text-sm font-semibold text-[var(--lg-text-primary)] mb-3">{t.stateChanges}</h3>
+                  <div className="rounded-lg border border-[var(--lg-border-soft)] overflow-hidden">
                     <Table>
                       <TableHeader>
-                        <TableRow className="border-glass-border hover:bg-transparent">
-                          <TableHead className="text-text-muted text-xs">{t.stateTable.field}</TableHead>
-                          <TableHead className="text-text-muted text-xs">{t.stateTable.before}</TableHead>
-                          <TableHead className="text-text-muted text-xs">{t.stateTable.after}</TableHead>
+                        <TableRow className="border-[var(--lg-border-soft)] hover:bg-transparent">
+                          <TableHead className="text-[var(--lg-text-tertiary)] text-xs">{t.stateTable.field}</TableHead>
+                          <TableHead className="text-[var(--lg-text-tertiary)] text-xs">{t.stateTable.before}</TableHead>
+                          <TableHead className="text-[var(--lg-text-tertiary)] text-xs">{t.stateTable.after}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {stateChanges.map((change, idx) => (
-                          <TableRow key={idx} className="border-glass-border">
-                            <TableCell className="text-xs text-text-primary font-medium">
+                          <TableRow key={idx} className="border-[var(--lg-border-soft)]">
+                            <TableCell className="text-xs text-[var(--lg-text-primary)] font-medium">
                               {change.field}
                             </TableCell>
-                            <TableCell className="text-xs text-red-600 font-mono">
+                            <TableCell className="text-xs text-red-400 font-mono">
                               {change.before || 'null'}
                             </TableCell>
-                            <TableCell className="text-xs text-green-600 font-mono">
+                            <TableCell className="text-xs text-green-400 font-mono">
                               {change.after || 'null'}
                             </TableCell>
                           </TableRow>
@@ -327,23 +327,23 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               )}
 
               {/* Footer: Model Stats */}
-              <div className="p-4 rounded-lg bg-glass-bg backdrop-blur-xl border-[0.5px] border-glass-border">
+              <div className="p-4 rounded-lg bg-white/8 backdrop-blur-xl border-[0.5px] border-[var(--lg-border-soft)]">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <p className="text-xs text-text-muted mb-1">{t.modelStats.model}</p>
-                    <p className="text-sm text-text-primary font-mono">
+                    <p className="text-xs text-[var(--lg-text-tertiary)] mb-1">{t.modelStats.model}</p>
+                    <p className="text-sm text-[var(--lg-text-primary)] font-mono">
                       {modelStats.modelId ? modelStats.modelId.split('/').pop() : 'N/A'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-text-muted mb-1">{t.modelStats.totalTokens}</p>
-                    <p className="text-sm text-text-primary font-semibold">
+                    <p className="text-xs text-[var(--lg-text-tertiary)] mb-1">{t.modelStats.totalTokens}</p>
+                    <p className="text-sm text-[var(--lg-text-primary)] font-semibold">
                       {modelStats.totalTokens.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-text-muted mb-1">{t.modelStats.totalLatency}</p>
-                    <p className="text-sm text-text-primary font-semibold">
+                    <p className="text-xs text-[var(--lg-text-tertiary)] mb-1">{t.modelStats.totalLatency}</p>
+                    <p className="text-sm text-[var(--lg-text-primary)] font-semibold">
                       {(modelStats.totalLatency / 1000).toFixed(2)}s
                     </p>
                   </div>
@@ -353,7 +353,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
           </ScrollArea>
         ) : (
           <div className="flex items-center justify-center h-64">
-            <p className="text-text-muted">{t.noAuditTrail}</p>
+            <p className="text-[var(--lg-text-tertiary)]">{t.noAuditTrail}</p>
           </div>
         )}
       </SheetContent>

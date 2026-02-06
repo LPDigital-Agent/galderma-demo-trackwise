@@ -37,12 +37,12 @@ function formatEventType(type: string): string {
 
 export function TimelineItem({ event, className }: TimelineItemProps) {
   const agentInfo = event.agent ? AGENTS[event.agent as AgentName] : null
-  const agentColor = agentInfo?.color ?? '#718096'
+  const agentColor = agentInfo?.color ?? '#8E8E93'
 
   return (
     <article
       className={cn(
-        'glass-control border-l-[3px] px-4 py-3 transition-all duration-[220ms] hover:translate-x-[1px] hover:shadow-[0_12px_20px_rgba(15,24,40,0.14)]',
+        'glass-control border-l-[3px] px-4 py-3 transition-all duration-200 hover:translate-x-[1px] hover:bg-white/8',
         className
       )}
       style={{ borderLeftColor: agentColor }}
@@ -56,7 +56,7 @@ export function TimelineItem({ event, className }: TimelineItemProps) {
             {agentInfo ? <span>{agentInfo.displayName}</span> : <span>Sistema</span>}
             {event.case_id ? (
               <>
-                <span className="opacity-50">•</span>
+                <span className="opacity-40">·</span>
                 <span className="font-mono">
                   {timeline.casePrefix} {event.case_id}
                 </span>

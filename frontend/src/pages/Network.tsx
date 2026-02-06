@@ -34,14 +34,14 @@ function AgentNode({ data }: { data: AgentNodeData }) {
   return (
     <div
       className={cn(
-        'px-6 py-4 rounded-2xl bg-white/78 backdrop-blur-2xl border border-white/70 shadow-[0_14px_24px_rgba(15,24,40,0.14)]',
+        'px-6 py-4 rounded-2xl bg-white/12 backdrop-blur-2xl border border-white/15 shadow-[0_14px_24px_rgba(0,0,0,0.35)]',
         'min-w-[240px] max-w-[280px]',
         'transition-all duration-300 hover:scale-105'
       )}
       style={{
         borderLeftWidth: '3px',
         borderLeftColor: agentInfo.color,
-        boxShadow: `0 0 20px ${agentInfo.color}20`,
+        boxShadow: `0 0 24px ${agentInfo.color}30`,
       }}
     >
       <Handle
@@ -55,11 +55,11 @@ function AgentNode({ data }: { data: AgentNodeData }) {
           className="w-3 h-3 rounded-full shrink-0"
           style={{ backgroundColor: agentInfo.color }}
         />
-        <div className="text-sm font-bold text-[var(--text-primary)]">
+        <div className="text-sm font-bold text-[var(--lg-text-primary)]">
           {agentInfo.displayName}
         </div>
       </div>
-      <div className="text-xs text-[var(--text-secondary)] mb-3 leading-relaxed">
+      <div className="text-xs text-[var(--lg-text-secondary)] mb-3 leading-relaxed">
         {agentInfo.description}
       </div>
       <Badge
@@ -67,8 +67,8 @@ function AgentNode({ data }: { data: AgentNodeData }) {
         className={cn(
           'text-[10px] font-mono uppercase px-2 py-0.5',
           agentInfo.model === 'OPUS'
-            ? 'bg-red-500/10 backdrop-blur-sm text-red-600 border-red-300/30'
-            : 'bg-cyan-500/10 backdrop-blur-sm text-cyan-600 border-cyan-300/30'
+            ? 'bg-red-500/10 backdrop-blur-sm text-red-400 border-red-400/30'
+            : 'bg-cyan-500/10 backdrop-blur-sm text-cyan-400 border-cyan-400/30'
         )}
       >
         {agentInfo.model}
@@ -249,8 +249,8 @@ export default function NetworkPage() {
     <div className="flex flex-col h-full min-h-[600px] gap-[var(--float-gap)]">
       {/* Header */}
       <div className="glass-shell p-5 lg:p-6">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
-        <p className="text-sm text-[var(--text-secondary)] mt-1">
+        <h1 className="text-2xl font-bold text-[var(--lg-text-primary)]">{t.title}</h1>
+        <p className="text-sm text-[var(--lg-text-secondary)] mt-1">
           {t.subtitle}
         </p>
       </div>
@@ -271,7 +271,7 @@ export default function NetworkPage() {
           className="react-flow-dark"
         >
           <Background
-            color="rgba(0,0,0,0.05)"
+            color="rgba(255,255,255,0.04)"
             gap={20}
             size={0.5}
           />
@@ -281,11 +281,7 @@ export default function NetworkPage() {
               const agent = node.data.agent as AgentName
               return AGENTS[agent].color
             }}
-            maskColor="rgba(234, 232, 238, 0.6)"
-            style={{
-              backgroundColor: 'var(--bg-elevated)',
-              border: '1px solid var(--glass-border)',
-            }}
+            maskColor="rgba(10, 15, 30, 0.6)"
           />
         </ReactFlow>
       </div>
@@ -293,7 +289,7 @@ export default function NetworkPage() {
       {/* Inline dark theme styles */}
       <style>{`
         .react-flow-dark {
-          background: linear-gradient(155deg, rgba(255,255,255,0.32), rgba(219,233,250,0.18));
+          background: linear-gradient(155deg, rgba(255,255,255,0.04), rgba(100,130,180,0.06));
         }
         .react-flow-dark .react-flow__node {
           cursor: pointer;
@@ -302,35 +298,35 @@ export default function NetworkPage() {
           stroke: rgba(74, 152, 184, 0.42);
         }
         .react-flow-dark .react-flow__controls {
-          background: rgba(255, 255, 255, 0.74);
-          border: 1px solid rgba(255, 255, 255, 0.8);
+          background: rgba(255, 255, 255, 0.10);
+          border: 1px solid rgba(255, 255, 255, 0.15);
           border-radius: 16px;
           overflow: hidden;
           backdrop-filter: blur(18px);
         }
         .react-flow-dark .react-flow__controls button {
-          background: rgba(255, 255, 255, 0.72);
+          background: rgba(255, 255, 255, 0.08);
           color: var(--lg-text-secondary);
           border: none;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.12);
         }
         .react-flow-dark .react-flow__controls button:hover {
-          background: rgba(255, 255, 255, 0.88);
+          background: rgba(255, 255, 255, 0.15);
           color: var(--lg-text-primary);
         }
         .react-flow-dark .react-flow__controls button svg {
           fill: currentColor;
         }
         .react-flow-dark .react-flow__minimap {
-          background: rgba(255, 255, 255, 0.75) !important;
-          border: 1px solid rgba(255, 255, 255, 0.82) !important;
+          background: rgba(255, 255, 255, 0.06) !important;
+          border: 1px solid rgba(255, 255, 255, 0.12) !important;
           border-radius: 12px;
           backdrop-filter: blur(16px);
         }
         .react-flow-dark .react-flow__attribution {
-          background: rgba(255, 255, 255, 0.72);
+          background: rgba(255, 255, 255, 0.06);
           color: var(--lg-text-tertiary);
-          border: 1px solid rgba(255, 255, 255, 0.82);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           border-radius: 4px;
           padding: 2px 6px;
           font-size: 10px;

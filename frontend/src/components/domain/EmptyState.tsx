@@ -19,7 +19,7 @@ export interface EmptyStateProps {
 export function EmptyState({ icon: Icon, title, description, action, className }: EmptyStateProps) {
   return (
     <section className={cn('glass-card flex flex-col items-center justify-center px-8 py-14 text-center', className)}>
-      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/55 bg-white/45">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/15 bg-white/8">
         <Icon className="h-8 w-8 text-[var(--brand-primary)]" />
       </div>
 

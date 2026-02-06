@@ -96,26 +96,26 @@ export default function Cases() {
       <div className="flex-1 glass-shell overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="border-glass-border hover:bg-transparent">
-              <TableHead className="text-text-secondary font-medium">{t.table.caseId}</TableHead>
-              <TableHead className="text-text-secondary font-medium">{t.table.product}</TableHead>
-              <TableHead className="text-text-secondary font-medium">{t.table.status}</TableHead>
-              <TableHead className="text-text-secondary font-medium">{t.table.severity}</TableHead>
-              <TableHead className="text-text-secondary font-medium">{t.table.type}</TableHead>
-              <TableHead className="text-text-secondary font-medium">{t.table.created}</TableHead>
+            <TableRow className="border-[var(--lg-border-soft)] hover:bg-transparent">
+              <TableHead className="text-[var(--lg-text-secondary)] font-medium">{t.table.caseId}</TableHead>
+              <TableHead className="text-[var(--lg-text-secondary)] font-medium">{t.table.product}</TableHead>
+              <TableHead className="text-[var(--lg-text-secondary)] font-medium">{t.table.status}</TableHead>
+              <TableHead className="text-[var(--lg-text-secondary)] font-medium">{t.table.severity}</TableHead>
+              <TableHead className="text-[var(--lg-text-secondary)] font-medium">{t.table.type}</TableHead>
+              <TableHead className="text-[var(--lg-text-secondary)] font-medium">{t.table.created}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               // Loading skeletons
               Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i} className="border-glass-border">
-                  <TableCell><Skeleton className="h-4 w-24 glass-float" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-32 glass-float" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-20 glass-float" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-16 glass-float" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24 glass-float" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-28 glass-float" /></TableCell>
+                <TableRow key={i} className="border-[var(--lg-border-soft)]">
+                  <TableCell><Skeleton className="h-4 w-24 bg-white/10" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32 bg-white/10" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-20 bg-white/10" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-16 bg-white/10" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24 bg-white/10" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-28 bg-white/10" /></TableCell>
                 </TableRow>
               ))
             ) : data && data.cases.length > 0 ? (
@@ -123,17 +123,17 @@ export default function Cases() {
                 <TableRow
                   key={caseItem.case_id}
                   onClick={() => navigate(`/cases/${caseItem.case_id}`)}
-                  className="border-glass-border hover:bg-white/36 cursor-pointer transition-colors"
+                  className="border-[var(--lg-border-soft)] hover:bg-white/10 cursor-pointer transition-colors"
                 >
                   <TableCell className="font-mono text-[var(--brand-secondary)]">
                     <div className="flex items-center gap-2">
                       {caseItem.case_id}
                       {caseItem.linked_case_id && (
-                        <LinkIcon className="w-3 h-3 text-text-muted" />
+                        <LinkIcon className="w-3 h-3 text-[var(--lg-text-tertiary)]" />
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-text-primary">
+                  <TableCell className="text-[var(--lg-text-primary)]">
                     <div className="flex flex-col">
                       <span className="font-medium">{caseItem.product_brand}</span>
                       <span className="text-sm text-[var(--lg-text-secondary)]">{caseItem.product_name}</span>
@@ -166,7 +166,7 @@ export default function Cases() {
               action={
                 <Button
                   onClick={() => setCreateModalOpen(true)}
-                  className="bg-brand-primary hover:bg-brand-primary/90 text-white"
+                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary)]/90 text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   {t.empty.createCase}

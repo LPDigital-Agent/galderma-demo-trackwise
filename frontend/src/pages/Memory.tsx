@@ -22,20 +22,20 @@ export default function Memory() {
   const { data: memory, isLoading } = useMemory()
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'text-green-600'
-    if (confidence >= 0.5) return 'text-amber-600'
-    return 'text-red-600'
+    if (confidence >= 0.8) return 'text-green-400'
+    if (confidence >= 0.5) return 'text-amber-400'
+    return 'text-red-400'
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE':
       case 'ENFORCED':
-        return 'bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30'
+        return 'bg-green-500/10 backdrop-blur-sm text-green-400 border-green-400/30'
       case 'PENDING':
-        return 'bg-amber-500/10 backdrop-blur-sm text-amber-600 border-amber-300/30'
+        return 'bg-amber-500/10 backdrop-blur-sm text-amber-400 border-amber-400/30'
       default:
-        return 'bg-gray-500/10 backdrop-blur-sm text-gray-600 border-gray-300/30'
+        return 'bg-gray-500/10 backdrop-blur-sm text-gray-400 border-gray-400/30'
     }
   }
 
@@ -49,12 +49,12 @@ export default function Memory() {
       {/* Header */}
       <div className="glass-shell p-5 lg:p-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-white/55 border border-white/60 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-white/8 border border-white/15 flex items-center justify-center">
             <Brain className="w-5 h-5 text-[var(--brand-primary)]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
-            <p className="text-sm text-[var(--text-secondary)]">
+            <h1 className="text-2xl font-bold text-[var(--lg-text-primary)]">{t.title}</h1>
+            <p className="text-sm text-[var(--lg-text-secondary)]">
               {t.subtitle}
             </p>
           </div>
@@ -65,8 +65,8 @@ export default function Memory() {
       <div className="flex-1 overflow-auto">
         {isLoading ? (
           <div className="space-y-4">
-            <Skeleton className="h-10 w-full bg-glass-bg border border-glass-border rounded-lg" />
-            <Skeleton className="h-64 w-full bg-glass-bg border border-glass-border rounded-xl" />
+            <Skeleton className="h-10 w-full bg-white/10 border border-white/15 rounded-lg" />
+            <Skeleton className="h-64 w-full bg-white/10 border border-white/15 rounded-xl" />
           </div>
         ) : isEmpty ? (
           <EmptyState
@@ -87,10 +87,10 @@ export default function Memory() {
             <TabsContent value="patterns">
               <GlassPanel variant="shell" className="p-6">
                 <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                  <h3 className="text-lg font-semibold text-[var(--lg-text-primary)]">
                     {t.patterns.title}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)] mt-1">
+                  <p className="text-sm text-[var(--lg-text-secondary)] mt-1">
                     {t.patterns.description}
                   </p>
                 </div>
@@ -111,16 +111,16 @@ export default function Memory() {
                         <TableCell className="font-mono text-[var(--brand-secondary)]">
                           {pattern.id}
                         </TableCell>
-                        <TableCell className="font-medium text-[var(--text-primary)]">
+                        <TableCell className="font-medium text-[var(--lg-text-primary)]">
                           {pattern.name}
                         </TableCell>
-                        <TableCell className="text-[var(--text-secondary)] text-sm max-w-md">
+                        <TableCell className="text-[var(--lg-text-secondary)] text-sm max-w-md">
                           {pattern.description}
                         </TableCell>
                         <TableCell className={cn('text-right font-mono', getConfidenceColor(pattern.confidence))}>
                           {Math.round(pattern.confidence * 100)}%
                         </TableCell>
-                        <TableCell className="text-right font-mono text-[var(--text-primary)]">
+                        <TableCell className="text-right font-mono text-[var(--lg-text-primary)]">
                           {pattern.occurrences}
                         </TableCell>
                         <TableCell>
@@ -139,10 +139,10 @@ export default function Memory() {
             <TabsContent value="templates">
               <GlassPanel variant="shell" className="p-6">
                 <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                  <h3 className="text-lg font-semibold text-[var(--lg-text-primary)]">
                     {t.templates.title}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)] mt-1">
+                  <p className="text-sm text-[var(--lg-text-secondary)] mt-1">
                     {t.templates.description}
                   </p>
                 </div>
@@ -163,16 +163,16 @@ export default function Memory() {
                         <TableCell className="font-mono text-[var(--brand-secondary)]">
                           {template.id}
                         </TableCell>
-                        <TableCell className="font-medium text-[var(--text-primary)]">
+                        <TableCell className="font-medium text-[var(--lg-text-primary)]">
                           {template.name}
                         </TableCell>
-                        <TableCell className="font-mono text-[var(--text-secondary)]">
+                        <TableCell className="font-mono text-[var(--lg-text-secondary)]">
                           {template.language}
                         </TableCell>
                         <TableCell className={cn('text-right font-mono', getConfidenceColor(template.confidence))}>
                           {Math.round(template.confidence * 100)}%
                         </TableCell>
-                        <TableCell className="text-right font-mono text-[var(--text-primary)]">
+                        <TableCell className="text-right font-mono text-[var(--lg-text-primary)]">
                           {template.uses}
                         </TableCell>
                         <TableCell>
@@ -191,10 +191,10 @@ export default function Memory() {
             <TabsContent value="policies">
               <GlassPanel variant="shell" className="p-6">
                 <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                  <h3 className="text-lg font-semibold text-[var(--lg-text-primary)]">
                     {t.policies.title}
                   </h3>
-                  <p className="text-sm text-[var(--text-secondary)] mt-1">
+                  <p className="text-sm text-[var(--lg-text-secondary)] mt-1">
                     {t.policies.description}
                   </p>
                 </div>
@@ -216,21 +216,21 @@ export default function Memory() {
                         <TableCell className="font-mono text-[var(--brand-secondary)]">
                           {policy.id}
                         </TableCell>
-                        <TableCell className="font-medium text-[var(--text-primary)]">
+                        <TableCell className="font-medium text-[var(--lg-text-primary)]">
                           {policy.name}
                         </TableCell>
-                        <TableCell className="font-mono text-[var(--text-secondary)] text-xs">
+                        <TableCell className="font-mono text-[var(--lg-text-secondary)] text-xs">
                           {policy.category}
                         </TableCell>
-                        <TableCell className="text-[var(--text-secondary)] text-sm max-w-md">
+                        <TableCell className="text-[var(--lg-text-secondary)] text-sm max-w-md">
                           {policy.description}
                         </TableCell>
-                        <TableCell className="text-right font-mono text-[var(--text-primary)]">
+                        <TableCell className="text-right font-mono text-[var(--lg-text-primary)]">
                           {policy.evaluations}
                         </TableCell>
                         <TableCell className={cn(
                           'text-right font-mono',
-                          policy.violations === 0 ? 'text-green-600' : 'text-amber-600'
+                          policy.violations === 0 ? 'text-green-400' : 'text-amber-400'
                         )}>
                           {policy.violations}
                         </TableCell>

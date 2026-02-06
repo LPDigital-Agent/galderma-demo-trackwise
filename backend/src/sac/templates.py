@@ -13,6 +13,7 @@
 
 import random
 import unicodedata
+from datetime import datetime, timedelta
 
 from src.simulator.models import (
     GALDERMA_PRODUCTS,
@@ -20,6 +21,10 @@ from src.simulator.models import (
     CaseSeverity,
     CaseType,
     ComplaintCategory,
+    InvestigationStatus,
+    ReceivedChannel,
+    RegulatoryClassification,
+    ReporterType,
 )
 
 
@@ -27,6 +32,62 @@ from src.simulator.models import (
 # Injectable products (trigger CRITICAL severity)
 # ============================================
 INJECTABLE_BRANDS = {"RESTYLANE", "DYSPORT", "SCULPTRA"}
+
+# ============================================
+# Manufacturing site mapping by brand
+# ============================================
+MANUFACTURING_SITES: dict[str, str] = {
+    "CETAPHIL": "Hortolândia, SP, Brazil",
+    "DIFFERIN": "Sophia Antipolis, France",
+    "EPIDUO": "Sophia Antipolis, France",
+    "RESTYLANE": "Uppsala, Sweden",
+    "DYSPORT": "Wrexham, United Kingdom",
+    "SCULPTRA": "Namur, Belgium",
+    "SOOLANTRA": "Sophia Antipolis, France",
+    "ORACEA": "Fort Worth, TX, USA",
+    "BENZAC": "Hortolândia, SP, Brazil",
+    "LOCERYL": "Sophia Antipolis, France",
+}
+
+# Country mapping by language code
+COUNTRY_BY_LANG: dict[str, str] = {
+    "pt": "Brasil",
+    "en": "United States",
+    "es": "México",
+    "fr": "France",
+}
+
+# Weighted channel distribution
+CHANNEL_WEIGHTS: list[tuple[ReceivedChannel, int]] = [
+    (ReceivedChannel.PHONE, 30),
+    (ReceivedChannel.EMAIL, 30),
+    (ReceivedChannel.WEB, 25),
+    (ReceivedChannel.SOCIAL_MEDIA, 10),
+    (ReceivedChannel.IN_PERSON, 5),
+]
+
+# Investigation status weights for new cases
+INVESTIGATION_WEIGHTS: list[tuple[InvestigationStatus, int]] = [
+    (InvestigationStatus.NOT_STARTED, 50),
+    (InvestigationStatus.IN_PROGRESS, 30),
+    (InvestigationStatus.NOT_REQUIRED, 15),
+    (InvestigationStatus.COMPLETED, 5),
+]
+
+# SLA days by severity
+SLA_DAYS: dict[CaseSeverity, int] = {
+    CaseSeverity.CRITICAL: 3,
+    CaseSeverity.HIGH: 5,
+    CaseSeverity.MEDIUM: 10,
+    CaseSeverity.LOW: 30,
+}
+
+
+def _weighted_choice(weights: list[tuple]) -> object:
+    """Pick a random item based on weights."""
+    items, w = zip(*weights)
+    return random.choices(items, weights=w, k=1)[0]
+
 
 # ============================================
 # PT-BR Complaint Templates by Category
@@ -559,6 +620,37 @@ def generate_from_template(
 
     severity = _determine_severity(cat, case_type, brand)
 
+    # Populate pharmaceutical compliance fields
+    is_injectable = brand in INJECTABLE_BRANDS
+    is_adverse = case_type == CaseType.ADVERSE_EVENT or cat == ComplaintCategory.SAFETY
+    is_critical = severity in (CaseSeverity.CRITICAL, CaseSeverity.HIGH)
+
+    reporter_type = (
+        ReporterType.HCP if is_injectable
+        else _weighted_choice([
+            (ReporterType.CONSUMER, 60),
+            (ReporterType.HCP, 15),
+            (ReporterType.SALES_REP, 15),
+            (ReporterType.DISTRIBUTOR, 10),
+        ])
+    )
+    received_channel = _weighted_choice(CHANNEL_WEIGHTS)
+    now = datetime.utcnow()
+    received_offset = random.randint(0, 3)  # 0-3 days before system entry
+    received_date = now - timedelta(days=received_offset)
+    expiry_months = random.randint(3, 18)
+    expiry_date = (now + timedelta(days=expiry_months * 30)).strftime("%Y-%m-%d")
+    sla_days = SLA_DAYS.get(severity, 10)
+    sla_due = (now + timedelta(days=sla_days)).strftime("%Y-%m-%d")
+
+    regulatory_class = RegulatoryClassification.NONE
+    if is_adverse and is_critical:
+        regulatory_class = RegulatoryClassification.SERIOUS_AE
+    elif is_adverse:
+        regulatory_class = RegulatoryClassification.MIR
+    elif is_critical:
+        regulatory_class = RegulatoryClassification.FIELD_ALERT
+
     return (
         CaseCreate(
             product_brand=brand,
@@ -571,6 +663,19 @@ def generate_from_template(
             severity=severity,
             lot_number=lot_number,
             linked_case_id=linked_case_id,
+            # New pharmaceutical fields
+            reporter_type=reporter_type,
+            reporter_country=COUNTRY_BY_LANG.get(lang, "Brasil"),
+            received_channel=received_channel,
+            received_date=received_date,
+            manufacturing_site=MANUFACTURING_SITES.get(brand, "Sophia Antipolis, France"),
+            expiry_date=expiry_date,
+            sample_available=random.random() < 0.35,
+            adverse_event_flag=is_adverse,
+            regulatory_reportable=is_adverse or is_critical,
+            regulatory_classification=regulatory_class,
+            investigation_status=_weighted_choice(INVESTIGATION_WEIGHTS),
+            sla_due_date=sla_due,
         ),
         lang,
     )

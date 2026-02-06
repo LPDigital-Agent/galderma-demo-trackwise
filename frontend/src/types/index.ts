@@ -12,6 +12,10 @@ export type CaseStatus = 'OPEN' | 'IN_PROGRESS' | 'PENDING_REVIEW' | 'RESOLVED' 
 export type CaseSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
 export type CaseType = 'COMPLAINT' | 'INQUIRY' | 'ADVERSE_EVENT'
 export type ComplaintCategory = 'PACKAGING' | 'QUALITY' | 'EFFICACY' | 'SAFETY' | 'DOCUMENTATION' | 'SHIPPING' | 'OTHER'
+export type ReporterType = 'CONSUMER' | 'HCP' | 'SALES_REP' | 'DISTRIBUTOR'
+export type ReceivedChannel = 'PHONE' | 'EMAIL' | 'WEB' | 'SOCIAL_MEDIA' | 'IN_PERSON'
+export type RegulatoryClassification = 'NONE' | 'MDR' | 'MIR' | 'FIELD_ALERT' | 'SERIOUS_AE'
+export type InvestigationStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'NOT_REQUIRED'
 export type ExecutionMode = 'OBSERVE' | 'TRAIN' | 'ACT'
 export type Language = 'AUTO' | 'PT' | 'EN' | 'ES' | 'FR'
 
@@ -32,16 +36,38 @@ export interface Case {
   linked_case_id?: string
   status: CaseStatus
   severity: CaseSeverity
+  // Reporter & intake
+  reporter_type?: ReporterType
+  reporter_country?: string
+  received_channel?: ReceivedChannel
+  received_date?: string
+  // Product traceability
+  manufacturing_site?: string
+  expiry_date?: string
+  sample_available?: boolean
+  // Compliance & regulatory
+  adverse_event_flag?: boolean
+  regulatory_reportable?: boolean
+  regulatory_classification?: RegulatoryClassification
+  // Investigation
+  investigation_status?: InvestigationStatus
+  root_cause?: string
+  capa_reference?: string
+  assigned_investigator?: string
+  sla_due_date?: string
+  // Resolution
   resolution_text?: string
   resolution_text_pt?: string
   resolution_text_en?: string
   resolution_text_es?: string
   resolution_text_fr?: string
+  // AI processing
   ai_recommendation?: string
   ai_confidence?: number
   guardian_approved?: boolean
   processed_by_agent?: string
   run_id?: string
+  // Metadata
   created_at: string
   updated_at: string
   closed_at?: string

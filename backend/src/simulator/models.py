@@ -60,6 +60,40 @@ class ComplaintCategory(StrEnum):
     OTHER = "OTHER"
 
 
+class ReporterType(StrEnum):
+    """Who reported the complaint."""
+    CONSUMER = "CONSUMER"
+    HCP = "HCP"
+    SALES_REP = "SALES_REP"
+    DISTRIBUTOR = "DISTRIBUTOR"
+
+
+class ReceivedChannel(StrEnum):
+    """Channel through which complaint was received."""
+    PHONE = "PHONE"
+    EMAIL = "EMAIL"
+    WEB = "WEB"
+    SOCIAL_MEDIA = "SOCIAL_MEDIA"
+    IN_PERSON = "IN_PERSON"
+
+
+class RegulatoryClassification(StrEnum):
+    """Regulatory classification of the complaint."""
+    NONE = "NONE"
+    MDR = "MDR"
+    MIR = "MIR"
+    FIELD_ALERT = "FIELD_ALERT"
+    SERIOUS_AE = "SERIOUS_AE"
+
+
+class InvestigationStatus(StrEnum):
+    """Investigation status of the case."""
+    NOT_STARTED = "NOT_STARTED"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    NOT_REQUIRED = "NOT_REQUIRED"
+
+
 class EventType(StrEnum):
     """Event types emitted by TrackWise Simulator."""
     CASE_CREATED = "CaseCreated"
@@ -142,6 +176,25 @@ class CaseBase(BaseModel):
     severity: CaseSeverity | None = Field(default=None, description="Override severity (computed if None)")
     lot_number: str | None = Field(default=None, description="Product lot/batch number")
     linked_case_id: str | None = Field(default=None, description="ID of linked case (for inquiries)")
+    # Reporter & intake
+    reporter_type: ReporterType | None = Field(default=None, description="Who reported the complaint")
+    reporter_country: str | None = Field(default=None, description="Country of reporter")
+    received_channel: ReceivedChannel | None = Field(default=None, description="Intake channel")
+    received_date: datetime | None = Field(default=None, description="Date complaint was received")
+    # Product traceability
+    manufacturing_site: str | None = Field(default=None, description="Manufacturing facility")
+    expiry_date: str | None = Field(default=None, description="Product expiry date")
+    sample_available: bool | None = Field(default=None, description="Sample available for analysis")
+    # Compliance & regulatory
+    adverse_event_flag: bool | None = Field(default=None, description="Adverse event implications")
+    regulatory_reportable: bool | None = Field(default=None, description="Needs regulatory reporting")
+    regulatory_classification: RegulatoryClassification | None = Field(default=None, description="Regulatory classification")
+    # Investigation
+    investigation_status: InvestigationStatus | None = Field(default=None, description="Investigation status")
+    root_cause: str | None = Field(default=None, description="Root cause determination")
+    capa_reference: str | None = Field(default=None, description="CAPA reference ID")
+    assigned_investigator: str | None = Field(default=None, description="Assigned investigator")
+    sla_due_date: str | None = Field(default=None, description="SLA deadline")
 
 
 class CaseCreate(CaseBase):

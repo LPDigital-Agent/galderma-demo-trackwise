@@ -29,6 +29,28 @@ from src.simulator.models import CaseCreate, CaseType
 logger = logging.getLogger(__name__)
 
 # ============================================
+# Multi-language inquiry follow-up text
+# ============================================
+INQUIRY_FOLLOWUP_TEXT: dict[str, str] = {
+    "pt": (
+        "Consulta de acompanhamento referente a reclamacao {case_id}. "
+        "Cliente solicita atualizacao sobre o status da investigacao."
+    ),
+    "en": (
+        "Follow-up inquiry regarding complaint {case_id}. "
+        "Customer requests an update on the investigation status."
+    ),
+    "es": (
+        "Consulta de seguimiento sobre la reclamacion {case_id}. "
+        "El cliente solicita una actualizacion del estado de la investigacion."
+    ),
+    "fr": (
+        "Demande de suivi concernant la reclamation {case_id}. "
+        "Le client demande une mise a jour sur l'etat de l'enquete."
+    ),
+}
+
+# ============================================
 # Module-level session state
 # ============================================
 _sac_state: dict = {
@@ -145,13 +167,15 @@ async def generate_cases(
     """
     start_time = time.monotonic()
     generated = []
+    last_lang = "pt"
 
     for _ in range(request.count):
-        # CODE Layer 1: Generate from template
-        case_create = generate_from_template(
+        # CODE Layer 1: Generate from template (random language per case)
+        case_create, lang = generate_from_template(
             scenario_type=request.scenario_type.value,
             product_brand=request.product_brand,
         )
+        last_lang = lang
 
         # CODE Layer 2: Create via existing pipeline (triggers WebSocket, events)
         case, _event = simulator_api.create_case(case_create)
@@ -160,13 +184,11 @@ async def generate_cases(
     # Handle LINKED_INQUIRY: create a second inquiry case linked to the first
     if request.scenario_type == ScenarioType.LINKED_INQUIRY and generated:
         first_case = generated[0]
+        followup_text = INQUIRY_FOLLOWUP_TEXT.get(last_lang, INQUIRY_FOLLOWUP_TEXT["pt"])
         inquiry_create = CaseCreate(
             product_brand=first_case.product_brand,
             product_name=first_case.product_name,
-            complaint_text=(
-                f"Consulta de acompanhamento referente a reclamacao {first_case.case_id}. "
-                "Cliente solicita atualizacao sobre o status da investigacao."
-            ),
+            complaint_text=followup_text.format(case_id=first_case.case_id),
             customer_name=first_case.customer_name,
             customer_email=first_case.customer_email,
             case_type=CaseType.INQUIRY,

@@ -79,11 +79,6 @@ async def lifespan(app: FastAPI):
         event_emitter.enable()
         simulator_api.set_event_callback(create_event_callback(event_emitter))
 
-    # Auto-populate Galderma scenario if no cases exist
-    if len(simulator_api._cases) == 0:
-        logger.info("No cases found — auto-populating Galderma demo scenario")
-        simulator_api.create_galderma_scenario()
-
     yield
 
     # Shutdown
@@ -139,11 +134,6 @@ async def invocations(payload: dict[str, Any]) -> dict[str, Any]:
              list_cases, create_batch, reset_demo, get_stats
     """
     try:
-        # Auto-populate demo data on cold start (lifespan doesn't run on AgentCore)
-        if len(simulator_api._cases) == 0:
-            logger.info("Cold start detected — auto-populating Galderma demo scenario")
-            simulator_api.create_galderma_scenario()
-
         action = payload.get("action", "")
         input_text = payload.get("inputText", "")
 

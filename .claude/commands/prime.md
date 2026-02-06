@@ -37,14 +37,15 @@ CLAUDE.md is the only source of truth for architecture, infra, security, and AI 
 | Field              | Value                                    |
 | ------------------ | ---------------------------------------- |
 | **Product**        | Galderma TrackWise AI Autopilot          |
-| **Type**           | Sales Demo — AI-First, 9-Agent Mesh      |
+| **Type**           | Sales Demo — AI-First, 10-Agent Mesh     |
 | **AI Framework**   | AWS Strands Agents SDK                   |
 | **AI Runtime**     | AWS Bedrock AgentCore                    |
+| **LLM**            | Gemini 3 Pro (`gemini-3-pro-preview`) via Strands GeminiModel |
 | **Phase**          | Demo-ready (all 3 implementation phases complete) |
 
 ### Current Focus
 
-Sales demo for Galderma: automated complaints processing via 9-agent mesh on Bedrock AgentCore. Backend uses in-memory simulator (Python dicts, not DynamoDB for demo). Frontend uses React 19 + TanStack Query + Zustand + Tailwind CSS (Galderma corporate light theme, full PT-BR localization).
+Sales demo for Galderma: automated complaints processing via 10-agent mesh on Bedrock AgentCore. All agents use Gemini 3 Pro with temperature tiering (0.3/0.5/0.8). Backend uses in-memory simulator (Python dicts, not DynamoDB for demo). Frontend uses React 19 + TanStack Query + Zustand + Tailwind CSS (Apple Liquid Glass theme, full PT-BR localization).
 
 ---
 
@@ -62,36 +63,39 @@ ls -la
 | -------------- | ---------------------------------------- |
 | `frontend/`    | React 19 + Vite + TanStack Query + Tailwind CSS |
 | `backend/`     | FastAPI simulator (in-memory demo data)  |
-| `agents/`      | 9 Strands Agents + shared models/tools   |
+| `agents/`      | 10 Strands Agents + shared models/tools  |
 | `infra/`       | Terraform modules (AgentCore, S3, CloudFront, API Proxy) |
 | `docs/prd/`    | PRD, Agent Architecture, Data Model, UI Design, Demo Script |
 | `.claude/`     | Claude Code commands, rules, CLAUDE.md   |
 
-### 9-Agent Mesh Architecture
+### 10-Agent Mesh Architecture
 
 ```
-TrackWise Simulator -> AgentCore Gateway -> A2A Agent Mesh (9 agents) -> Memory/Ledger
+TrackWise Simulator -> AgentCore Gateway -> A2A Agent Mesh (10 agents) -> Memory/Ledger
                                                 |
                                           Agent Room UI (React)
 ```
 
-| Agent | Model | Purpose |
-| ----- | ----- | ------- |
-| Observer | Haiku | Orchestrator — routes events to specialists |
-| Case Understanding | Haiku | Classifies cases (19 products, 6 categories) |
-| Recurring Detector | Haiku | Pattern matching with weighted similarity |
-| Compliance Guardian | OPUS | 5 policy rules validation |
-| Resolution Composer | OPUS | Multi-language resolution text (4 languages) |
-| Inquiry Bridge | Haiku | Linked case cascade closure |
-| Writeback | Haiku | Case closure execution |
-| Memory Curator | Haiku | Memory updates from feedback |
-| CSV Pack | Haiku | Compliance artifacts generation |
+| Agent | Temp | Purpose |
+| ----- | ---- | ------- |
+| Observer | 0.5 | Orchestrator — routes events to specialists |
+| Case Understanding | 0.5 | Classifies cases (19 products, 6 categories) |
+| Recurring Detector | 0.5 | Pattern matching with weighted similarity |
+| Compliance Guardian | 0.3 | 5 policy rules validation (critical) |
+| Resolution Composer | 0.3 | Multi-language resolution text (critical) |
+| Inquiry Bridge | 0.5 | Linked case cascade closure |
+| Writeback | 0.5 | Case closure execution |
+| Memory Curator | 0.5 | Memory updates from feedback |
+| CSV Pack | 0.5 | Compliance artifacts generation |
+| SAC Generator | 0.8 | Brazilian consumer complaint generation (creative) |
+
+All agents use **Gemini 3 Pro** (`gemini-3-pro-preview`) via Strands `GeminiModel`.
 
 ### Infrastructure (Terraform)
 
 | Module | Purpose |
 | ------ | ------- |
-| `infra/modules/agentcore/runtime/` | 9 agent runtimes + simulator on AgentCore |
+| `infra/modules/agentcore/runtime/` | 10 agent runtimes + simulator on AgentCore |
 | `infra/modules/agentcore/gateway/` | AgentCore Gateway for MCP tools |
 | `infra/modules/api-proxy/` | Lambda translating REST -> AgentCore invocations |
 | `infra/modules/s3/` | Artifacts + frontend buckets |
@@ -124,7 +128,7 @@ Frontend (React 19 + Vite)
   -> CloudFront CDN
     -> Lambda API Proxy (REST -> AgentCore)
       -> AgentCore Simulator Runtime (FastAPI in-memory)
-      -> AgentCore Agent Runtimes (9 Strands Agents)
+      -> AgentCore Agent Runtimes (10 Strands Agents, all Gemini 3 Pro)
            |- A2A Protocol (JSON-RPC on port 9000)
            |- AgentCore Memory (STM + LTM strategies)
            |- DynamoDB Ledger (append-only, SHA-256 hash chain)

@@ -183,7 +183,29 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:53:37 UTC
+## 2026-02-06: SAC Module 404 Fix (Lambda Proxy + Invocations Handler)
+
+**Commit:** `1906196` — `🐛 fix: Add SAC module routes to Lambda proxy and invocations handler`
+
+**Changes (2 files, 66 insertions):**
+- **`infra/modules/api-proxy/main.tf`**: Added 4 SAC route mappings to `route_to_action()` (generate, status, scenarios, configure) + `format_response()` handler
+- **`backend/src/main.py`**: Added 4 SAC action handlers to `/invocations` dispatcher (sac_generate, sac_get_status, sac_get_scenarios, sac_configure) + import for `sac_service`
+
+**Root Cause:** SAC module was added after the Lambda proxy was created. FastAPI router worked in local dev but production flow goes `Frontend → Lambda Proxy → AgentCore invoke_agent_runtime() → /invocations`. Both the proxy's `route_to_action()` and the backend's `/invocations` dispatcher had no SAC mappings, causing HTTP 404.
+
+**Verification:** 13 backend tests pass, ruff lint clean, pushed to main.
+
+---
+
+## 2026-02-06: Gemini 3 Pro Migration (All 10 Agents)
+
+**Commit:** `180fbcf` — `🏗️ refactor: Migrate all 10 agents from Claude/Bedrock to Gemini 3 Pro via Strands GeminiModel`
+
+**Changes:** All 10 agents migrated from Claude/Bedrock model providers to Gemini 3.0 Pro via Strands `GeminiModel`. Temperature tiering (0.3/0.5/0.8) replaces model tiering (Opus/Haiku). Centralized via `config.get_model()` in `shared/config.py`. Strands SDK pinned to v1.25.0.
+
+---
+
+## Turn Log — 2026-02-06 16:39:30 UTC
 
 **User:** (no user message captured)
 
@@ -191,168 +213,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:57:25 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 15:35:01 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 15:36:31 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 15:37:08 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 15:37:17 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 15:42:31 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 15:43:31 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:04:18 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:06:45 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:06:47 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:06:52 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:06:53 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:06:57 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:08:21 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:08:27 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:09:09 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:09:20 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:09:34 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:10:13 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-
-## Turn Log — 2026-02-06 16:18:48 UTC
-
-**User:** (no user message captured)
-
-**Assistant:** (no assistant response captured)
-
----
-
-## Turn Log — 2026-02-06 16:29:02 UTC
+## Turn Log — 2026-02-06 16:48:24 UTC
 
 **User:** (no user message captured)
 

@@ -15,7 +15,7 @@ import hashlib
 from datetime import datetime, timedelta
 from typing import Any
 
-from .models import Case, CaseStatus, CaseType
+from .models import Case, CaseSeverity, CaseStatus, CaseType
 
 
 # Agent pipeline order (the happy path)
@@ -209,7 +209,9 @@ def _generate_case_ledger(
     t += 2.0
 
     # 2. Pattern Matched (Recurring Detector)
-    is_recurring = case.category and case.category.value == "PACKAGING"
+    is_recurring = bool(case.recurring_pattern_id) or (case.category and case.category.value == "PACKAGING")
+    pattern_id = case.recurring_pattern_id or "PKG-SEAL-001"
+    match_confidence = case.ai_confidence or 0.94
     entry_id = _deterministic_id(f"{case.case_id}-pattern", "led-")
     entry_hash = hashlib.sha256(f"{entry_id}{prev_hash}".encode()).hexdigest()
     entries.append({
@@ -219,14 +221,15 @@ def _generate_case_ledger(
         "agent_name": "recurring_detector",
         "action": "PATTERN_MATCHED" if is_recurring else "CASE_ANALYZED",
         "action_description": (
-            f"Padrão recorrente detectado: reclamação de embalagem {case.product_brand}"
+            f"Padrão recorrente detectado: {pattern_id} — {case.product_brand} {case.product_name}"
             if is_recurring
             else "Nenhum padrão recorrente encontrado"
         ),
         "timestamp": _time_offset(base_time, t),
         "reasoning": (
-            "Pontuação de similaridade ponderada: 0.94 (produto: 1.0, categoria: 1.0, semântica: 0.82). "
-            "Padrão PKG-SEAL-001 correspondido com ALTA confiança. "
+            f"Pontuação de similaridade ponderada: {match_confidence:.2f} "
+            f"(produto: 1.0, categoria: 1.0, semântica: {match_confidence - 0.12:.2f}). "
+            f"Padrão {pattern_id} correspondido com ALTA confiança. "
             "Recomendação: AUTO_CLOSE"
             if is_recurring
             else "Nenhum padrão correspondido acima do limite de 0.75. "
@@ -234,7 +237,7 @@ def _generate_case_ledger(
             "Recomendação: HUMAN_REVIEW"
         ),
         "decision": "AUTO_CLOSE" if is_recurring else "HUMAN_REVIEW",
-        "confidence": 0.94 if is_recurring else 0.45,
+        "confidence": match_confidence if is_recurring else 0.45,
         "state_changes": [],
         "policies_evaluated": [],
         "policy_violations": [],
@@ -242,7 +245,7 @@ def _generate_case_ledger(
         "tokens_used": 380,
         "latency_ms": 1800,
         "memory_strategy": "RecurringPatterns",
-        "memory_pattern_id": "PKG-SEAL-001" if is_recurring else None,
+        "memory_pattern_id": pattern_id if is_recurring else None,
         "entry_hash": entry_hash,
         "previous_hash": prev_hash,
     })
@@ -315,6 +318,42 @@ def _generate_case_ledger(
     })
     prev_hash = entry_hash
     t += 3.0
+
+    # 3.5. Inquiry Bridge (for inquiries with linked complaint)
+    if case.case_type == CaseType.INQUIRY and case.linked_case_id:
+        entry_id = _deterministic_id(f"{case.case_id}-inquiry-bridge", "led-")
+        entry_hash = hashlib.sha256(f"{entry_id}{prev_hash}".encode()).hexdigest()
+        entries.append({
+            "ledger_id": entry_id,
+            "run_id": run_id,
+            "case_id": case.case_id,
+            "agent_name": "inquiry_bridge",
+            "action": "INQUIRY_CASCADE_CLOSED",
+            "action_description": (
+                f"Fechamento em cascata: reclamação vinculada {case.linked_case_id} "
+                "concluída pela fábrica"
+            ),
+            "timestamp": _time_offset(base_time, t),
+            "reasoning": (
+                f"Reclamação vinculada {case.linked_case_id} concluída pela fábrica. "
+                "Verificação de elegibilidade: (1) Reclamação pai CLOSED, "
+                "(2) Resolução presente em 4 idiomas, (3) Conformidade aprovada. "
+                f"Iniciando fechamento em cascata da Inquiry {case.case_id}."
+            ),
+            "decision": f"CASCADE_CLOSE — Inquiry {case.case_id} elegível para fechamento automático",
+            "confidence": 0.98,
+            "state_changes": [],
+            "policies_evaluated": [],
+            "policy_violations": [],
+            "model_id": "claude-4.5-haiku",
+            "tokens_used": 320,
+            "latency_ms": 1100,
+            "linked_case_id": case.linked_case_id,
+            "entry_hash": entry_hash,
+            "previous_hash": prev_hash,
+        })
+        prev_hash = entry_hash
+        t += 2.0
 
     # 4. Resolution Generated (Composer)
     entry_id = _deterministic_id(f"{case.case_id}-resolution", "led-")
@@ -514,23 +553,24 @@ def _generate_urs_artifact(pack_id: str, cases: list[Case]) -> dict[str, Any]:
     return {
         "artifact_id": f"{pack_id}-URS",
         "artifact_type": "URS",
-        "title": "Especificação de Requisitos do Usuário",
-        "description": "Define o que o sistema AI Autopilot deve fazer para processamento de reclamações.",
+        "title": "Especificação de Requisitos — Galderma TrackWise AI Autopilot",
+        "description": "Requisitos funcionais e de conformidade do sistema AI Autopilot para processamento automatizado de reclamações Galderma.",
         "status": "APPROVED",
         "sections": [
             {"id": "FR-001", "requirement": "Classificação automática de severidade", "priority": "MANDATORY", "status": "VERIFIED"},
             {"id": "FR-002", "requirement": "Detecção de padrão recorrente via AgentCore Memory", "priority": "MANDATORY", "status": "VERIFIED"},
             {"id": "FR-003", "requirement": "Geração de resolução multilíngue (PT/EN/ES/FR)", "priority": "MANDATORY", "status": "VERIFIED"},
             {"id": "FR-004", "requirement": "Fechamento em cascata de consulta vinculada", "priority": "MANDATORY", "status": "VERIFIED"},
+            {"id": "FR-005", "requirement": "Classificação de procedência (extensibilidade futura)", "priority": "HIGH", "status": "PLANNED"},
             {"id": "CR-001", "requirement": "Trilha de auditoria imutável com hash chain SHA-256", "priority": "MANDATORY", "status": "VERIFIED"},
             {"id": "CR-002", "requirement": "Portal de conformidade de 5 políticas antes de fechamento automático", "priority": "MANDATORY", "status": "VERIFIED"},
             {"id": "CR-003", "requirement": "Human-in-the-loop para severidade HIGH/CRITICAL", "priority": "MANDATORY", "status": "VERIFIED"},
             {"id": "NFR-001", "requirement": "Latência de processamento < 30 segundos", "priority": "HIGH", "status": "VERIFIED"},
             {"id": "NFR-002", "requirement": "Limite de confiança do agente >= 0.90", "priority": "MANDATORY", "status": "VERIFIED"},
         ],
-        "total_requirements": 9,
+        "total_requirements": 10,
         "verified": 9,
-        "coverage": 100.0,
+        "coverage": 90.0,
     }
 
 
@@ -541,8 +581,8 @@ def _generate_risk_assessment_artifact(
     return {
         "artifact_id": f"{pack_id}-RA",
         "artifact_type": "RiskAssessment",
-        "title": "Avaliação de Risco (FMEA)",
-        "description": "Análise de Modo e Efeito de Falha para processamento de reclamações orientado por IA.",
+        "title": "Avaliação de Risco (FMEA) — Galderma Hub Qualidade Americas",
+        "description": "Análise de Modo e Efeito de Falha para processamento de reclamações orientado por IA no contexto do Hub de Qualidade Americas da Galderma.",
         "status": "APPROVED",
         "methodology": "FMEA",
         "risk_summary": {
@@ -578,8 +618,8 @@ def _generate_traceability_artifact(pack_id: str) -> dict[str, Any]:
     return {
         "artifact_id": f"{pack_id}-TM",
         "artifact_type": "TraceabilityMatrix",
-        "title": "Matriz de Rastreabilidade de Requisitos",
-        "description": "Vincula cada requisito a casos de teste e evidências.",
+        "title": "Matriz de Rastreabilidade — TrackWise AI Autopilot",
+        "description": "Vincula cada requisito a casos de teste e evidências, referenciando IDs de caso TrackWise processados.",
         "status": "APPROVED",
         "matrix": matrix,
         "coverage": 100.0,
@@ -662,3 +702,194 @@ def _generate_memory_dump_artifact(pack_id: str, closed_cases: list[Case]) -> di
         "sample_patterns": patterns,
         "total_patterns": len(patterns) + 6,
     }
+
+
+# ============================================
+# Memory Entries Generation (derived from cases)
+# ============================================
+
+def generate_memory_entries(cases: list[Case]) -> dict[str, Any]:
+    """Generate memory entries (patterns, templates, policies) derived from case state.
+
+    In production, these come from AgentCore Memory (STM/LTM strategies).
+    For demo, we derive them deterministically from existing cases so that:
+    - After reset → empty (patterns are LEARNED from cases)
+    - After scenario creation → patterns appear
+    """
+    closed = [c for c in cases if c.status == CaseStatus.CLOSED]
+
+    patterns = _generate_memory_patterns(closed)
+    templates = _generate_memory_templates(closed)
+    policies = _generate_memory_policies(cases)
+
+    return {
+        "patterns": patterns,
+        "templates": templates,
+        "policies": policies,
+        "summary": {
+            "total_patterns": len(patterns),
+            "total_templates": len(templates),
+            "total_policies": len(policies),
+            "cases_analyzed": len(cases),
+        },
+    }
+
+
+def _generate_memory_patterns(closed_cases: list[Case]) -> list[dict[str, Any]]:
+    """Generate recurring patterns from closed cases (RecurringPatterns strategy)."""
+    patterns: list[dict[str, Any]] = []
+    seen_products: set[str] = set()
+
+    for case in closed_cases:
+        product_key = f"{case.product_brand} {case.product_name}"
+        if product_key in seen_products:
+            continue
+        seen_products.add(product_key)
+
+        pattern_id = case.recurring_pattern_id or _deterministic_id(f"pat-{case.case_id}", "PAT-")
+        category = str(case.category.value) if case.category else "PACKAGING"
+
+        # Map category to descriptive pattern name
+        category_names = {
+            "PACKAGING": "Defeito de Embalagem",
+            "QUALITY": "Alteração de Qualidade",
+            "EFFICACY": "Resposta de Eficácia",
+            "SAFETY": "Evento de Segurança",
+            "LABELING": "Problema de Rotulagem",
+        }
+        pattern_name = f"{category_names.get(category, category)} {case.product_brand}"
+
+        # Map category to descriptive pattern description
+        category_descs = {
+            "PACKAGING": f"Problema recorrente com integridade de embalagem em {case.product_brand} {case.product_name}",
+            "QUALITY": f"Relatos de alteração de textura/consistência em {case.product_brand} {case.product_name}",
+            "EFFICACY": f"Relatos de resposta insuficiente ao tratamento com {case.product_brand} {case.product_name}",
+            "SAFETY": f"Relatos de reação adversa com {case.product_brand} {case.product_name}",
+            "LABELING": f"Inconsistências em rotulagem de {case.product_brand} {case.product_name}",
+        }
+
+        # Count occurrences for this product (how many cases match)
+        occurrences = len([
+            c for c in closed_cases
+            if c.product_brand == case.product_brand
+        ])
+
+        patterns.append({
+            "id": pattern_id,
+            "name": pattern_name,
+            "description": category_descs.get(category, f"Padrão detectado para {product_key}"),
+            "confidence": case.ai_confidence or 0.92,
+            "occurrences": max(occurrences, 3),  # At least 3 to show it's recurring
+            "status": "ACTIVE",
+            "created_at": (case.created_at or case.opened_at).isoformat() + "Z" if (case.created_at or case.opened_at) else "2026-01-15T10:00:00Z",
+        })
+
+    return patterns
+
+
+def _generate_memory_templates(closed_cases: list[Case]) -> list[dict[str, Any]]:
+    """Generate resolution templates from closed cases (ResolutionTemplates strategy)."""
+    templates: list[dict[str, Any]] = []
+    seen_categories: set[str] = set()
+
+    for case in closed_cases:
+        category = str(case.category.value) if case.category else "PACKAGING"
+        if category in seen_categories:
+            continue
+        seen_categories.add(category)
+
+        template_id = _deterministic_id(f"tpl-{category}", "TPL-")
+
+        # Template names by category
+        template_names = {
+            "PACKAGING": "Defeito de Embalagem — Resolução Padrão",
+            "QUALITY": "Alteração de Qualidade — Resposta Multilíngue",
+            "EFFICACY": "Eficácia — Orientação de Acompanhamento",
+            "SAFETY": "Evento de Segurança — Protocolo de Escalação",
+            "LABELING": "Rotulagem — Correção e Substituição",
+        }
+
+        # Template texts by category
+        template_texts = {
+            "PACKAGING": "Pedimos desculpas pelo problema na embalagem. Substituiremos o produto e investigaremos o lote.",
+            "QUALITY": "Lamentamos o inconveniente. Investigaremos o lote e providenciaremos substituição imediata.",
+            "EFFICACY": "Orientamos que consulte o profissional de saúde. Registramos o relato para análise técnica do lote.",
+            "SAFETY": "Agradecemos o relato. O caso foi escalado para revisão médica e análise de farmacovigilância.",
+            "LABELING": "Identificamos a inconsistência e providenciaremos correção. Uma unidade de reposição será enviada.",
+        }
+
+        # Count uses
+        uses = len([c for c in closed_cases if (str(c.category.value) if c.category else "PACKAGING") == category])
+
+        templates.append({
+            "id": template_id,
+            "name": template_names.get(category, f"Template {category}"),
+            "language": "PT",
+            "confidence": 0.95 - (len(templates) * 0.03),
+            "uses": max(uses * 7, 12),  # Inflate for demo realism
+            "status": "ACTIVE",
+            "template_text": template_texts.get(category, "Resolução padrão aplicada."),
+        })
+
+    return templates
+
+
+def _generate_memory_policies(cases: list[Case]) -> list[dict[str, Any]]:
+    """Generate policy knowledge entries (PolicyKnowledge strategy).
+
+    These are the 5 compliance policies enforced by the Guardian agent.
+    Evaluation counts and violations are derived from case data.
+    """
+    total_cases = len(cases)
+    high_critical = len([c for c in cases if c.severity in (CaseSeverity.HIGH, CaseSeverity.CRITICAL)])
+
+    if total_cases == 0:
+        return []
+
+    return [
+        {
+            "id": "POL-001",
+            "name": "Limiar de Severidade",
+            "category": "SEGURANÇA",
+            "description": "Casos HIGH/CRITICAL requerem revisão humana obrigatória antes de fechamento",
+            "evaluations": total_cases,
+            "violations": high_critical,
+            "status": "ENFORCED",
+        },
+        {
+            "id": "POL-002",
+            "name": "Evidência Completa",
+            "category": "QUALIDADE",
+            "description": "Todos os 5 campos obrigatórios devem estar presentes para fechamento automático",
+            "evaluations": total_cases,
+            "violations": 0,
+            "status": "ENFORCED",
+        },
+        {
+            "id": "POL-003",
+            "name": "Confiança Mínima",
+            "category": "CONFORMIDADE",
+            "description": "Confiança do agente deve ser >= 0.90 para decisão automática",
+            "evaluations": total_cases,
+            "violations": high_critical,
+            "status": "ENFORCED",
+        },
+        {
+            "id": "POL-004",
+            "name": "Detecção de Evento Adverso",
+            "category": "FARMACOVIGILÂNCIA",
+            "description": "Indicadores de evento adverso disparam escalação automática para equipe médica",
+            "evaluations": total_cases,
+            "violations": 0,
+            "status": "ENFORCED",
+        },
+        {
+            "id": "POL-005",
+            "name": "Resposta Multilíngue Obrigatória",
+            "category": "ATEND_CLIENTE",
+            "description": "Respostas devem ser geradas em PT/EN/ES/FR para cobertura regulatória",
+            "evaluations": total_cases,
+            "violations": 0,
+            "status": "ENFORCED",
+        },
+    ]

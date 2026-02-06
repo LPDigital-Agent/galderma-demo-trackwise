@@ -77,6 +77,11 @@ async def lifespan(app: FastAPI):
         event_emitter.enable()
         simulator_api.set_event_callback(create_event_callback(event_emitter))
 
+    # Auto-populate Galderma scenario if no cases exist
+    if len(simulator_api._cases) == 0:
+        logger.info("No cases found — auto-populating Galderma demo scenario")
+        simulator_api.create_galderma_scenario()
+
     yield
 
     # Shutdown
@@ -460,6 +465,22 @@ async def get_executive_stats() -> dict[str, Any]:
     }
 
 
+# --- Memory (AgentCore Memory strategies) ---
+@app.get("/api/memory", tags=["Memory"])
+async def get_memory() -> dict[str, Any]:
+    """Get memory entries (patterns, templates, policies) derived from case state.
+
+    Returns data from three AgentCore Memory strategies:
+    - RecurringPatterns: detected recurring complaint patterns
+    - ResolutionTemplates: learned resolution templates
+    - PolicyKnowledge: compliance policies and enforcement stats
+    """
+    from .simulator.demo_data import generate_memory_entries
+
+    cases = list(simulator_api._cases.values())
+    return generate_memory_entries(cases)
+
+
 # --- CSV Pack ---
 @app.post("/api/csv-pack", tags=["CSV Pack"])
 async def generate_csv_pack() -> dict[str, Any]:
@@ -475,6 +496,17 @@ async def generate_csv_pack() -> dict[str, Any]:
 async def reset_demo() -> dict[str, int]:
     """Reset all demo data."""
     return simulator_api.reset_demo()
+
+
+# --- Galderma Scenario ---
+@app.post("/api/scenario/galderma", tags=["Demo"])
+async def create_galderma_scenario() -> dict:
+    """Create the Galderma demo scenario with pre-configured cases.
+
+    Creates 6 cases: 3 recurring (CLOSED), 1 non-recurring (PENDING_REVIEW),
+    1 complaint + inquiry linked pair (CLOSED).
+    """
+    return simulator_api.create_galderma_scenario()
 
 
 # ============================================

@@ -182,6 +182,7 @@ class Case(CaseBase):
     ai_confidence: float | None = Field(default=None, ge=0.0, le=1.0)
     guardian_approved: bool | None = None
     processed_by_agent: str | None = None
+    recurring_pattern_id: str | None = Field(default=None, description="Recurring pattern ID if matched")
     run_id: str | None = None
 
     # Metadata

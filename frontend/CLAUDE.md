@@ -1,7 +1,7 @@
 # Frontend — React Agent Room UI
 
 ## Purpose
-Real-time dashboard showing the 9-agent mesh in action. Neo-Cyberpunk dark theme optimized for sales demo impact.
+Real-time dashboard showing the 9-agent mesh in action. Galderma corporate brand theme (dark) with PT-BR localization, optimized for sales demo impact.
 
 ## Stack
 - **Framework:** React 19 + TypeScript strict mode
@@ -13,7 +13,8 @@ Real-time dashboard showing the 9-agent mesh in action. Neo-Cyberpunk dark theme
 - **Command Palette:** cmdk (Cmd+K)
 - **Toasts:** sonner
 - **Icons:** lucide-react
-- **Fonts:** Geist Sans + Geist Mono (CDN)
+- **Fonts:** Georgia/serif (headings) + Segoe UI/sans-serif (body) + Geist Mono (code)
+- **i18n:** PT-BR via `src/i18n/pt-br.ts` constants map (no framework)
 - **Package manager:** pnpm 9+
 
 ## Key Paths
@@ -28,6 +29,7 @@ Real-time dashboard showing the 9-agent mesh in action. Neo-Cyberpunk dark theme
 - `src/stores/` — modeStore, languageStore, timelineStore
 - `src/api/` — API client (axios)
 - `src/types/` — TypeScript types + AGENTS constant
+- `src/i18n/` — PT-BR translation constants (pt-br.ts + index.ts barrel)
 
 ## Commands
 ```bash
@@ -38,10 +40,12 @@ pnpm lint         # eslint
 ```
 
 ## Design System
-- Neo-Cyberpunk dark theme: `#0A0A0F` base, glass surfaces, cyan/violet accents
-- Galderma teal brand: `#00A4B4`
+- Galderma corporate dark theme: `#080B10` base, glass surfaces, teal/blue accents
+- Brand colors: Primary teal `#4A98B8`, Secondary blue `#3860BE`, Accent `#6AAAE4`
 - CSS variables in `src/index.css` (--bg-base, --bg-surface, --glass-bg, etc.)
 - Dark theme ONLY (demo requirement)
+- All UI strings in PT-BR via centralized i18n constants
+- Galderma logo SVG wordmark in sidebar (`public/assets/galderma-logo.svg`)
 - WebSocket connection for real-time agent activity feed
 
 ## Rules

@@ -4,7 +4,7 @@
 // ============================================
 
 import { useState } from 'react'
-import { Shield, FileText, Database, Download, Loader2, CheckCircle2 } from 'lucide-react'
+import { Shield, FileText, Database, Download, Loader2, CheckCircle2, Rocket } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { csvPack as t, DATE_LOCALE } from '@/i18n'
 import { generateCSVPack, type CSVPackResult, type CSVPackArtifact } from '@/api/client'
@@ -150,13 +150,21 @@ export default function CSVPack() {
                     {t.readyForAudit}
                   </p>
                 </div>
-                <Badge
-                  variant="outline"
-                  className="bg-green-500/10 text-green-400 border-green-500/20"
-                >
-                  <CheckCircle2 className="w-3 h-3 mr-1" />
-                  {result.status}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge
+                    variant="outline"
+                    className="bg-green-500/10 text-green-400 border-green-500/20"
+                  >
+                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                    {t.auditReady}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="bg-green-500/10 text-green-400 border-green-500/20"
+                  >
+                    {result.status}
+                  </Badge>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
@@ -274,6 +282,51 @@ export default function CSVPack() {
                 })}
               </div>
             </div>
+
+            {/* Extensibility Roadmap */}
+            <GlassPanel className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-[var(--brand-accent)]/10 flex items-center justify-center">
+                  <Rocket className="w-4 h-4 text-[var(--brand-accent)]" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                    {t.extensibility.title}
+                  </h3>
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    {t.extensibility.description}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {t.extensibility.items.map((item) => (
+                  <div
+                    key={item.name}
+                    className="flex items-center justify-between p-3 rounded-lg bg-[var(--bg-elevated)]/50 border border-[var(--glass-border)]"
+                  >
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-[var(--text-primary)]">
+                        {item.name}
+                      </div>
+                      <div className="text-xs text-[var(--text-secondary)] mt-0.5">
+                        {item.description}
+                      </div>
+                    </div>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        'ml-4 shrink-0 text-[10px]',
+                        item.status === 'EM DESENVOLVIMENTO'
+                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                          : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                      )}
+                    >
+                      {item.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </GlassPanel>
           </div>
         )}
       </div>

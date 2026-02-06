@@ -102,6 +102,8 @@ export const agentRoom = {
   subtitle: 'Painel Executivo AI Autopilot',
   createBatch: 'Criar Lote',
   creating: 'Criando...',
+  createScenario: 'Cenário Galderma',
+  creatingScenario: 'Criando...',
   resetDemo: 'Resetar Demo',
   resetting: 'Resetando...',
   metrics: {
@@ -132,6 +134,9 @@ export const agentRoom = {
     resetCleared: (cases: number, events: number) =>
       `${cases} casos e ${events} eventos removidos`,
     resetError: 'Falha ao resetar demo',
+    scenarioSuccess: (count: number) => `Cenário Galderma criado: ${count} casos`,
+    scenarioDescription: '3 recorrentes + 1 não-recorrente + 1 par vinculado',
+    scenarioError: 'Falha ao criar cenário Galderma',
   },
 } as const
 
@@ -268,122 +273,8 @@ export const memory = {
       status: 'Status',
     },
   },
-  // Mock data (PT-BR)
-  mockPatterns: [
-    {
-      id: 'PAT-001',
-      name: 'Defeito de Embalagem Cetaphil',
-      confidence: 0.92,
-      occurrences: 15,
-      status: 'ACTIVE',
-      description: 'Problema recorrente com integridade do lacre do tubo em múltiplos lotes',
-      created_at: '2026-01-15T10:23:00Z',
-    },
-    {
-      id: 'PAT-002',
-      name: 'Falha no Lacre do Tubo Differin',
-      confidence: 0.87,
-      occurrences: 8,
-      status: 'ACTIVE',
-      description: 'Relatos de produto ressecado devido à degradação do lacre',
-      created_at: '2026-01-20T14:45:00Z',
-    },
-    {
-      id: 'PAT-003',
-      name: 'Quebra de Cadeia de Frio Restylane',
-      confidence: 0.74,
-      occurrences: 3,
-      status: 'PENDING',
-      description: 'Possível excursão de temperatura durante transporte - requer validação',
-      created_at: '2026-02-01T08:12:00Z',
-    },
-    {
-      id: 'PAT-004',
-      name: 'Mau Funcionamento da Bomba Benzac',
-      confidence: 0.68,
-      occurrences: 5,
-      status: 'ACTIVE',
-      description: 'Falha mecânica impedindo a dispensação do produto',
-      created_at: '2026-01-28T16:30:00Z',
-    },
-  ],
-  mockTemplates: [
-    {
-      id: 'TPL-001',
-      name: 'Defeito de Embalagem - Resolução Padrão',
-      language: 'PT',
-      confidence: 0.95,
-      uses: 42,
-      status: 'ACTIVE',
-      template_text:
-        'Pedimos desculpas pelo problema na embalagem. Substituiremos o produto e investigaremos o lote.',
-    },
-    {
-      id: 'TPL-002',
-      name: 'Qualidade - Resposta Multilíngue',
-      language: 'PT',
-      confidence: 0.89,
-      uses: 28,
-      status: 'ACTIVE',
-      template_text:
-        'Lamentamos o inconveniente. Investigaremos o lote e providenciaremos substituição.',
-    },
-    {
-      id: 'TPL-003',
-      name: 'Investigação de Cadeia de Frio',
-      language: 'PT',
-      confidence: 0.78,
-      uses: 12,
-      status: 'PENDING',
-      template_text:
-        'Estamos investigando uma possível excursão de temperatura. Não utilize o produto.',
-    },
-  ],
-  mockPolicies: [
-    {
-      id: 'POL-001',
-      name: 'Requer Revisão Médica',
-      category: 'SEGURANÇA',
-      confidence: 1.0,
-      evaluations: 156,
-      violations: 3,
-      status: 'ENFORCED',
-      description: 'Eventos adversos devem ser revisados por profissional médico',
-    },
-    {
-      id: 'POL-002',
-      name: 'Quarentena de Lote Multi-site',
-      category: 'QUALIDADE',
-      confidence: 0.98,
-      evaluations: 89,
-      violations: 1,
-      status: 'ENFORCED',
-      description:
-        'Lotes com 3+ reclamações em múltiplos sites devem ser colocados em quarentena',
-    },
-    {
-      id: 'POL-003',
-      name: 'Gatilho de Notificação Regulatória',
-      category: 'CONFORMIDADE',
-      confidence: 1.0,
-      evaluations: 203,
-      violations: 0,
-      status: 'ENFORCED',
-      description:
-        'Casos de severidade CRÍTICA requerem notificação regulatória em até 24h',
-    },
-    {
-      id: 'POL-004',
-      name: 'Resposta Multilíngue Obrigatória',
-      category: 'ATEND_CLIENTE',
-      confidence: 0.93,
-      evaluations: 312,
-      violations: 8,
-      status: 'ENFORCED',
-      description:
-        'Respostas devem corresponder ao idioma do cliente ou fornecer tradução',
-    },
-  ],
+  emptyTitle: 'Nenhum padrão aprendido',
+  emptyDescription: 'Os agentes ainda não processaram casos suficientes para formar memória. Crie o Cenário Galderma para ver padrões emergirem.',
 } as const
 
 // ============================================
@@ -421,11 +312,12 @@ export const ledger = {
 
 export const csvPack = {
   title: 'Pacote CSV',
-  subtitle: 'Validação de Sistema Computadorizado (NÃO é arquivo CSV!)',
+  subtitle: 'Validação de Sistema Computadorizado — Pronto para auditoria externa (21 CFR Parte 11)',
   generatePack: 'Gerar Pacote',
   generating: 'Gerando...',
   packGenerated: 'Pacote CSV Gerado',
-  readyForAudit: 'Documentação de conformidade pronta para auditoria',
+  readyForAudit: 'Documentação de conformidade pronta para auditoria externa',
+  auditReady: 'Pronto para Auditoria Externa',
   summary: {
     packId: 'ID do Pacote',
     generatedAt: 'Gerado em',
@@ -456,6 +348,27 @@ export const csvPack = {
       `=== ${title} ===\n\n${description}\n\nGerado em: ${new Date().toISOString()}\nID do Artefato: ${artifactId}\n\nStatus: ${status}\n\n--- Resumo ---\nEste relatório de conformidade documenta todas as decisões orientadas por IA e aprovações humanas para os casos analisados.\n\nPrincipais Constatações:\n- Todas as decisões críticas revisadas pelo Guardião de Conformidade (Claude Opus)\n- Confirmações humanas no loop registradas\n- Violações de políticas sinalizadas e resolvidas\n- Qualidade da resolução atende aos padrões regulatórios`,
     generic: (title: string, description: string, artifactId: string, status: string) =>
       `=== ${title} ===\n\n${description}\n\nGerado em: ${new Date().toISOString()}\nID do Artefato: ${artifactId}\n\nStatus: ${status}\n\n--- Conteúdo ---\nEste artefato faz parte do pacote de Validação de Sistema Computadorizado (CSV) do TrackWise AI Autopilot.\n\nNorma de Conformidade: 21 CFR Parte 11\nSistema: TrackWise AI Autopilot Demo\nVersão: 1.0.0\n\nTodos os dados neste artefato foram validados e verificados pelo pipeline de conformidade.`,
+  },
+  extensibility: {
+    title: 'Roadmap de Extensibilidade',
+    description: 'Funcionalidades planejadas para próximas versões do AI Autopilot',
+    items: [
+      {
+        name: 'Classificação de Procedência (Procedente/Não Procedente)',
+        description: 'Classificação automática via agente especializado com aprendizado contínuo',
+        status: 'PLANEJADO',
+      },
+      {
+        name: 'Integração EDMS D2 — Gap Analysis Documental',
+        description: 'Conexão direta ao sistema EDMS para análise de lacunas documentais',
+        status: 'PLANEJADO',
+      },
+      {
+        name: 'Suporte Francês (Canadá) Completo',
+        description: 'Variante fr-CA com terminologia regulatória canadense',
+        status: 'EM DESENVOLVIMENTO',
+      },
+    ],
   },
 } as const
 

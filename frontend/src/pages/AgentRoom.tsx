@@ -4,11 +4,11 @@
 // ============================================
 
 import { useEffect, useRef } from 'react'
-import { CheckCircle2, Zap, Shield, Activity, RotateCcw, Plus } from 'lucide-react'
+import { CheckCircle2, Zap, Shield, Activity, RotateCcw, Plus, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { agentRoom as t } from '@/i18n'
-import { useExecutiveStats, useStats, useCreateBatch, useResetDemo } from '@/hooks'
+import { useExecutiveStats, useStats, useCreateBatch, useResetDemo, useCreateGaldermaScenario } from '@/hooks'
 import { useTimelineStore, useFilteredEvents } from '@/stores'
 import { AGENTS } from '@/types'
 import { Button } from '@/components/ui/button'
@@ -36,6 +36,7 @@ export default function AgentRoom() {
   const { data: executiveStats, isLoading: executiveLoading } = useExecutiveStats()
   const { data: stats, isLoading: statsLoading } = useStats()
   const createBatch = useCreateBatch()
+  const createScenario = useCreateGaldermaScenario()
   const resetDemo = useResetDemo()
 
   const filteredEvents = useFilteredEvents()
@@ -77,6 +78,22 @@ export default function AgentRoom() {
     )
   }
 
+  // Handle Galderma scenario mutation
+  const handleCreateScenario = () => {
+    createScenario.mutate(undefined, {
+      onSuccess: (data) => {
+        toast.success(t.toasts.scenarioSuccess(data.created_count), {
+          description: t.toasts.scenarioDescription,
+        })
+      },
+      onError: (error) => {
+        toast.error(t.toasts.scenarioError, {
+          description: error instanceof Error ? error.message : 'Unknown error',
+        })
+      },
+    })
+  }
+
   // Handle reset demo mutation
   const handleResetDemo = () => {
     resetDemo.mutate(undefined, {
@@ -103,9 +120,18 @@ export default function AgentRoom() {
         </div>
         <div className="flex items-center gap-3">
           <Button
+            onClick={handleCreateScenario}
+            disabled={createScenario.isPending}
+            className="bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold shadow-lg shadow-brand-primary/20"
+          >
+            <Sparkles className="mr-2 h-4 w-4" />
+            {createScenario.isPending ? t.creatingScenario : t.createScenario}
+          </Button>
+          <Button
             onClick={handleCreateBatch}
             disabled={createBatch.isPending}
-            className="bg-brand-primary hover:bg-brand-primary/90 text-white font-medium"
+            variant="outline"
+            className="font-medium"
           >
             <Plus className="mr-2 h-4 w-4" />
             {createBatch.isPending ? t.creating : t.createBatch}

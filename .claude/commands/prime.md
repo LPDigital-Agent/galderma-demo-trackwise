@@ -44,7 +44,7 @@ CLAUDE.md is the only source of truth for architecture, infra, security, and AI 
 
 ### Current Focus
 
-Sales demo for Galderma: automated complaints processing via 9-agent mesh on Bedrock AgentCore. Backend uses in-memory simulator (Python dicts, not DynamoDB for demo). Frontend uses React 19 + TanStack Query + Zustand + Tailwind CSS (dark glassmorphism theme).
+Sales demo for Galderma: automated complaints processing via 9-agent mesh on Bedrock AgentCore. Backend uses in-memory simulator (Python dicts, not DynamoDB for demo). Frontend uses React 19 + TanStack Query + Zustand + Tailwind CSS (Galderma corporate dark theme, full PT-BR localization).
 
 ---
 

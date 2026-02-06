@@ -152,6 +152,56 @@ export async function getExecutiveStats(): Promise<ExecutiveStats> {
 }
 
 // ============================================
+// Memory API
+// ============================================
+export interface MemoryPattern {
+  id: string
+  name: string
+  description: string
+  confidence: number
+  occurrences: number
+  status: string
+  created_at: string
+}
+
+export interface MemoryTemplate {
+  id: string
+  name: string
+  language: string
+  confidence: number
+  uses: number
+  status: string
+  template_text: string
+}
+
+export interface MemoryPolicy {
+  id: string
+  name: string
+  category: string
+  description: string
+  evaluations: number
+  violations: number
+  status: string
+}
+
+export interface MemoryData {
+  patterns: MemoryPattern[]
+  templates: MemoryTemplate[]
+  policies: MemoryPolicy[]
+  summary: {
+    total_patterns: number
+    total_templates: number
+    total_policies: number
+    cases_analyzed: number
+  }
+}
+
+export async function getMemory(): Promise<MemoryData> {
+  const response = await api.get<MemoryData>('/memory')
+  return response.data
+}
+
+// ============================================
 // CSV Pack API
 // ============================================
 export interface CSVPackArtifact {
@@ -176,6 +226,21 @@ export interface CSVPackResult {
 
 export async function generateCSVPack(): Promise<CSVPackResult> {
   const response = await api.post<CSVPackResult>('/csv-pack')
+  return response.data
+}
+
+// ============================================
+// Scenario API
+// ============================================
+export interface ScenarioResult {
+  created_count: number
+  case_ids: string[]
+  scenario: string
+  description: string
+}
+
+export async function createGaldermaScenario(): Promise<ScenarioResult> {
+  const response = await api.post<ScenarioResult>('/scenario/galderma')
   return response.data
 }
 

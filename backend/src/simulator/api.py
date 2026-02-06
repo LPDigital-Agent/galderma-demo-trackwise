@@ -463,6 +463,302 @@ class SimulatorAPI:
         }
 
     # ============================================
+    # Galderma Demo Scenario
+    # ============================================
+    def create_galderma_scenario(self) -> dict[str, int | list[str] | str]:
+        """Create the Galderma demo scenario with deterministic cases.
+
+        Demonstrates all key capabilities:
+        - 3 recurring complaints (CLOSED by AI): CETAPHIL, DIFFERIN, BENZAC
+        - 1 non-recurring complaint (PENDING_REVIEW): RESTYLANE (HIGH severity)
+        - 1 complaint + linked inquiry pair (CLOSED): CETAPHIL Gentle Cleanser
+
+        Returns:
+            Summary of created cases
+        """
+        case_ids: list[str] = []
+
+        # ── 1. Recurring: CETAPHIL Moisturizing Lotion — Packaging/Broken Seal ──
+        c1, _ = self.create_case(CaseCreate(
+            product_brand="CETAPHIL",
+            product_name="Moisturizing Lotion",
+            complaint_text=(
+                "O lacre do meu CETAPHIL Moisturizing Lotion estava violado quando recebi. "
+                "O produto aparentava ter sido aberto anteriormente."
+            ),
+            customer_name="Maria Silva",
+            customer_email="maria.silva@example.com",
+            case_type=CaseType.COMPLAINT,
+            category=ComplaintCategory.PACKAGING,
+            lot_number="LOT-24871",
+        ))
+        c1.recurring_pattern_id = "PKG-SEAL-001"
+        c1.severity = CaseSeverity.LOW
+        c1.ai_confidence = 0.94
+        c1.ai_recommendation = "AUTO_CLOSE — Padrão PKG-SEAL-001"
+        c1.guardian_approved = True
+        self.close_case(
+            case_id=c1.case_id,
+            resolution_text="Replacement product shipped. Pattern PKG-SEAL-001 confirmed recurring.",
+            resolution_text_pt=(
+                "Prezada cliente, agradecemos por entrar em contato sobre o CETAPHIL Moisturizing Lotion. "
+                "Após análise, confirmamos que o problema de lacre violado foi classificado como recorrente "
+                "(padrão PKG-SEAL-001). Um produto substituto será enviado em até 5 dias úteis. "
+                "Pedimos desculpas pelo inconveniente."
+            ),
+            resolution_text_en=(
+                "Dear customer, thank you for contacting us about your CETAPHIL Moisturizing Lotion. "
+                "After analysis, we confirmed the broken seal issue was classified as recurring "
+                "(pattern PKG-SEAL-001). A replacement product will be shipped within 5 business days. "
+                "We apologize for the inconvenience."
+            ),
+            resolution_text_es=(
+                "Estimada cliente, agradecemos su contacto sobre el CETAPHIL Moisturizing Lotion. "
+                "Tras el análisis, confirmamos que el problema del sello roto fue clasificado como "
+                "recurrente (patrón PKG-SEAL-001). Un producto de reemplazo será enviado en un plazo "
+                "de 5 días hábiles. Lamentamos las molestias."
+            ),
+            resolution_text_fr=(
+                "Chère cliente, nous vous remercions de nous avoir contactés au sujet de votre "
+                "CETAPHIL Moisturizing Lotion. Après analyse, nous confirmons que le problème de "
+                "scellé brisé a été classé comme récurrent (modèle PKG-SEAL-001). Un produit de "
+                "remplacement sera expédié sous 5 jours ouvrables. Nous nous excusons pour le désagrément."
+            ),
+            processed_by_agent="resolution_composer",
+        )
+        case_ids.append(c1.case_id)
+
+        # ── 2. Recurring: DIFFERIN Gel 0.3% — Quality/Texture Change ──
+        c2, _ = self.create_case(CaseCreate(
+            product_brand="DIFFERIN",
+            product_name="Adapalene Gel 0.3%",
+            complaint_text=(
+                "Meu DIFFERIN Adapalene Gel 0.3% tem uma textura estranha, diferente do que costumo receber. "
+                "O gel parece mais aquoso que o normal."
+            ),
+            customer_name="João Santos",
+            customer_email="joao.santos@example.com",
+            case_type=CaseType.COMPLAINT,
+            category=ComplaintCategory.QUALITY,
+            lot_number="LOT-31502",
+        ))
+        c2.recurring_pattern_id = "QTY-TEXT-001"
+        c2.severity = CaseSeverity.LOW
+        c2.ai_confidence = 0.92
+        c2.ai_recommendation = "AUTO_CLOSE — Padrão QTY-TEXT-001"
+        c2.guardian_approved = True
+        self.close_case(
+            case_id=c2.case_id,
+            resolution_text="Quality investigation initiated. Pattern QTY-TEXT-001 confirmed recurring. Replacement shipped.",
+            resolution_text_pt=(
+                "Prezado cliente, agradecemos por entrar em contato sobre o DIFFERIN Adapalene Gel 0.3%. "
+                "Após análise, confirmamos que a alteração de textura reportada foi classificada como "
+                "recorrente (padrão QTY-TEXT-001). Uma investigação de qualidade foi iniciada no lote "
+                "LOT-31502 e um produto substituto será enviado em até 5 dias úteis."
+            ),
+            resolution_text_en=(
+                "Dear customer, thank you for contacting us about your DIFFERIN Adapalene Gel 0.3%. "
+                "After analysis, we confirmed the reported texture change was classified as recurring "
+                "(pattern QTY-TEXT-001). A quality investigation has been initiated for lot LOT-31502 "
+                "and a replacement product will be shipped within 5 business days."
+            ),
+            resolution_text_es=(
+                "Estimado cliente, agradecemos su contacto sobre el DIFFERIN Adapalene Gel 0.3%. "
+                "Tras el análisis, confirmamos que el cambio de textura reportado fue clasificado como "
+                "recurrente (patrón QTY-TEXT-001). Se ha iniciado una investigación de calidad en el lote "
+                "LOT-31502 y un producto de reemplazo será enviado en un plazo de 5 días hábiles."
+            ),
+            resolution_text_fr=(
+                "Cher client, nous vous remercions de nous avoir contactés au sujet de votre "
+                "DIFFERIN Adapalene Gel 0.3%. Après analyse, nous confirmons que le changement de "
+                "texture signalé a été classé comme récurrent (modèle QTY-TEXT-001). Une enquête "
+                "qualité a été lancée pour le lot LOT-31502 et un produit de remplacement sera "
+                "expédié sous 5 jours ouvrables."
+            ),
+            processed_by_agent="resolution_composer",
+        )
+        case_ids.append(c2.case_id)
+
+        # ── 3. Recurring: BENZAC AC 5% Gel — Efficacy/No Improvement ──
+        c3, _ = self.create_case(CaseCreate(
+            product_brand="BENZAC",
+            product_name="Benzac AC Gel 5%",
+            complaint_text=(
+                "Estou usando BENZAC AC Gel 5% há 2 semanas sem melhora visível. "
+                "Minha condição de pele não apresentou nenhuma mudança."
+            ),
+            customer_name="Ana Oliveira",
+            customer_email="ana.oliveira@example.com",
+            case_type=CaseType.COMPLAINT,
+            category=ComplaintCategory.EFFICACY,
+            lot_number="LOT-18293",
+        ))
+        c3.recurring_pattern_id = "EFF-RESP-001"
+        c3.severity = CaseSeverity.LOW
+        c3.ai_confidence = 0.91
+        c3.ai_recommendation = "AUTO_CLOSE — Padrão EFF-RESP-001"
+        c3.guardian_approved = True
+        self.close_case(
+            case_id=c3.case_id,
+            resolution_text="Efficacy counseling provided. Pattern EFF-RESP-001 confirmed recurring.",
+            resolution_text_pt=(
+                "Prezada cliente, agradecemos por entrar em contato sobre o BENZAC AC Gel 5%. "
+                "Após análise, confirmamos que a ausência de melhora reportada foi classificada como "
+                "recorrente (padrão EFF-RESP-001). Recomendamos consulta dermatológica para avaliação "
+                "da posologia. O tratamento com peróxido de benzoíla pode levar de 4 a 8 semanas para "
+                "resultados visíveis."
+            ),
+            resolution_text_en=(
+                "Dear customer, thank you for contacting us about BENZAC AC Gel 5%. "
+                "After analysis, we confirmed the reported lack of improvement was classified as "
+                "recurring (pattern EFF-RESP-001). We recommend a dermatological consultation to "
+                "evaluate dosage. Benzoyl peroxide treatment may take 4 to 8 weeks for visible results."
+            ),
+            resolution_text_es=(
+                "Estimada cliente, agradecemos su contacto sobre el BENZAC AC Gel 5%. "
+                "Tras el análisis, confirmamos que la falta de mejora reportada fue clasificada como "
+                "recurrente (patrón EFF-RESP-001). Recomendamos una consulta dermatológica para "
+                "evaluar la dosificación. El tratamiento con peróxido de benzoílo puede tardar "
+                "de 4 a 8 semanas en mostrar resultados visibles."
+            ),
+            resolution_text_fr=(
+                "Chère cliente, nous vous remercions de nous avoir contactés au sujet du "
+                "BENZAC AC Gel 5%. Après analyse, nous confirmons que l'absence d'amélioration "
+                "signalée a été classée comme récurrente (modèle EFF-RESP-001). Nous recommandons "
+                "une consultation dermatologique pour évaluer la posologie. Le traitement au peroxyde "
+                "de benzoyle peut prendre de 4 à 8 semaines pour des résultats visibles."
+            ),
+            processed_by_agent="resolution_composer",
+        )
+        case_ids.append(c3.case_id)
+
+        # ── 4. Non-recurring: RESTYLANE Kysse — Safety/Allergic Reaction (HIGH) ──
+        c4, _ = self.create_case(CaseCreate(
+            product_brand="RESTYLANE",
+            product_name="Restylane Kysse",
+            complaint_text=(
+                "Tive uma reação alérgica após aplicação do RESTYLANE Kysse. "
+                "Meus lábios ficaram muito inchados e com vermelhidão intensa 48h após o procedimento."
+            ),
+            customer_name="Carla Ferreira",
+            customer_email="carla.ferreira@example.com",
+            case_type=CaseType.COMPLAINT,
+            category=ComplaintCategory.SAFETY,
+            lot_number="LOT-55042",
+        ))
+        # Escalate to PENDING_REVIEW — Human-in-the-Loop
+        self.update_case(c4.case_id, CaseUpdate(
+            status=CaseStatus.PENDING_REVIEW,
+            severity=CaseSeverity.HIGH,
+            ai_confidence=0.45,
+            ai_recommendation="HUMAN_REVIEW — Severidade HIGH, evento adverso potencial",
+        ))
+        case_ids.append(c4.case_id)
+
+        # ── 5+6. Linked Pair: CETAPHIL Gentle Cleanser (Complaint + Inquiry) ──
+        # 5a. Complaint — factory concluded → CLOSED
+        c5, _ = self.create_case(CaseCreate(
+            product_brand="CETAPHIL",
+            product_name="Gentle Skin Cleanser",
+            complaint_text=(
+                "O meu CETAPHIL Gentle Skin Cleanser veio com a embalagem danificada. "
+                "O frasco estava amassado e o produto vazou durante o transporte."
+            ),
+            customer_name="Rafael Pereira",
+            customer_email="rafael.pereira@example.com",
+            case_type=CaseType.COMPLAINT,
+            category=ComplaintCategory.PACKAGING,
+            lot_number="LOT-37614",
+        ))
+        c5.recurring_pattern_id = "PKG-SEAL-001"
+        c5.severity = CaseSeverity.LOW
+        c5.ai_confidence = 0.93
+        c5.ai_recommendation = "AUTO_CLOSE — Padrão PKG-SEAL-001"
+        c5.guardian_approved = True
+        self.close_case(
+            case_id=c5.case_id,
+            resolution_text="Factory investigation complete. Packaging defect confirmed in LOT-37614.",
+            resolution_text_pt=(
+                "Prezado cliente, agradecemos por entrar em contato sobre o CETAPHIL Gentle Skin Cleanser. "
+                "A investigação da fábrica foi concluída e o defeito de embalagem no lote LOT-37614 foi "
+                "confirmado. Um produto substituto foi enviado. Medidas corretivas foram implementadas "
+                "na linha de produção."
+            ),
+            resolution_text_en=(
+                "Dear customer, thank you for contacting us about your CETAPHIL Gentle Skin Cleanser. "
+                "The factory investigation has been completed and the packaging defect in lot LOT-37614 "
+                "was confirmed. A replacement product has been shipped. Corrective actions have been "
+                "implemented on the production line."
+            ),
+            resolution_text_es=(
+                "Estimado cliente, agradecemos su contacto sobre el CETAPHIL Gentle Skin Cleanser. "
+                "La investigación de fábrica ha sido completada y el defecto de embalaje en el lote "
+                "LOT-37614 fue confirmado. Un producto de reemplazo ha sido enviado. Acciones "
+                "correctivas han sido implementadas en la línea de producción."
+            ),
+            resolution_text_fr=(
+                "Cher client, nous vous remercions de nous avoir contactés au sujet de votre "
+                "CETAPHIL Gentle Skin Cleanser. L'enquête en usine a été complétée et le défaut "
+                "d'emballage du lot LOT-37614 a été confirmé. Un produit de remplacement a été "
+                "expédié. Des actions correctives ont été mises en place sur la ligne de production."
+            ),
+            processed_by_agent="resolution_composer",
+        )
+        case_ids.append(c5.case_id)
+
+        # 5b. Linked Inquiry — auto-closed via Inquiry Bridge cascade
+        c6, _ = self.create_case(CaseCreate(
+            product_brand="CETAPHIL",
+            product_name="Gentle Skin Cleanser",
+            complaint_text=(
+                f"Consulta de acompanhamento referente à reclamação {c5.case_id}. "
+                "Cliente solicita atualização sobre o status da investigação."
+            ),
+            customer_name="Rafael Pereira",
+            customer_email="rafael.pereira@example.com",
+            case_type=CaseType.INQUIRY,
+            category=ComplaintCategory.PACKAGING,
+            linked_case_id=c5.case_id,
+        ))
+        c6.severity = CaseSeverity.LOW
+        c6.ai_confidence = 0.98
+        c6.ai_recommendation = f"INQUIRY_CASCADE_CLOSED — Reclamação vinculada {c5.case_id} concluída"
+        self.close_case(
+            case_id=c6.case_id,
+            resolution_text=f"Inquiry auto-closed. Linked complaint {c5.case_id} resolved by factory.",
+            resolution_text_pt=(
+                f"Consulta encerrada automaticamente. A reclamação vinculada {c5.case_id} foi "
+                "concluída pela fábrica. A investigação confirmou o defeito e medidas corretivas "
+                "foram implementadas."
+            ),
+            resolution_text_en=(
+                f"Inquiry automatically closed. Linked complaint {c5.case_id} has been resolved "
+                "by the factory. Investigation confirmed the defect and corrective actions have "
+                "been implemented."
+            ),
+            resolution_text_es=(
+                f"Consulta cerrada automáticamente. La reclamación vinculada {c5.case_id} ha sido "
+                "resuelta por la fábrica. La investigación confirmó el defecto y se implementaron "
+                "acciones correctivas."
+            ),
+            resolution_text_fr=(
+                f"Consultation clôturée automatiquement. La réclamation liée {c5.case_id} a été "
+                "résolue par l'usine. L'enquête a confirmé le défaut et des actions correctives "
+                "ont été mises en place."
+            ),
+            processed_by_agent="inquiry_bridge",
+        )
+        case_ids.append(c6.case_id)
+
+        logger.info(f"Galderma scenario created: {len(case_ids)} cases")
+        return {
+            "created_count": len(case_ids),
+            "case_ids": case_ids,
+            "scenario": "galderma",
+            "description": "3 recurring (CLOSED) + 1 non-recurring (PENDING_REVIEW) + 1 linked pair (CLOSED)",
+        }
+
+    # ============================================
     # Event Management
     # ============================================
     def _emit_event(self, event_type: EventType, payload: dict) -> EventEnvelope:

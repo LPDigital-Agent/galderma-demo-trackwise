@@ -17,6 +17,10 @@ export const batchKeys = {
   all: ['batch'] as const,
 }
 
+export const memoryKeys = {
+  all: ['memory'] as const,
+}
+
 // Get statistics
 export function useStats() {
   return useQuery({
@@ -52,6 +56,15 @@ export function useCreateBatch() {
   })
 }
 
+// Memory entries (patterns, templates, policies)
+export function useMemory() {
+  return useQuery({
+    queryKey: memoryKeys.all,
+    queryFn: api.getMemory,
+    refetchInterval: 10000, // Refetch every 10 seconds (memory changes less frequently)
+  })
+}
+
 // Reset demo mutation
 export function useResetDemo() {
   const queryClient = useQueryClient()
@@ -61,6 +74,23 @@ export function useResetDemo() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cases'] })
       queryClient.invalidateQueries({ queryKey: statsKeys.all })
+      queryClient.invalidateQueries({ queryKey: executiveKeys.all })
+      queryClient.invalidateQueries({ queryKey: memoryKeys.all })
+    },
+  })
+}
+
+// Create Galderma scenario mutation
+export function useCreateGaldermaScenario() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: api.createGaldermaScenario,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cases'] })
+      queryClient.invalidateQueries({ queryKey: statsKeys.all })
+      queryClient.invalidateQueries({ queryKey: executiveKeys.all })
+      queryClient.invalidateQueries({ queryKey: memoryKeys.all })
     },
   })
 }

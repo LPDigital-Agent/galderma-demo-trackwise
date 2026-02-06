@@ -4,6 +4,7 @@ import { caseDetail as t, DATE_LOCALE } from '@/i18n'
 import { ArrowLeft, ChevronDown, ChevronRight, Link as LinkIcon } from 'lucide-react'
 import { useCase, useCaseRuns, useCaseLedger } from '@/hooks'
 import { useLanguageStore } from '@/stores/languageStore'
+import { useSacStore } from '@/stores/sacStore'
 import { StatusBadge, SeverityBadge, AgentBadge, GlassPanel } from '@/components/domain'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -32,6 +33,11 @@ export default function CaseDetail() {
   const { data: caseData, isLoading: caseLoading } = useCase(caseId ?? '')
   const { data: runs, isLoading: runsLoading } = useCaseRuns(caseId ?? '')
   const { data: ledger, isLoading: ledgerLoading } = useCaseLedger(caseId ?? '')
+
+  // Fallback: if the API doesn't have the case (AgentCore container recycled),
+  // look it up in the SAC store which holds all browser-generated cases.
+  const sacCases = useSacStore((s) => s.generatedCases)
+  const effectiveCaseData = caseData ?? (!caseLoading ? sacCases.find((c) => c.case_id === caseId) : undefined)
 
   const firstRun = runs?.[0]
   const agentSteps = firstRun?.agent_steps || []
@@ -77,7 +83,7 @@ export default function CaseDetail() {
     )
   }
 
-  if (!caseData) {
+  if (!effectiveCaseData) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -94,7 +100,7 @@ export default function CaseDetail() {
     )
   }
 
-  const resolutionText = getResolutionForLanguage(caseData, language)
+  const resolutionText = getResolutionForLanguage(effectiveCaseData, language)
 
   return (
     <div className="flex flex-col lg:flex-row gap-[var(--float-gap)] h-full overflow-hidden">
@@ -117,7 +123,7 @@ export default function CaseDetail() {
           <div className="space-y-4">
             <div>
               <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.caseId}</p>
-              <p className="font-mono text-[var(--brand-accent)] text-lg">{caseData.case_id}</p>
+              <p className="font-mono text-[var(--brand-accent)] text-lg">{effectiveCaseData.case_id}</p>
             </div>
 
             <Separator className="bg-[var(--lg-border-soft)]" />
@@ -125,11 +131,11 @@ export default function CaseDetail() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.status}</p>
-                <StatusBadge status={caseData.status} />
+                <StatusBadge status={effectiveCaseData.status} />
               </div>
               <div>
                 <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.severity}</p>
-                <SeverityBadge severity={caseData.severity} />
+                <SeverityBadge severity={effectiveCaseData.severity} />
               </div>
             </div>
 
@@ -137,18 +143,18 @@ export default function CaseDetail() {
 
             <div>
               <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.productBrand}</p>
-              <p className="text-[var(--lg-text-primary)] font-medium">{caseData.product_brand}</p>
+              <p className="text-[var(--lg-text-primary)] font-medium">{effectiveCaseData.product_brand}</p>
             </div>
 
             <div>
               <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.productName}</p>
-              <p className="text-[var(--lg-text-primary)]">{caseData.product_name}</p>
+              <p className="text-[var(--lg-text-primary)]">{effectiveCaseData.product_name}</p>
             </div>
 
-            {caseData.lot_number && (
+            {effectiveCaseData.lot_number && (
               <div>
                 <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.lotNumber}</p>
-                <p className="font-mono text-[var(--lg-text-primary)]">{caseData.lot_number}</p>
+                <p className="font-mono text-[var(--lg-text-primary)]">{effectiveCaseData.lot_number}</p>
               </div>
             )}
 
@@ -157,12 +163,12 @@ export default function CaseDetail() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.type}</p>
-                <p className="text-[var(--lg-text-primary)]">{caseData.case_type.replace('_', ' ')}</p>
+                <p className="text-[var(--lg-text-primary)]">{effectiveCaseData.case_type.replace('_', ' ')}</p>
               </div>
-              {caseData.category && (
+              {effectiveCaseData.category && (
                 <div>
                   <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.category}</p>
-                  <p className="text-[var(--lg-text-primary)]">{caseData.category}</p>
+                  <p className="text-[var(--lg-text-primary)]">{effectiveCaseData.category}</p>
                 </div>
               )}
             </div>
@@ -171,12 +177,12 @@ export default function CaseDetail() {
 
             <div>
               <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.customer}</p>
-              <p className="text-[var(--lg-text-primary)] font-medium">{caseData.customer_name}</p>
-              {caseData.customer_email && (
-                <p className="text-[var(--lg-text-secondary)] text-sm">{caseData.customer_email}</p>
+              <p className="text-[var(--lg-text-primary)] font-medium">{effectiveCaseData.customer_name}</p>
+              {effectiveCaseData.customer_email && (
+                <p className="text-[var(--lg-text-secondary)] text-sm">{effectiveCaseData.customer_email}</p>
               )}
-              {caseData.customer_phone && (
-                <p className="text-[var(--lg-text-secondary)] text-sm">{caseData.customer_phone}</p>
+              {effectiveCaseData.customer_phone && (
+                <p className="text-[var(--lg-text-secondary)] text-sm">{effectiveCaseData.customer_phone}</p>
               )}
             </div>
 
@@ -184,7 +190,7 @@ export default function CaseDetail() {
 
             <div>
               <p className="text-[var(--lg-text-tertiary)] text-sm mb-1">{t.labels.created}</p>
-              <p className="text-[var(--lg-text-secondary)] text-sm font-mono">{formatDate(caseData.created_at)}</p>
+              <p className="text-[var(--lg-text-secondary)] text-sm font-mono">{formatDate(effectiveCaseData.created_at)}</p>
             </div>
           </div>
         </GlassPanel>
@@ -192,7 +198,7 @@ export default function CaseDetail() {
         {/* Complaint Text */}
         <GlassPanel variant="card">
           <h3 className="text-[var(--lg-text-primary)] font-semibold mb-3">{t.complaint}</h3>
-          <p className="text-[var(--lg-text-secondary)] leading-relaxed">{caseData.complaint_text}</p>
+          <p className="text-[var(--lg-text-secondary)] leading-relaxed">{effectiveCaseData.complaint_text}</p>
         </GlassPanel>
 
         {/* Resolution Text */}
@@ -218,17 +224,17 @@ export default function CaseDetail() {
         )}
 
         {/* Linked Case */}
-        {caseData.linked_case_id && (
+        {effectiveCaseData.linked_case_id && (
           <GlassPanel variant="card">
             <h3 className="text-[var(--lg-text-primary)] font-semibold mb-3 flex items-center gap-2">
               <LinkIcon className="w-4 h-4" />
               {t.linkedCase}
             </h3>
             <div
-              onClick={() => navigate(`/cases/${caseData.linked_case_id}`)}
+              onClick={() => navigate(`/cases/${effectiveCaseData.linked_case_id}`)}
               className="glass-control flex items-center justify-between p-3 rounded-xl hover:bg-white/10 cursor-pointer transition-colors"
             >
-              <span className="font-mono text-[var(--brand-accent)]">{caseData.linked_case_id}</span>
+              <span className="font-mono text-[var(--brand-accent)]">{effectiveCaseData.linked_case_id}</span>
             </div>
           </GlassPanel>
         )}

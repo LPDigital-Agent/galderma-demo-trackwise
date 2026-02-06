@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Link as LinkIcon } from 'lucide-react'
 import { cases as t, DATE_LOCALE } from '@/i18n'
@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CreateCaseModal } from '@/components/overlays/CreateCaseModal'
+import { useSacStore } from '@/stores/sacStore'
 import type { CaseStatus, CaseSeverity } from '@/types'
 
 export default function Cases() {
@@ -24,6 +25,26 @@ export default function Cases() {
     page: 1,
     page_size: 100,
   })
+
+  // Merge SAC-generated cases (Zustand) with API results.
+  // In production, AgentCore Runtime containers may recycle between invocations,
+  // so the API can return empty while SAC cases exist only in browser memory.
+  const sacCases = useSacStore((s) => s.generatedCases)
+
+  const mergedData = useMemo(() => {
+    const apiCases = data?.cases ?? []
+    const apiCaseIds = new Set(apiCases.map((c) => c.case_id))
+
+    // SAC cases not already in API response — apply active UI filters
+    let sacOnly = sacCases.filter((c) => !apiCaseIds.has(c.case_id))
+    if (statusFilter !== 'ALL') sacOnly = sacOnly.filter((c) => c.status === statusFilter)
+    if (severityFilter !== 'ALL') sacOnly = sacOnly.filter((c) => c.severity === severityFilter)
+
+    const allCases = [...sacOnly, ...apiCases]
+    allCases.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+    return { total: allCases.length, cases: allCases }
+  }, [data, sacCases, statusFilter, severityFilter])
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(DATE_LOCALE, {
@@ -41,12 +62,12 @@ export default function Cases() {
       <div className="glass-shell p-5 lg:p-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-3xl font-semibold text-[var(--lg-text-primary)]">{t.title}</h1>
-          {data && (
+          {mergedData.total > 0 && (
             <Badge
               variant="outline"
               className="glass-control px-2.5 py-1 text-[var(--brand-accent)]"
             >
-              {data.total}
+              {mergedData.total}
             </Badge>
           )}
         </div>
@@ -118,8 +139,8 @@ export default function Cases() {
                   <TableCell><Skeleton className="h-4 w-28 bg-white/10" /></TableCell>
                 </TableRow>
               ))
-            ) : data && data.cases.length > 0 ? (
-              data.cases.map((caseItem) => (
+            ) : mergedData.cases.length > 0 ? (
+              mergedData.cases.map((caseItem) => (
                 <TableRow
                   key={caseItem.case_id}
                   onClick={() => navigate(`/cases/${caseItem.case_id}`)}

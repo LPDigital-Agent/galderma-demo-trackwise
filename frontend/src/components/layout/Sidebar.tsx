@@ -27,15 +27,15 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'h-full flex flex-col bg-[var(--bg-surface)] border-r border-[var(--glass-border)]',
+        'h-full flex flex-col bg-[var(--bg-sidebar)] border-r border-[var(--sidebar-border)]',
         'transition-all duration-300 ease-in-out',
         isCollapsed ? 'w-16' : 'w-60'
       )}
     >
       {/* Logo Area */}
-      <div className="flex items-center gap-3 px-4 py-6 border-b border-[var(--glass-border)]">
+      <div className="flex items-center gap-3 px-4 py-6 border-b border-[var(--sidebar-border)]">
         {isCollapsed ? (
-          <span className="text-[var(--brand-primary)] font-bold text-lg mx-auto" style={{ fontFamily: 'Georgia, Cambria, serif' }}>G</span>
+          <span className="text-white font-bold text-lg mx-auto" style={{ fontFamily: 'Georgia, Cambria, serif' }}>G</span>
         ) : (
           <div className="flex flex-col overflow-hidden">
             <img
@@ -43,7 +43,7 @@ export function Sidebar() {
               alt="Galderma"
               className="h-7 object-contain object-left"
             />
-            <span className="text-xs text-[var(--text-muted)] whitespace-nowrap">
+            <span className="text-xs text-[var(--sidebar-text-muted)] whitespace-nowrap">
               {t.subtitle}
             </span>
           </div>
@@ -63,8 +63,8 @@ export function Sidebar() {
                     'transition-all duration-200',
                     'text-sm font-medium',
                     isActive
-                      ? 'bg-black/5 border-l-2 border-[var(--brand-primary)] text-[var(--text-primary)]'
-                      : 'text-[var(--text-secondary)] hover:bg-black/[0.02] hover:text-[var(--text-primary)] border-l-2 border-transparent'
+                      ? 'bg-white/10 border-l-2 border-[var(--brand-accent)] text-[var(--sidebar-text)]'
+                      : 'text-[var(--sidebar-text-muted)] hover:bg-white/5 hover:text-[var(--sidebar-text)] border-l-2 border-transparent'
                   )
                 }
               >
@@ -81,7 +81,7 @@ export function Sidebar() {
       </nav>
 
       {/* Bottom Section */}
-      <div className="border-t border-[var(--glass-border)] px-4 py-3">
+      <div className="border-t border-[var(--sidebar-border)] px-4 py-3">
         {/* Connection Status */}
         <div className="flex items-center gap-2 mb-3">
           <div
@@ -93,7 +93,7 @@ export function Sidebar() {
             )}
           />
           {!isCollapsed && (
-            <span className="text-xs text-[var(--text-muted)]">
+            <span className="text-xs text-[var(--sidebar-text-muted)]">
               {isConnected ? t.live : t.offline}
             </span>
           )}
@@ -104,8 +104,8 @@ export function Sidebar() {
           onClick={() => setIsCollapsed(!isCollapsed)}
           className={cn(
             'w-full flex items-center gap-2 px-2 py-1.5 rounded-md',
-            'text-xs text-[var(--text-muted)]',
-            'hover:bg-black/[0.02] hover:text-[var(--text-secondary)]',
+            'text-xs text-[var(--sidebar-text-muted)]',
+            'hover:bg-white/5 hover:text-[var(--sidebar-text)]',
             'transition-colors duration-200',
             isCollapsed && 'justify-center'
           )}

@@ -36,7 +36,7 @@ export function ModeToggle({ className }: ModeToggleProps) {
             className={cn(
               'rounded-md px-3 py-1 text-xs font-medium transition-all',
               isActive
-                ? 'text-white shadow-sm'
+                ? 'text-[var(--text-primary)] shadow-sm font-semibold'
                 : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
             )}
             style={

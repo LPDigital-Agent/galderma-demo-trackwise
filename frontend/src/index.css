@@ -10,11 +10,17 @@
    ============================================ */
 
 :root {
-  /* Background Colors — light whites/grays matching galderma.com */
-  --bg-base: #FFFFFF;
+  /* Background Colors — light gray base, white cards */
+  --bg-base: #F4F4F4;
   --bg-surface: #F8F8F8;
   --bg-elevated: #FFFFFF;
   --bg-overlay: rgba(0, 0, 0, 0.08);
+
+  /* Sidebar — dark cyan (Galderma teal, 2 tones darker) */
+  --bg-sidebar: #236B75;
+  --sidebar-text: #E8F4F7;
+  --sidebar-text-muted: #A8CFD9;
+  --sidebar-border: rgba(255, 255, 255, 0.10);
 
   /* Glass — light frosted glass */
   --glass-bg: rgba(255, 255, 255, 0.75);
@@ -101,14 +107,14 @@
   --chart-3: oklch(0.45 0.12 155);
   --chart-4: oklch(0.65 0.18 85);
   --chart-5: oklch(0.55 0.2 340);
-  --sidebar: oklch(0.97 0.005 230);
-  --sidebar-foreground: oklch(0.15 0.005 230);
-  --sidebar-primary: oklch(0.65 0.1 215);
+  --sidebar: oklch(0.45 0.08 195);
+  --sidebar-foreground: oklch(0.95 0.02 195);
+  --sidebar-primary: oklch(0.75 0.1 195);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.93 0.03 215);
-  --sidebar-accent-foreground: oklch(0.15 0.005 230);
-  --sidebar-border: oklch(0 0 0 / 8%);
-  --sidebar-ring: oklch(0.65 0.1 215);
+  --sidebar-accent: oklch(0.50 0.06 195);
+  --sidebar-accent-foreground: oklch(0.95 0.02 195);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.65 0.1 195);
 }
 
 /* ============================================
@@ -266,6 +272,10 @@ body::before {
 
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
+
+  --color-bg-sidebar: var(--bg-sidebar);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-text-muted: var(--sidebar-text-muted);
 
   --color-brand-primary: #4A98B8;
   --color-brand-secondary: #3860BE;

@@ -293,6 +293,26 @@ def route_to_action(method, path, query_params, body):
             'action': 'reset_demo'
         }
 
+    # SAC Module endpoints
+    elif path == '/api/sac/generate' and method == 'POST':
+        return {
+            'action': 'sac_generate',
+            'request': body
+        }
+    elif path == '/api/sac/status':
+        return {
+            'action': 'sac_get_status'
+        }
+    elif path == '/api/sac/scenarios':
+        return {
+            'action': 'sac_get_scenarios'
+        }
+    elif path == '/api/sac/configure' and method == 'POST':
+        return {
+            'action': 'sac_configure',
+            'request': body
+        }
+
     # Ping (health check)
     elif path == '/ping' or path == '/api/ping':
         return {
@@ -334,6 +354,8 @@ def format_response(action, result):
     elif action == 'create_galderma_scenario':
         return 200, result.get('result', result)
     elif action == 'reset_demo':
+        return 200, result.get('result', result)
+    elif action in ('sac_generate', 'sac_get_status', 'sac_get_scenarios', 'sac_configure'):
         return 200, result.get('result', result)
     elif action == 'ping':
         return 200, {'status': 'healthy', 'service': 'simulator'}

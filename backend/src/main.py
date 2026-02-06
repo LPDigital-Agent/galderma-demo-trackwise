@@ -30,6 +30,7 @@ from fastapi.responses import JSONResponse
 
 from .bridge.routes import router as bridge_router
 from .config import settings
+from .sac import service as sac_service
 from .sac.router import router as sac_router
 from .simulator.api import simulator_api
 from .simulator.event_emitter import create_event_callback, event_emitter
@@ -322,6 +323,45 @@ async def invocations(payload: dict[str, Any]) -> dict[str, Any]:
                 "result": result,
             }
 
+        # SAC Module actions
+        elif action == "sac_generate":
+            from src.sac.models import SACGenerateRequest
+
+            sac_request = SACGenerateRequest(**data.get("request", data))
+            sac_result = await sac_service.generate_cases(sac_request, simulator_api)
+            return {
+                "success": True,
+                "action": "sac_generate",
+                "result": sac_result.model_dump(mode="json"),
+            }
+
+        elif action == "sac_get_status":
+            status = sac_service.get_status()
+            return {
+                "success": True,
+                "action": "sac_get_status",
+                "result": status.model_dump(mode="json"),
+            }
+
+        elif action == "sac_get_scenarios":
+            scenarios = sac_service.get_scenarios()
+            return {
+                "success": True,
+                "action": "sac_get_scenarios",
+                "result": [s.model_dump(mode="json") for s in scenarios],
+            }
+
+        elif action == "sac_configure":
+            from src.sac.models import SACConfigureRequest
+
+            config_request = SACConfigureRequest(**data.get("request", data))
+            status = sac_service.configure(config_request)
+            return {
+                "success": True,
+                "action": "sac_configure",
+                "result": status.model_dump(mode="json"),
+            }
+
         else:
             return {
                 "success": False,
@@ -342,6 +382,10 @@ async def invocations(payload: dict[str, Any]) -> dict[str, Any]:
                     "get_memory",
                     "generate_csv_pack",
                     "create_galderma_scenario",
+                    "sac_generate",
+                    "sac_get_status",
+                    "sac_get_scenarios",
+                    "sac_configure",
                 ],
             }
 

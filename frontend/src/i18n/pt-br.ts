@@ -16,6 +16,7 @@ export const sidebar = {
   brand: 'Galderma',
   subtitle: 'TrackWise AI',
   nav: {
+    sac: 'SAC / Atendimento',
     agentRoom: 'Sala de Agentes',
     cases: 'Casos',
     network: 'Rede',
@@ -383,6 +384,59 @@ export const csvPack = {
         status: 'EM DESENVOLVIMENTO',
       },
     ],
+  },
+} as const
+
+// ============================================
+// SAC / Atendimento Page
+// ============================================
+
+export const sac = {
+  title: 'SAC / Atendimento',
+  subtitle: 'Simulador de Reclamações',
+  generate: 'Gerar Caso',
+  generateBatch: 'Gerar Lote',
+  generating: 'Gerando...',
+  scenarios: {
+    label: 'Cenário',
+    RECURRING_COMPLAINT: 'Reclamação Recorrente',
+    RECURRING_COMPLAINT_DESC: 'Padrão detectável pelo Detector de Recorrência',
+    ADVERSE_EVENT_HIGH: 'Evento Adverso',
+    ADVERSE_EVENT_HIGH_DESC: 'Severidade alta — aciona Human-in-the-Loop',
+    LINKED_INQUIRY: 'Consulta Vinculada',
+    LINKED_INQUIRY_DESC: 'Par reclamação + consulta para Inquiry Bridge',
+    MISSING_DATA: 'Dados Incompletos',
+    MISSING_DATA_DESC: 'Campos ausentes — teste de robustez',
+    MULTI_PRODUCT_BATCH: 'Lote Multi-Produto',
+    MULTI_PRODUCT_BATCH_DESC: 'Mistura de marcas Galderma',
+    RANDOM: 'Aleatório',
+    RANDOM_DESC: 'Cenários mistos',
+  },
+  config: {
+    product: 'Marca do Produto',
+    allBrands: 'Todas as Marcas',
+    count: 'Quantidade',
+    persistDynamo: 'Persistir no DynamoDB',
+    persistHint: 'Gravar no banco de dados real',
+  },
+  feed: {
+    title: 'Feed de Casos Gerados',
+    empty: 'Nenhum caso gerado nesta sessão',
+    emptyHint: 'Selecione um cenário e clique em "Gerar Caso" para começar',
+    clickToView: 'Clique para ver detalhes',
+    complaint: 'Reclamação:',
+    customer: 'Cliente:',
+  },
+  stats: {
+    generated: 'Casos Gerados',
+    recurring: 'Recorrentes',
+    adverse: 'Adversos',
+    linked: 'Vinculados',
+  },
+  toasts: {
+    singleSuccess: 'Caso gerado com sucesso',
+    batchSuccess: 'casos gerados com sucesso',
+    error: 'Falha ao gerar caso',
   },
 } as const
 

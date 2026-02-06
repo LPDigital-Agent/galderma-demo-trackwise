@@ -129,6 +129,7 @@ class SimulatorAPI:
             category=case_data.category,
             lot_number=case_data.lot_number,
             linked_case_id=case_data.linked_case_id,
+            **({"severity": case_data.severity} if case_data.severity else {}),
         )
 
         self._cases[case.case_id] = case

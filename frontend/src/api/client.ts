@@ -254,4 +254,53 @@ export async function resetDemo(): Promise<{ cases_cleared: number; events_clear
   return response.data
 }
 
+// ============================================
+// SAC API
+// ============================================
+export interface SACGenerateRequest {
+  count: number
+  scenario_type: string
+  product_brand?: string | null
+  use_agent?: boolean
+  persist_dynamo?: boolean
+}
+
+export interface SACGenerateResponse {
+  success: boolean
+  generated_count: number
+  case_ids: string[]
+  scenario_type: string
+  generation_method: string
+  generation_time_ms: number
+  cases: Case[]
+}
+
+export interface SACStatus {
+  agent_available: boolean
+  total_generated: number
+  last_generation_at: string | null
+  fallback_mode: boolean
+  dynamo_enabled: boolean
+}
+
+export async function sacGenerate(data: SACGenerateRequest): Promise<SACGenerateResponse> {
+  const response = await api.post<SACGenerateResponse>('/sac/generate', data)
+  return response.data
+}
+
+export async function sacStatus(): Promise<SACStatus> {
+  const response = await api.get<SACStatus>('/sac/status')
+  return response.data
+}
+
+export async function sacScenarios(): Promise<unknown[]> {
+  const response = await api.get('/sac/scenarios')
+  return response.data
+}
+
+export async function sacConfigure(data: { dynamo_enabled: boolean }): Promise<SACStatus> {
+  const response = await api.post<SACStatus>('/sac/configure', data)
+  return response.data
+}
+
 export default api

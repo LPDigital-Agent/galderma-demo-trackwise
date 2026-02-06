@@ -38,6 +38,7 @@ AGENT_MODULES = {
     "writeback": "writeback.agent",
     "memory-curator": "memory_curator.agent",
     "csv-pack": "csv_pack.agent",
+    "sac-generator": "sac_generator.agent",
 }
 
 # Load the agent module

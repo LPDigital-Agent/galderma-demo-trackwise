@@ -139,6 +139,7 @@ class CaseBase(BaseModel):
     customer_phone: str | None = Field(default=None, description="Customer phone")
     case_type: CaseType = Field(default=CaseType.COMPLAINT, description="Type of case")
     category: ComplaintCategory | None = Field(default=None, description="Complaint category")
+    severity: CaseSeverity | None = Field(default=None, description="Override severity (computed if None)")
     lot_number: str | None = Field(default=None, description="Product lot/batch number")
     linked_case_id: str | None = Field(default=None, description="ID of linked case (for inquiries)")
 

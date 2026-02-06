@@ -15,6 +15,14 @@ export interface ShellRouteMeta {
 
 const ROUTE_META: Array<{ matcher: RegExp; meta: ShellRouteMeta }> = [
   {
+    matcher: /^\/sac$/,
+    meta: {
+      title: 'SAC / Atendimento',
+      subtitle: 'Simulador de reclamações',
+      showGlobalRail: false,
+    },
+  },
+  {
     matcher: /^\/agent-room$/,
     meta: {
       title: 'Sala de Agentes',

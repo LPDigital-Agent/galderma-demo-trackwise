@@ -6,13 +6,14 @@
 import { useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { Brain, BookOpen, ChevronLeft, ChevronRight, FileText } from 'lucide-react'
+import { Brain, BookOpen, ChevronLeft, ChevronRight, FileText, Headphones } from 'lucide-react'
 
 import { sidebar as t } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { useSidebarStore } from '@/stores'
 
 const NAV_ITEMS = [
+  { icon: Headphones, label: t.nav.sac, route: '/sac' },
   { icon: FileText, label: t.nav.cases, route: '/cases' },
   { icon: Brain, label: t.nav.memory, route: '/memory' },
   { icon: BookOpen, label: t.nav.ledger, route: '/ledger' },

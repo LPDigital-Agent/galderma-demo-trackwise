@@ -30,6 +30,7 @@ from fastapi.responses import JSONResponse
 
 from .bridge.routes import router as bridge_router
 from .config import settings
+from .sac.router import router as sac_router
 from .simulator.api import simulator_api
 from .simulator.event_emitter import create_event_callback, event_emitter
 from .simulator.models import (
@@ -109,6 +110,9 @@ app.add_middleware(
 
 # Include WebSocket router for timeline
 app.include_router(bridge_router)
+
+# Include SAC module router
+app.include_router(sac_router, prefix="/api/sac")
 
 
 # ============================================

@@ -36,8 +36,8 @@ function SidebarBody({ onNavigate, onClose, showCloseButton = false }: SidebarBo
     <>
       <div className="px-5 pb-4 pt-5">
         <div className="flex items-start justify-between gap-3">
-          <div className="space-y-2">
-            <div className="inline-flex items-center rounded-2xl border border-white/15 bg-white/8 px-4 py-1.5">
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="flex items-center rounded-2xl border border-white/15 bg-white/8 px-4 py-1.5">
               <img src="/assets/galderma-logo.svg" alt="Galderma" className="h-6 w-full object-contain object-left brightness-0 invert" />
             </div>
             <div>

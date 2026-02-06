@@ -235,10 +235,56 @@ def route_to_action(method, path, query_params, body):
             'batch': body
         }
 
-    # Stats endpoint
+    # Stats endpoints
+    elif path == '/api/stats/executive':
+        return {
+            'action': 'get_executive_stats'
+        }
     elif path == '/api/stats':
         return {
             'action': 'get_stats'
+        }
+
+    # Runs endpoints
+    elif re.match(r'^/api/runs/([^/]+)$', path):
+        run_id = re.match(r'^/api/runs/([^/]+)$', path).group(1)
+        return {
+            'action': 'get_run',
+            'run_id': run_id
+        }
+    elif path == '/api/runs':
+        return {
+            'action': 'list_runs',
+            'case_id': query_params.get('case_id'),
+            'status': query_params.get('status')
+        }
+
+    # Ledger endpoint
+    elif path == '/api/ledger':
+        return {
+            'action': 'list_ledger',
+            'case_id': query_params.get('case_id'),
+            'run_id': query_params.get('run_id'),
+            'agent_name': query_params.get('agent_name'),
+            'limit': int(query_params.get('limit', 100))
+        }
+
+    # Memory endpoint
+    elif path == '/api/memory':
+        return {
+            'action': 'get_memory'
+        }
+
+    # CSV Pack endpoint
+    elif path == '/api/csv-pack' and method == 'POST':
+        return {
+            'action': 'generate_csv_pack'
+        }
+
+    # Scenario endpoint
+    elif path == '/api/scenario/galderma' and method == 'POST':
+        return {
+            'action': 'create_galderma_scenario'
         }
 
     # Reset endpoint
@@ -275,6 +321,18 @@ def format_response(action, result):
         return 201, result.get('result', result)
     elif action == 'get_stats':
         return 200, result.get('stats', result)
+    elif action == 'get_executive_stats':
+        return 200, result.get('stats', result)
+    elif action in ('list_runs', 'get_run'):
+        return 200, result.get('result', result)
+    elif action == 'list_ledger':
+        return 200, result.get('result', result)
+    elif action == 'get_memory':
+        return 200, result.get('result', result)
+    elif action == 'generate_csv_pack':
+        return 200, result.get('result', result)
+    elif action == 'create_galderma_scenario':
+        return 200, result.get('result', result)
     elif action == 'reset_demo':
         return 200, result.get('result', result)
     elif action == 'ping':
@@ -295,6 +353,13 @@ def lambda_handler(event, context):
     - GET /api/events -> action: list_events
     - POST /api/batch -> action: create_batch
     - GET /api/stats -> action: get_stats
+    - GET /api/stats/executive -> action: get_executive_stats
+    - GET /api/runs -> action: list_runs
+    - GET /api/runs/{id} -> action: get_run
+    - GET /api/ledger -> action: list_ledger
+    - GET /api/memory -> action: get_memory
+    - POST /api/csv-pack -> action: generate_csv_pack
+    - POST /api/scenario/galderma -> action: create_galderma_scenario
     - POST /api/reset -> action: reset_demo
     """
     try:
@@ -429,14 +494,8 @@ resource "aws_lambda_function_url" "api_proxy" {
   function_name      = aws_lambda_function.api_proxy.function_name
   authorization_type = "NONE" # Public access for demo
 
-  cors {
-    allow_credentials = false
-    allow_headers     = ["content-type", "authorization", "x-requested-with"]
-    allow_methods     = ["*"]
-    allow_origins     = ["*"]
-    expose_headers    = ["content-type"]
-    max_age           = 86400
-  }
+  # CORS handled exclusively by Lambda function code (CORS_HEADERS dict)
+  # to avoid duplicate Access-Control-Allow-Origin headers (*, * is invalid)
 }
 
 # ============================================

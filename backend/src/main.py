@@ -248,6 +248,71 @@ async def invocations(payload: dict[str, Any]) -> dict[str, Any]:
                 "stats": stats,
             }
 
+        elif action == "get_executive_stats":
+            stats = await get_executive_stats()
+            return {
+                "success": True,
+                "action": "get_executive_stats",
+                "stats": stats,
+            }
+
+        elif action == "list_runs":
+            runs = await list_runs(
+                case_id=data.get("case_id"),
+                status=data.get("status"),
+            )
+            return {
+                "success": True,
+                "action": "list_runs",
+                "result": runs,
+            }
+
+        elif action == "get_run":
+            run_id = data.get("run_id")
+            run = await get_run(run_id)
+            return {
+                "success": True,
+                "action": "get_run",
+                "result": run,
+            }
+
+        elif action == "list_ledger":
+            entries = await list_ledger(
+                case_id=data.get("case_id"),
+                run_id=data.get("run_id"),
+                agent_name=data.get("agent_name"),
+                limit=data.get("limit", 100),
+            )
+            return {
+                "success": True,
+                "action": "list_ledger",
+                "result": entries,
+            }
+
+        elif action == "get_memory":
+            memory = await get_memory()
+            return {
+                "success": True,
+                "action": "get_memory",
+                "result": memory,
+            }
+
+        elif action == "generate_csv_pack":
+            pack = await generate_csv_pack()
+            return {
+                "success": True,
+                "action": "generate_csv_pack",
+                "result": pack,
+            }
+
+        elif action == "create_galderma_scenario":
+            result = simulator_api.create_galderma_scenario()
+            return {
+                "success": True,
+                "action": "create_galderma_scenario",
+                "result": result,
+            }
+
         else:
             return {
                 "success": False,
@@ -261,6 +326,13 @@ async def invocations(payload: dict[str, Any]) -> dict[str, Any]:
                     "create_batch",
                     "reset_demo",
                     "get_stats",
+                    "get_executive_stats",
+                    "list_runs",
+                    "get_run",
+                    "list_ledger",
+                    "get_memory",
+                    "generate_csv_pack",
+                    "create_galderma_scenario",
                 ],
             }
 

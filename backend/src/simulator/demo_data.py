@@ -781,7 +781,7 @@ def _generate_memory_patterns(closed_cases: list[Case]) -> list[dict[str, Any]]:
             "confidence": case.ai_confidence or 0.92,
             "occurrences": max(occurrences, 3),  # At least 3 to show it's recurring
             "status": "ACTIVE",
-            "created_at": (case.created_at or case.opened_at).isoformat() + "Z" if (case.created_at or case.opened_at) else "2026-01-15T10:00:00Z",
+            "created_at": case.created_at.isoformat() + "Z",
         })
 
     return patterns

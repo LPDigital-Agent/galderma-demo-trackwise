@@ -22,7 +22,7 @@ export default function Cases() {
     status: statusFilter === 'ALL' ? undefined : statusFilter,
     severity: severityFilter === 'ALL' ? undefined : severityFilter,
     page: 1,
-    page_size: 20,
+    page_size: 100,
   })
 
   const formatDate = (dateString: string) => {

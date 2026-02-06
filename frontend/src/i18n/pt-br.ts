@@ -395,8 +395,9 @@ export const sac = {
   title: 'SAC / Atendimento',
   subtitle: 'Simulador de Reclamações',
   generate: 'Gerar Caso',
-  generateBatch: 'Gerar Lote',
   generating: 'Gerando...',
+  startSimulator: 'Ligar Simulador',
+  stopSimulator: 'Desligar Simulador',
   scenarios: {
     label: 'Cenário',
     RECURRING_COMPLAINT: 'Reclamação Recorrente',

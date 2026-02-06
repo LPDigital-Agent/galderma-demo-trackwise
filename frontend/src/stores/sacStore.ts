@@ -30,6 +30,7 @@ interface SacState {
   generatedCases: Case[]
   sessionStats: SacSessionStats
   isGenerating: boolean
+  simulatorActive: boolean
 
   setScenario: (scenario: SacScenario) => void
   setProductBrand: (brand: string | null) => void
@@ -37,6 +38,7 @@ interface SacState {
   setPersistDynamo: (persist: boolean) => void
   addGeneratedCases: (cases: Case[]) => void
   setIsGenerating: (generating: boolean) => void
+  toggleSimulator: () => void
   resetSession: () => void
 }
 
@@ -59,6 +61,7 @@ export const useSacStore = create<SacState>()((set, get) => ({
   generatedCases: [],
   sessionStats: INITIAL_STATS,
   isGenerating: false,
+  simulatorActive: false,
 
   setScenario: (scenario) => set({ scenario }),
   setProductBrand: (brand) => set({ productBrand: brand }),
@@ -69,6 +72,7 @@ export const useSacStore = create<SacState>()((set, get) => ({
     set({ generatedCases: updated, sessionStats: computeStats(updated) })
   },
   setIsGenerating: (generating) => set({ isGenerating: generating }),
+  toggleSimulator: () => set((s) => ({ simulatorActive: !s.simulatorActive })),
   resetSession: () =>
-    set({ generatedCases: [], sessionStats: INITIAL_STATS, isGenerating: false }),
+    set({ generatedCases: [], sessionStats: INITIAL_STATS, isGenerating: false, simulatorActive: false }),
 }))

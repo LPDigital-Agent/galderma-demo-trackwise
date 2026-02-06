@@ -9,6 +9,7 @@ import { Toaster } from 'sonner'
 
 import { useExecutiveStats } from '@/hooks'
 import { useRealtimeSync } from '@/hooks/useRealtimeSync'
+import { useSacSimulator } from '@/hooks/useSacSimulator'
 import { useTimelineStore } from '@/stores'
 import type { AgentName } from '@/types'
 import { CommandPalette } from './CommandPalette'
@@ -47,6 +48,7 @@ function toAgentName(agent?: string): AgentName | undefined {
 
 export function AppLayout() {
   useRealtimeSync()
+  useSacSimulator()
 
   const location = useLocation()
   const meta = getShellRouteMeta(location.pathname)

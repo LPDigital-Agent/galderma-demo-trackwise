@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import * as api from '@/api/client'
 import { sac as t } from '@/i18n'
 import { useSacStore } from '@/stores/sacStore'
+import { caseKeys } from './useCases'
 
 export const sacKeys = {
   all: ['sac'] as const,
@@ -31,7 +32,7 @@ export function useSacGenerate() {
     },
     onSuccess: (data) => {
       addGeneratedCases(data.cases)
-      queryClient.invalidateQueries({ queryKey: ['cases'] })
+      queryClient.invalidateQueries({ queryKey: caseKeys.lists() })
       queryClient.invalidateQueries({ queryKey: ['stats'] })
       queryClient.invalidateQueries({ queryKey: ['executive-stats'] })
       if (data.generated_count === 1) {

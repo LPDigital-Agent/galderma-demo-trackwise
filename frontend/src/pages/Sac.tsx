@@ -16,6 +16,8 @@ import {
   Package,
   Shuffle,
   RotateCcw,
+  Play,
+  Square,
 } from 'lucide-react'
 
 import { sac as t, DATE_LOCALE } from '@/i18n'
@@ -26,7 +28,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { SacScenario } from '@/stores/sacStore'
 
@@ -82,12 +83,12 @@ export default function Sac() {
   const {
     scenario,
     productBrand,
-    batchCount,
     generatedCases,
     sessionStats,
+    simulatorActive,
     setScenario,
     setProductBrand,
-    setBatchCount,
+    toggleSimulator,
     resetSession,
   } = useSacStore()
 
@@ -133,15 +134,29 @@ export default function Sac() {
             )}
             {generate.isPending ? t.generating : t.generate}
           </Button>
-          <Button variant="outline" onClick={() => generate.mutate('batch')} disabled={generate.isPending}>
-            {t.generateBatch} ({batchCount})
+          <Button
+            variant={simulatorActive ? 'destructive' : 'default'}
+            onClick={toggleSimulator}
+            className={simulatorActive ? '' : 'bg-emerald-600 hover:bg-emerald-700 text-white'}
+          >
+            {simulatorActive ? (
+              <>
+                <Square className="h-4 w-4 mr-2" />
+                {t.stopSimulator}
+              </>
+            ) : (
+              <>
+                <Play className="h-4 w-4 mr-2" />
+                {t.startSimulator}
+              </>
+            )}
           </Button>
         </div>
       </header>
 
       {/* Config Panel */}
       <section className="glass-shell p-4">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {/* Scenario Toggle */}
           <div className="md:col-span-2 lg:col-span-2 space-y-2">
             <Label className="text-xs uppercase tracking-wide text-[var(--lg-text-tertiary)]">
@@ -192,20 +207,6 @@ export default function Sac() {
             </Select>
           </div>
 
-          {/* Batch Count */}
-          <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-wide text-[var(--lg-text-tertiary)]">
-              {t.config.count}
-            </Label>
-            <Input
-              type="number"
-              min={1}
-              max={20}
-              value={batchCount}
-              onChange={(e) => setBatchCount(Number(e.target.value))}
-              className="w-full"
-            />
-          </div>
         </div>
       </section>
 

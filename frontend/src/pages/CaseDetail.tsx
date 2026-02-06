@@ -30,14 +30,17 @@ export default function CaseDetail() {
   const [auditorOpen, setAuditorOpen] = useState(false)
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set())
 
-  const { data: caseData, isLoading: caseLoading } = useCase(caseId ?? '')
-  const { data: runs, isLoading: runsLoading } = useCaseRuns(caseId ?? '')
-  const { data: ledger, isLoading: ledgerLoading } = useCaseLedger(caseId ?? '')
-
-  // Fallback: if the API doesn't have the case (AgentCore container recycled),
-  // look it up in the SAC store which holds all browser-generated cases.
+  // Check SAC store first — if the case exists in browser memory,
+  // skip all API calls (they'd fail anyway due to container recycling).
   const sacCases = useSacStore((s) => s.generatedCases)
-  const effectiveCaseData = caseData ?? (!caseLoading ? sacCases.find((c) => c.case_id === caseId) : undefined)
+  const sacCase = sacCases.find((c) => c.case_id === caseId)
+
+  const { data: caseData, isLoading: caseLoading } = useCase(caseId ?? '', { enabled: !sacCase })
+  const { data: runs, isLoading: runsLoading } = useCaseRuns(caseId ?? '', { enabled: !sacCase })
+  const { data: ledger, isLoading: ledgerLoading } = useCaseLedger(caseId ?? '', { enabled: !sacCase })
+
+  // Use API data if available, otherwise use SAC store data
+  const effectiveCaseData = caseData ?? sacCase
 
   const firstRun = runs?.[0]
   const agentSteps = firstRun?.agent_steps || []

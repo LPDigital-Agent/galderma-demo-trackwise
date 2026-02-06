@@ -22,11 +22,11 @@ export const ledgerKeys = {
 }
 
 // Get runs for a specific case
-export function useCaseRuns(caseId: string) {
+export function useCaseRuns(caseId: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: runKeys.byCase(caseId),
     queryFn: () => api.getRuns({ case_id: caseId }),
-    enabled: !!caseId,
+    enabled: (options?.enabled ?? true) && !!caseId,
   })
 }
 
@@ -40,11 +40,11 @@ export function useRun(runId: string) {
 }
 
 // Get ledger entries for a specific case
-export function useCaseLedger(caseId: string) {
+export function useCaseLedger(caseId: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ledgerKeys.byCase(caseId),
     queryFn: () => api.getLedgerEntries({ case_id: caseId }),
-    enabled: !!caseId,
+    enabled: (options?.enabled ?? true) && !!caseId,
   })
 }
 

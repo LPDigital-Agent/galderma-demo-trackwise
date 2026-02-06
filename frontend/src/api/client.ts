@@ -23,7 +23,9 @@ import type {
 } from '@/types'
 
 // Get API base URL from environment or use relative path
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/+$/, '')}/api`
+  : '/api'
 
 // Create axios instance
 const api = axios.create({

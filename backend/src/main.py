@@ -134,6 +134,11 @@ async def invocations(payload: dict[str, Any]) -> dict[str, Any]:
              list_cases, create_batch, reset_demo, get_stats
     """
     try:
+        # Auto-populate demo data on cold start (lifespan doesn't run on AgentCore)
+        if len(simulator_api._cases) == 0:
+            logger.info("Cold start detected — auto-populating Galderma demo scenario")
+            simulator_api.create_galderma_scenario()
+
         action = payload.get("action", "")
         input_text = payload.get("inputText", "")
 

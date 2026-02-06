@@ -37,7 +37,7 @@ export function Sidebar() {
         {isCollapsed ? (
           <span className="text-white font-bold text-lg mx-auto" style={{ fontFamily: 'Georgia, Cambria, serif' }}>G</span>
         ) : (
-          <div className="flex flex-col overflow-hidden">
+          <div className="flex flex-col">
             <img
               src="/assets/galderma-logo.svg"
               alt="Galderma"

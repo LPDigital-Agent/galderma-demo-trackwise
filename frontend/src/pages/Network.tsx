@@ -34,7 +34,7 @@ function AgentNode({ data }: { data: AgentNodeData }) {
   return (
     <div
       className={cn(
-        'px-6 py-4 rounded-2xl bg-[var(--glass-bg)] backdrop-blur-xl border-[0.5px] border-[var(--glass-border)]',
+        'px-6 py-4 rounded-2xl bg-white/78 backdrop-blur-2xl border border-white/70 shadow-[0_14px_24px_rgba(15,24,40,0.14)]',
         'min-w-[240px] max-w-[280px]',
         'transition-all duration-300 hover:scale-105'
       )}
@@ -248,7 +248,7 @@ export default function NetworkPage() {
   return (
     <div className="flex flex-col h-full min-h-[600px] gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="glass-float p-5 lg:p-6">
+      <div className="glass-shell p-5 lg:p-6">
         <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
         <p className="text-sm text-[var(--text-secondary)] mt-1">
           {t.subtitle}
@@ -256,7 +256,7 @@ export default function NetworkPage() {
       </div>
 
       {/* React Flow Canvas */}
-      <div className="flex-1 min-h-[500px] glass-float overflow-hidden">
+      <div className="flex-1 min-h-[500px] glass-shell overflow-hidden">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -293,50 +293,50 @@ export default function NetworkPage() {
       {/* Inline dark theme styles */}
       <style>{`
         .react-flow-dark {
-          background-color: transparent;
+          background: linear-gradient(155deg, rgba(255,255,255,0.32), rgba(219,233,250,0.18));
         }
         .react-flow-dark .react-flow__node {
           cursor: pointer;
         }
         .react-flow-dark .react-flow__edge-path {
-          stroke: rgba(74, 152, 184, 0.25);
+          stroke: rgba(74, 152, 184, 0.42);
         }
         .react-flow-dark .react-flow__controls {
-          background: var(--bg-elevated);
-          border: 1px solid var(--glass-border);
+          background: rgba(255, 255, 255, 0.74);
+          border: 1px solid rgba(255, 255, 255, 0.8);
           border-radius: 16px;
           overflow: hidden;
-          backdrop-filter: blur(20px);
+          backdrop-filter: blur(18px);
         }
         .react-flow-dark .react-flow__controls button {
-          background: var(--bg-elevated);
-          color: var(--text-secondary);
+          background: rgba(255, 255, 255, 0.72);
+          color: var(--lg-text-secondary);
           border: none;
-          border-bottom: 1px solid var(--glass-border);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.8);
         }
         .react-flow-dark .react-flow__controls button:hover {
-          background: var(--bg-surface);
-          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.88);
+          color: var(--lg-text-primary);
         }
         .react-flow-dark .react-flow__controls button svg {
           fill: currentColor;
         }
         .react-flow-dark .react-flow__minimap {
-          background: var(--bg-elevated) !important;
-          border: 1px solid var(--glass-border) !important;
+          background: rgba(255, 255, 255, 0.75) !important;
+          border: 1px solid rgba(255, 255, 255, 0.82) !important;
           border-radius: 12px;
-          backdrop-filter: blur(20px);
+          backdrop-filter: blur(16px);
         }
         .react-flow-dark .react-flow__attribution {
-          background: var(--bg-elevated);
-          color: var(--text-muted);
-          border: 1px solid var(--glass-border);
+          background: rgba(255, 255, 255, 0.72);
+          color: var(--lg-text-tertiary);
+          border: 1px solid rgba(255, 255, 255, 0.82);
           border-radius: 4px;
           padding: 2px 6px;
           font-size: 10px;
         }
         .react-flow-dark .react-flow__attribution a {
-          color: var(--text-muted);
+          color: var(--lg-text-tertiary);
         }
       `}</style>
     </div>

@@ -3,10 +3,11 @@
 // Domain Component: Timeline Item
 // ============================================
 
-import type { TimelineEvent, AgentName } from '@/types'
-import { AGENTS } from '@/types'
+import type { AgentName, TimelineEvent } from '@/types'
+
 import { timeAgo, timeline } from '@/i18n'
 import { cn } from '@/lib/utils'
+import { AGENTS } from '@/types'
 
 export interface TimelineItemProps {
   event: TimelineEvent
@@ -24,49 +25,50 @@ function formatRelativeTime(timestamp: string): string {
   if (diffMin < 60) return timeAgo.minutesAgo(diffMin)
   const diffHour = Math.floor(diffMin / 60)
   if (diffHour < 24) return timeAgo.hoursAgo(diffHour)
-  const diffDay = Math.floor(diffHour / 24)
-  return timeAgo.daysAgo(diffDay)
+  return timeAgo.daysAgo(Math.floor(diffHour / 24))
 }
 
 function formatEventType(type: string): string {
   return type
     .split('_')
-    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ')
 }
 
 export function TimelineItem({ event, className }: TimelineItemProps) {
   const agentInfo = event.agent ? AGENTS[event.agent as AgentName] : null
-  const agentColor = agentInfo?.color || '#6B7280'
-  const displayMessage = event.message || formatEventType(event.type)
+  const agentColor = agentInfo?.color ?? '#718096'
 
   return (
-    <div
+    <article
       className={cn(
-        'px-4 py-3 border-b border-[var(--glass-border)] hover:bg-black/[0.02] transition-colors',
+        'glass-control border-l-[3px] px-4 py-3 transition-all duration-[220ms] hover:translate-x-[1px] hover:shadow-[0_12px_20px_rgba(15,24,40,0.14)]',
         className
       )}
-      style={{
-        borderLeft: `2px solid ${agentColor}`,
-      }}
+      style={{ borderLeftColor: agentColor }}
     >
       <div className="flex items-start gap-3">
-        <div
-          className="w-2 h-2 rounded-full shrink-0 mt-1.5"
-          style={{ backgroundColor: agentColor }}
-        />
-        <div className="flex-1 min-w-0">
-          <div className="text-sm text-[var(--text-primary)]">{displayMessage}</div>
-          {event.case_id && (
-            <div className="text-xs text-cyan-600 font-mono mt-1">
-              {timeline.casePrefix} {event.case_id}
-            </div>
-          )}
+        <span className="mt-1.5 inline-flex h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: agentColor }} />
+
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-[var(--lg-text-primary)]">{event.message || formatEventType(event.type)}</p>
+          <div className="mt-1 flex items-center gap-2 text-xs text-[var(--lg-text-tertiary)]">
+            {agentInfo ? <span>{agentInfo.displayName}</span> : <span>Sistema</span>}
+            {event.case_id ? (
+              <>
+                <span className="opacity-50">•</span>
+                <span className="font-mono">
+                  {timeline.casePrefix} {event.case_id}
+                </span>
+              </>
+            ) : null}
+          </div>
         </div>
-        <div className="text-xs text-[var(--text-muted)] font-mono shrink-0">
+
+        <time className="shrink-0 text-[11px] font-medium text-[var(--lg-text-tertiary)]">
           {formatRelativeTime(event.timestamp)}
-        </div>
+        </time>
       </div>
-    </div>
+    </article>
   )
 }

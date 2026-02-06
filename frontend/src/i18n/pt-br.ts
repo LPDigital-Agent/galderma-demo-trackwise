@@ -59,6 +59,18 @@ export const commandPalette = {
   },
 } as const
 
+export const shell = {
+  liveStrip: {
+    ariaLabel: 'Faixa de atividade em tempo real',
+    title: 'Fluxo em Tempo Real',
+    subtitle: 'Eventos recentes dos agentes e sistema',
+    connected: 'Conectado',
+    disconnected: 'Desconectado',
+    empty: 'Sem atividade recente no momento.',
+    system: 'Sistema',
+  },
+} as const
+
 // ============================================
 // Domain Components
 // ============================================

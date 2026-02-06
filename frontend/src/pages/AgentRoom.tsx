@@ -4,21 +4,20 @@
 // ============================================
 
 import { useEffect, useRef } from 'react'
-import { CheckCircle2, Zap, Shield, Activity, RotateCcw, Plus, Sparkles } from 'lucide-react'
+import { Activity, Plus, RotateCcw, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { agentRoom as t } from '@/i18n'
-import { useExecutiveStats, useStats, useCreateBatch, useResetDemo, useCreateGaldermaScenario } from '@/hooks'
-import { useTimelineStore, useFilteredEvents } from '@/stores'
+import { useCreateBatch, useCreateGaldermaScenario, useResetDemo, useStats } from '@/hooks'
+import { useFilteredEvents, useTimelineStore } from '@/stores'
 import { AGENTS } from '@/types'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { MetricCard, TimelineItem, GlassPanel, EmptyState } from '@/components/domain'
+import { EmptyState, GlassPanel, TimelineItem } from '@/components/domain'
 
 export default function AgentRoom() {
-  const { data: executiveStats, isLoading: executiveLoading } = useExecutiveStats()
   const { data: stats, isLoading: statsLoading } = useStats()
   const createBatch = useCreateBatch()
   const createScenario = useCreateGaldermaScenario()
@@ -29,13 +28,12 @@ export default function AgentRoom() {
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll to top when new events arrive (if autoScroll enabled)
   useEffect(() => {
-    if (autoScroll && scrollAreaRef.current) {
-      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
-      if (viewport) {
-        viewport.scrollTop = 0
-      }
+    if (!autoScroll || !scrollAreaRef.current) return
+
+    const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+    if (viewport) {
+      viewport.scrollTop = 0
     }
   }, [filteredEvents.length, autoScroll])
 
@@ -94,129 +92,78 @@ export default function AgentRoom() {
 
   return (
     <div className="space-y-[var(--float-gap)]">
-      {/* Header Section */}
-      <div className="glass-float p-5 lg:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <GlassPanel variant="shell" className="space-y-4 p-5 lg:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-text-primary tracking-tight">{t.title}</h1>
-            <p className="text-text-secondary mt-1">{t.subtitle}</p>
+            <h2 className="text-2xl font-semibold tracking-tight text-[var(--lg-text-primary)]">{t.title}</h2>
+            <p className="mt-1 text-sm text-[var(--lg-text-secondary)]">{t.subtitle}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              onClick={handleCreateScenario}
-              disabled={createScenario.isPending}
-              className="font-semibold"
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button onClick={handleCreateScenario} disabled={createScenario.isPending} className="font-semibold">
+              <Sparkles className="mr-1 h-4 w-4" />
               {createScenario.isPending ? t.creatingScenario : t.createScenario}
             </Button>
-            <Button
-              onClick={handleCreateBatch}
-              disabled={createBatch.isPending}
-              variant="outline"
-              className="font-medium"
-            >
-              <Plus className="mr-2 h-4 w-4" />
+
+            <Button onClick={handleCreateBatch} disabled={createBatch.isPending} variant="outline" className="font-medium">
+              <Plus className="mr-1 h-4 w-4" />
               {createBatch.isPending ? t.creating : t.createBatch}
             </Button>
+
             <Button
               onClick={handleResetDemo}
               disabled={resetDemo.isPending}
               variant="destructive"
               className="font-medium"
             >
-              <RotateCcw className="mr-2 h-4 w-4" />
+              <RotateCcw className="mr-1 h-4 w-4" />
               {resetDemo.isPending ? t.resetting : t.resetDemo}
             </Button>
           </div>
         </div>
-      </div>
 
-      {/* Executive Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-[var(--float-gap)]">
-        {executiveLoading ? (
-          <>
-            <Skeleton className="h-32 glass-float" />
-            <Skeleton className="h-32 glass-float" />
-            <Skeleton className="h-32 glass-float" />
-          </>
-        ) : executiveStats ? (
-          <>
-            <MetricCard
-              value={executiveStats.ai_closed_count.toLocaleString()}
-              label={t.metrics.aiClosed}
-              sublabel={t.metrics.aiClosedSublabel(executiveStats.total_cases.toLocaleString())}
-              icon={CheckCircle2}
-              color="#10B981"
-            />
-            <MetricCard
-              value={executiveStats.human_hours_saved.toLocaleString()}
-              label={t.metrics.hoursSaved}
-              sublabel={t.metrics.hoursSavedSublabel}
-              icon={Zap}
-              color="#06B6D4"
-            />
-            <MetricCard
-              value={executiveStats.risks_avoided.toLocaleString()}
-              label={t.metrics.risksAvoided}
-              sublabel={t.metrics.risksAvoidedSublabel}
-              icon={Shield}
-              color="#8B5CF6"
-            />
-          </>
-        ) : (
-          <div className="col-span-3 text-center text-text-muted py-8">
-            {t.failedMetrics}
-          </div>
-        )}
-      </div>
-
-      {/* Status Counters Row */}
-      {statsLoading ? (
-        <Skeleton className="h-12 glass-float" />
-      ) : stats ? (
-        <GlassPanel variant="floating" className="px-6 py-4">
-          <div className="flex items-center justify-center gap-8 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-text-secondary">{t.counters.total}</span>
-              <span className="text-brand-primary font-mono font-semibold">
-                {stats.total_cases.toLocaleString()}
-              </span>
+        {statsLoading ? (
+          <Skeleton className="glass-control h-16" />
+        ) : stats ? (
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+            <div className="glass-control px-4 py-3">
+              <p className="text-xs uppercase tracking-[0.03em] text-[var(--lg-text-tertiary)]">{t.counters.total}</p>
+              <p className="mt-1 text-xl font-semibold text-[var(--lg-text-primary)]">{stats.total_cases.toLocaleString()}</p>
             </div>
-            <div className="h-4 w-px bg-black/10" />
-            <div className="flex items-center gap-2">
-              <span className="text-text-secondary">{t.counters.open}</span>
-              <span className="text-status-warning font-mono font-semibold">
-                {stats.open_cases.toLocaleString()}
-              </span>
+            <div className="glass-control px-4 py-3">
+              <p className="text-xs uppercase tracking-[0.03em] text-[var(--lg-text-tertiary)]">{t.counters.open}</p>
+              <p className="mt-1 text-xl font-semibold text-[var(--status-warning)]">{stats.open_cases.toLocaleString()}</p>
             </div>
-            <div className="h-4 w-px bg-black/10" />
-            <div className="flex items-center gap-2">
-              <span className="text-text-secondary">{t.counters.inProgress}</span>
-              <span className="text-brand-accent font-mono font-semibold">
+            <div className="glass-control px-4 py-3">
+              <p className="text-xs uppercase tracking-[0.03em] text-[var(--lg-text-tertiary)]">{t.counters.inProgress}</p>
+              <p className="mt-1 text-xl font-semibold text-[var(--brand-secondary)]">
                 {stats.in_progress_cases.toLocaleString()}
-              </span>
+              </p>
             </div>
-            <div className="h-4 w-px bg-black/10" />
-            <div className="flex items-center gap-2">
-              <span className="text-text-secondary">{t.counters.closed}</span>
-              <span className="text-status-success font-mono font-semibold">
+            <div className="glass-control px-4 py-3">
+              <p className="text-xs uppercase tracking-[0.03em] text-[var(--lg-text-tertiary)]">{t.counters.closed}</p>
+              <p className="mt-1 text-xl font-semibold text-[var(--status-success)]">
                 {stats.closed_cases.toLocaleString()}
-              </span>
+              </p>
             </div>
           </div>
-        </GlassPanel>
-      ) : null}
+        ) : null}
+      </GlassPanel>
 
-      {/* Activity Timeline Section */}
-      <GlassPanel variant="floating" className="p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-text-primary">{t.activityTimeline}</h2>
-          <Select value={filter || 'all'} onValueChange={(value) => setFilter(value === 'all' ? null : value)}>
-            <SelectTrigger className="w-[200px] bg-white/20 border-white/30">
+      <GlassPanel variant="shell" className="space-y-4 p-5 lg:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="inline-flex items-center gap-2">
+            <div className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-white/50">
+              <Activity className="h-4 w-4 text-[var(--brand-primary)]" />
+            </div>
+            <h3 className="text-lg font-semibold text-[var(--lg-text-primary)]">{t.activityTimeline}</h3>
+          </div>
+
+          <Select value={filter ?? 'all'} onValueChange={(value) => setFilter(value === 'all' ? null : value)}>
+            <SelectTrigger className="w-[220px]">
               <SelectValue placeholder={t.filterByAgent} />
             </SelectTrigger>
-            <SelectContent className="bg-bg-elevated border-glass-border">
+            <SelectContent>
               <SelectItem value="all">{t.allAgents}</SelectItem>
               {Object.values(AGENTS).map((agent) => (
                 <SelectItem key={agent.name} value={agent.name}>
@@ -227,16 +174,16 @@ export default function AgentRoom() {
           </Select>
         </div>
 
-        <ScrollArea className="h-[400px]" ref={scrollAreaRef}>
+        <ScrollArea className="h-[460px]" ref={scrollAreaRef}>
           {filteredEvents.length === 0 ? (
             <EmptyState
               icon={Activity}
               title={t.noActivityTitle}
               description={t.noActivityDescription}
-              className="py-12"
+              className="py-16"
             />
           ) : (
-            <div className="space-y-3 pr-4">
+            <div className="space-y-2 pr-2">
               {filteredEvents.map((event, index) => (
                 <TimelineItem key={`${event.timestamp}-${index}`} event={event} />
               ))}

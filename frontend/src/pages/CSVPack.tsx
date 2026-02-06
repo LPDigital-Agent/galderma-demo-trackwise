@@ -85,7 +85,7 @@ export default function CSVPack() {
   return (
     <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="glass-float p-5 lg:p-6">
+      <div className="glass-shell p-5 lg:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
@@ -140,7 +140,7 @@ export default function CSVPack() {
         ) : (
           <div className="space-y-[var(--float-gap)]">
             {/* Summary Banner */}
-            <GlassPanel variant="floating" className="p-6">
+            <GlassPanel variant="shell" className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-lg font-semibold text-[var(--text-primary)]">
@@ -172,7 +172,7 @@ export default function CSVPack() {
                   <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">
                     {t.summary.packId}
                   </div>
-                  <div className="text-sm font-mono text-cyan-600 mt-1">
+                  <div className="text-sm font-mono text-[var(--brand-secondary)] mt-1">
                     {result.pack_id}
                   </div>
                 </div>
@@ -231,9 +231,13 @@ export default function CSVPack() {
                 {result.artifacts.map((artifact) => {
                   const Icon = getArtifactIcon(artifact.artifact_type)
                   return (
-                    <GlassPanel key={artifact.artifact_id} variant="floating" className="p-5 hover:shadow-lg transition-all">
+                    <GlassPanel
+                      key={artifact.artifact_id}
+                      variant="card"
+                      className="p-5 transition-all hover:-translate-y-[1px] hover:shadow-[0_18px_28px_rgba(15,24,40,0.18)]"
+                    >
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-[var(--brand-primary)]/10 flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-2xl border border-white/60 bg-white/50 backdrop-blur-sm flex items-center justify-center shrink-0">
                           <Icon className="w-5 h-5 text-[var(--brand-primary)]" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -270,7 +274,7 @@ export default function CSVPack() {
                       <div className="mt-3 pt-3 border-t border-[var(--glass-border)]">
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-[var(--text-muted)]">{t.artifactId}</span>
-                          <span className="font-mono text-cyan-600">{artifact.artifact_id}</span>
+                        <span className="font-mono text-[var(--brand-secondary)]">{artifact.artifact_id}</span>
                         </div>
                         <div className="flex items-center justify-between text-xs mt-1">
                           <span className="text-[var(--text-muted)]">{t.type}</span>
@@ -284,7 +288,7 @@ export default function CSVPack() {
             </div>
 
             {/* Extensibility Roadmap */}
-            <GlassPanel variant="floating" className="p-6">
+            <GlassPanel variant="shell" className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 rounded-2xl backdrop-blur-sm bg-[var(--brand-accent)]/10 flex items-center justify-center">
                   <Rocket className="w-4 h-4 text-[var(--brand-accent)]" />
@@ -300,10 +304,7 @@ export default function CSVPack() {
               </div>
               <div className="space-y-3">
                 {t.extensibility.items.map((item) => (
-                  <div
-                    key={item.name}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white/15 backdrop-blur-sm border-[0.5px] border-[var(--glass-border)]"
-                  >
+                  <div key={item.name} className="glass-control flex items-center justify-between p-3 rounded-xl">
                     <div className="flex-1">
                       <div className="text-sm font-medium text-[var(--text-primary)]">
                         {item.name}

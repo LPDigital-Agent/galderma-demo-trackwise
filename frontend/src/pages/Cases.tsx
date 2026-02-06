@@ -38,13 +38,13 @@ export default function Cases() {
   return (
     <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="glass-float p-5 lg:p-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="glass-shell p-5 lg:p-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-semibold text-text-primary">{t.title}</h1>
+          <h1 className="text-3xl font-semibold text-[var(--lg-text-primary)]">{t.title}</h1>
           {data && (
             <Badge
               variant="outline"
-              className="bg-brand-primary/12 border-brand-primary/30 text-brand-primary"
+              className="glass-control px-2.5 py-1 text-[var(--brand-secondary)]"
             >
               {data.total}
             </Badge>
@@ -57,7 +57,7 @@ export default function Cases() {
       </div>
 
       {/* Filters */}
-      <div className="glass-float p-4 flex flex-wrap gap-3">
+      <div className="glass-shell p-4 flex flex-wrap gap-3">
         <Select
           value={statusFilter}
           onValueChange={(value) => setStatusFilter(value as CaseStatus | 'ALL')}
@@ -93,7 +93,7 @@ export default function Cases() {
       </div>
 
       {/* Table */}
-      <div className="flex-1 glass-float overflow-hidden">
+      <div className="flex-1 glass-shell overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="border-glass-border hover:bg-transparent">
@@ -123,9 +123,9 @@ export default function Cases() {
                 <TableRow
                   key={caseItem.case_id}
                   onClick={() => navigate(`/cases/${caseItem.case_id}`)}
-                  className="border-glass-border hover:bg-white/15 cursor-pointer transition-colors"
+                  className="border-glass-border hover:bg-white/36 cursor-pointer transition-colors"
                 >
-                  <TableCell className="font-mono text-brand-accent">
+                  <TableCell className="font-mono text-[var(--brand-secondary)]">
                     <div className="flex items-center gap-2">
                       {caseItem.case_id}
                       {caseItem.linked_case_id && (
@@ -136,7 +136,7 @@ export default function Cases() {
                   <TableCell className="text-text-primary">
                     <div className="flex flex-col">
                       <span className="font-medium">{caseItem.product_brand}</span>
-                      <span className="text-sm text-text-secondary">{caseItem.product_name}</span>
+                      <span className="text-sm text-[var(--lg-text-secondary)]">{caseItem.product_name}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -145,10 +145,10 @@ export default function Cases() {
                   <TableCell>
                     <SeverityBadge severity={caseItem.severity} />
                   </TableCell>
-                  <TableCell className="text-text-secondary">
+                  <TableCell className="text-[var(--lg-text-secondary)]">
                     {caseItem.case_type.replace('_', ' ')}
                   </TableCell>
-                  <TableCell className="text-text-secondary font-mono text-sm">
+                  <TableCell className="text-[var(--lg-text-secondary)] font-mono text-sm">
                     {formatDate(caseItem.created_at)}
                   </TableCell>
                 </TableRow>

@@ -47,9 +47,9 @@ export default function Memory() {
   return (
     <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="glass-float p-5 lg:p-6">
+      <div className="glass-shell p-5 lg:p-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-[var(--brand-primary)]/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-white/55 border border-white/60 flex items-center justify-center">
             <Brain className="w-5 h-5 text-[var(--brand-primary)]" />
           </div>
           <div>
@@ -77,7 +77,7 @@ export default function Memory() {
           />
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsList className="grid w-full grid-cols-3 mb-6 glass-control p-1 h-auto">
               <TabsTrigger value="patterns">{t.tabs.patterns}</TabsTrigger>
               <TabsTrigger value="templates">{t.tabs.templates}</TabsTrigger>
               <TabsTrigger value="policies">{t.tabs.policies}</TabsTrigger>
@@ -85,7 +85,7 @@ export default function Memory() {
 
             {/* Recurring Patterns Tab */}
             <TabsContent value="patterns">
-              <GlassPanel variant="floating" className="p-6">
+              <GlassPanel variant="shell" className="p-6">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                     {t.patterns.title}
@@ -108,7 +108,7 @@ export default function Memory() {
                   <TableBody>
                     {patterns.map((pattern) => (
                       <TableRow key={pattern.id}>
-                        <TableCell className="font-mono text-cyan-600">
+                        <TableCell className="font-mono text-[var(--brand-secondary)]">
                           {pattern.id}
                         </TableCell>
                         <TableCell className="font-medium text-[var(--text-primary)]">
@@ -137,7 +137,7 @@ export default function Memory() {
 
             {/* Resolution Templates Tab */}
             <TabsContent value="templates">
-              <GlassPanel variant="floating" className="p-6">
+              <GlassPanel variant="shell" className="p-6">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                     {t.templates.title}
@@ -160,7 +160,7 @@ export default function Memory() {
                   <TableBody>
                     {templates.map((template) => (
                       <TableRow key={template.id}>
-                        <TableCell className="font-mono text-cyan-600">
+                        <TableCell className="font-mono text-[var(--brand-secondary)]">
                           {template.id}
                         </TableCell>
                         <TableCell className="font-medium text-[var(--text-primary)]">
@@ -189,7 +189,7 @@ export default function Memory() {
 
             {/* Policy Knowledge Tab */}
             <TabsContent value="policies">
-              <GlassPanel variant="floating" className="p-6">
+              <GlassPanel variant="shell" className="p-6">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                     {t.policies.title}
@@ -213,7 +213,7 @@ export default function Memory() {
                   <TableBody>
                     {policies.map((policy) => (
                       <TableRow key={policy.id}>
-                        <TableCell className="font-mono text-cyan-600">
+                        <TableCell className="font-mono text-[var(--brand-secondary)]">
                           {policy.id}
                         </TableCell>
                         <TableCell className="font-medium text-[var(--text-primary)]">

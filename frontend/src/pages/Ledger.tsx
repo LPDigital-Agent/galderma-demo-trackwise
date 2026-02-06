@@ -85,7 +85,7 @@ export default function Ledger() {
   return (
     <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="glass-float p-5 lg:p-6">
+      <div className="glass-shell p-5 lg:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
@@ -141,7 +141,7 @@ export default function Ledger() {
             description={t.empty.description}
           />
         ) : (
-          <div className="glass-float overflow-hidden">
+          <div className="glass-shell overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -182,7 +182,7 @@ export default function Ledger() {
                       {getConfidenceDisplay(entry.confidence) || '—'}
                     </TableCell>
                     <TableCell
-                      className="font-mono text-cyan-600 hover:underline"
+                      className="font-mono text-[var(--brand-secondary)] hover:underline"
                       onClick={(e) => {
                         e.stopPropagation()
                         navigate(`/cases/${entry.case_id}`)

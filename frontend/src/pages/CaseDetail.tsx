@@ -101,11 +101,11 @@ export default function CaseDetail() {
       {/* Left Column */}
       <div className="lg:w-1/3 flex flex-col gap-[var(--float-gap)] overflow-auto">
         {/* Back Button */}
-        <div className="glass-float p-2 w-fit">
+        <div className="glass-control p-1.5 w-fit rounded-2xl">
           <Button
             variant="ghost"
             onClick={() => navigate('/cases')}
-            className="w-fit text-text-secondary hover:text-text-primary"
+            className="w-fit text-[var(--lg-text-secondary)] hover:text-[var(--lg-text-primary)]"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t.backToCases}
@@ -113,7 +113,7 @@ export default function CaseDetail() {
         </div>
 
         {/* Case Info Card */}
-        <GlassPanel variant="floating">
+        <GlassPanel variant="shell">
           <div className="space-y-4">
             <div>
               <p className="text-text-muted text-sm mb-1">{t.labels.caseId}</p>
@@ -190,18 +190,18 @@ export default function CaseDetail() {
         </GlassPanel>
 
         {/* Complaint Text */}
-        <GlassPanel variant="floating">
+        <GlassPanel variant="card">
           <h3 className="text-text-primary font-semibold mb-3">{t.complaint}</h3>
           <p className="text-text-secondary leading-relaxed">{caseData.complaint_text}</p>
         </GlassPanel>
 
         {/* Resolution Text */}
         {resolutionText && (
-          <GlassPanel variant="floating">
+          <GlassPanel variant="card">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-text-primary font-semibold">{t.resolution}</h3>
               <Select value={language} onValueChange={(val) => setLanguage(val as Language)}>
-                <SelectTrigger className="w-[120px] h-8 bg-bg-elevated border-glass-border">
+                <SelectTrigger className="w-[120px] h-8">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -219,14 +219,14 @@ export default function CaseDetail() {
 
         {/* Linked Case */}
         {caseData.linked_case_id && (
-          <GlassPanel variant="floating">
+          <GlassPanel variant="card">
             <h3 className="text-text-primary font-semibold mb-3 flex items-center gap-2">
               <LinkIcon className="w-4 h-4" />
               {t.linkedCase}
             </h3>
             <div
               onClick={() => navigate(`/cases/${caseData.linked_case_id}`)}
-              className="flex items-center justify-between p-3 rounded-xl bg-bg-elevated backdrop-blur-sm border-[0.5px] border-glass-border hover:bg-white/15 cursor-pointer transition-colors"
+              className="glass-control flex items-center justify-between p-3 rounded-xl hover:bg-white/55 cursor-pointer transition-colors"
             >
               <span className="font-mono text-brand-accent">{caseData.linked_case_id}</span>
             </div>
@@ -237,7 +237,7 @@ export default function CaseDetail() {
       {/* Right Column */}
       <div className="lg:w-2/3 flex flex-col gap-[var(--float-gap)] overflow-auto">
         {/* Processing Timeline */}
-        <GlassPanel variant="floating" className="flex-1">
+        <GlassPanel variant="shell" className="flex-1">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-text-primary font-semibold text-lg">{t.processingTimeline}</h3>
             <Button
@@ -313,7 +313,7 @@ export default function CaseDetail() {
                             {t.reasoning}
                           </button>
                           {expandedSteps.has(step.step_number) && (
-                            <div className="mt-2 p-3 rounded-xl bg-bg-elevated backdrop-blur-xl border-[0.5px] border-glass-border">
+                            <div className="glass-control mt-2 p-3 rounded-xl">
                               <p className="text-text-secondary text-sm leading-relaxed">
                                 {step.reasoning}
                               </p>
@@ -332,7 +332,7 @@ export default function CaseDetail() {
         </GlassPanel>
 
         {/* Audit Trail */}
-        <GlassPanel variant="floating">
+        <GlassPanel variant="shell">
           <h3 className="text-text-primary font-semibold text-lg mb-4">{t.auditTrail}</h3>
 
           {ledgerLoading ? (
@@ -347,7 +347,7 @@ export default function CaseDetail() {
                 {ledger.map((entry) => (
                   <div
                     key={entry.ledger_id}
-                    className="p-4 rounded-xl bg-bg-elevated backdrop-blur-xl border-[0.5px] border-glass-border"
+                    className="glass-control p-4 rounded-xl"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">

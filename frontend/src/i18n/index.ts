@@ -8,6 +8,7 @@ export {
   sidebar,
   statusBar,
   commandPalette,
+  shell,
   // Domain
   statuses,
   severities,

@@ -4,6 +4,7 @@
 // ============================================
 
 import type { LucideIcon } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 export interface MetricCardProps {
@@ -15,41 +16,25 @@ export interface MetricCardProps {
   className?: string
 }
 
-export function MetricCard({
-  value,
-  label,
-  sublabel,
-  icon: Icon,
-  color,
-  className,
-}: MetricCardProps) {
+export function MetricCard({ value, label, sublabel, icon: Icon, color, className }: MetricCardProps) {
   return (
-    <div
-      className={cn(
-        'glass-float p-6',
-        className
-      )}
-    >
+    <article className={cn('glass-card p-5 lg:p-6', className)}>
       <div className="flex items-start justify-between gap-4">
-        <div className="flex-1">
-          <div
-            className="text-4xl font-bold tracking-tight mb-2"
-            style={{ color }}
-          >
+        <div>
+          <p className="text-xs uppercase tracking-[0.06em] text-[var(--lg-text-tertiary)]">{label}</p>
+          <p className="mt-2 text-[2.15rem] font-semibold leading-none tracking-tight text-[var(--lg-text-primary)]">
             {value}
-          </div>
-          <div className="text-sm text-[var(--text-secondary)]">{label}</div>
-          {sublabel && (
-            <div className="text-xs text-[var(--text-muted)] mt-1">{sublabel}</div>
-          )}
+          </p>
+          {sublabel ? <p className="mt-2 text-sm text-[var(--lg-text-secondary)]">{sublabel}</p> : null}
         </div>
+
         <div
-          className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-          style={{ backgroundColor: `${color}10` }}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/60"
+          style={{ background: `color-mix(in oklab, ${color} 16%, white 84%)` }}
         >
-          <Icon className="w-6 h-6" style={{ color }} />
+          <Icon className="h-5 w-5" style={{ color }} />
         </div>
       </div>
-    </div>
+    </article>
   )
 }

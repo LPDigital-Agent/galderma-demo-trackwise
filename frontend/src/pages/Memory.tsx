@@ -108,7 +108,7 @@ export default function Memory() {
                   <TableBody>
                     {patterns.map((pattern) => (
                       <TableRow key={pattern.id}>
-                        <TableCell className="font-mono text-[var(--brand-secondary)]">
+                        <TableCell className="font-mono text-[var(--brand-accent)]">
                           {pattern.id}
                         </TableCell>
                         <TableCell className="font-medium text-[var(--lg-text-primary)]">
@@ -160,7 +160,7 @@ export default function Memory() {
                   <TableBody>
                     {templates.map((template) => (
                       <TableRow key={template.id}>
-                        <TableCell className="font-mono text-[var(--brand-secondary)]">
+                        <TableCell className="font-mono text-[var(--brand-accent)]">
                           {template.id}
                         </TableCell>
                         <TableCell className="font-medium text-[var(--lg-text-primary)]">
@@ -213,7 +213,7 @@ export default function Memory() {
                   <TableBody>
                     {policies.map((policy) => (
                       <TableRow key={policy.id}>
-                        <TableCell className="font-mono text-[var(--brand-secondary)]">
+                        <TableCell className="font-mono text-[var(--brand-accent)]">
                           {policy.id}
                         </TableCell>
                         <TableCell className="font-medium text-[var(--lg-text-primary)]">

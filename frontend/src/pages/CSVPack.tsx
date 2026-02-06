@@ -172,7 +172,7 @@ export default function CSVPack() {
                   <div className="text-xs text-[var(--lg-text-tertiary)] uppercase tracking-wide">
                     {t.summary.packId}
                   </div>
-                  <div className="text-sm font-mono text-[var(--brand-secondary)] mt-1">
+                  <div className="text-sm font-mono text-[var(--brand-accent)] mt-1">
                     {result.pack_id}
                   </div>
                 </div>
@@ -274,7 +274,7 @@ export default function CSVPack() {
                       <div className="mt-3 pt-3 border-t border-[var(--lg-border-soft)]">
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-[var(--lg-text-tertiary)]">{t.artifactId}</span>
-                        <span className="font-mono text-[var(--brand-secondary)]">{artifact.artifact_id}</span>
+                        <span className="font-mono text-[var(--brand-accent)]">{artifact.artifact_id}</span>
                         </div>
                         <div className="flex items-center justify-between text-xs mt-1">
                           <span className="text-[var(--lg-text-tertiary)]">{t.type}</span>

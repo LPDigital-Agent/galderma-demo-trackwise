@@ -44,7 +44,7 @@ export default function Cases() {
           {data && (
             <Badge
               variant="outline"
-              className="glass-control px-2.5 py-1 text-[var(--brand-secondary)]"
+              className="glass-control px-2.5 py-1 text-[var(--brand-accent)]"
             >
               {data.total}
             </Badge>
@@ -125,7 +125,7 @@ export default function Cases() {
                   onClick={() => navigate(`/cases/${caseItem.case_id}`)}
                   className="border-[var(--lg-border-soft)] hover:bg-white/10 cursor-pointer transition-colors"
                 >
-                  <TableCell className="font-mono text-[var(--brand-secondary)]">
+                  <TableCell className="font-mono text-[var(--brand-accent)]">
                     <div className="flex items-center gap-2">
                       {caseItem.case_id}
                       {caseItem.linked_case_id && (

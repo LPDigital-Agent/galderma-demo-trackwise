@@ -182,7 +182,7 @@ export default function Ledger() {
                       {getConfidenceDisplay(entry.confidence) || '—'}
                     </TableCell>
                     <TableCell
-                      className="font-mono text-[var(--brand-secondary)] hover:underline"
+                      className="font-mono text-[var(--brand-accent)] hover:underline"
                       onClick={(e) => {
                         e.stopPropagation()
                         navigate(`/cases/${entry.case_id}`)

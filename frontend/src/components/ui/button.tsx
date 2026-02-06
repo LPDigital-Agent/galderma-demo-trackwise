@@ -18,7 +18,7 @@ const buttonVariants = cva(
         secondary:
           'border-[0.5px] border-white/55 bg-white/44 text-[var(--lg-text-secondary)] backdrop-blur-2xl shadow-[var(--shadow-control)] hover:bg-white/60 hover:text-[var(--lg-text-primary)]',
         ghost: 'text-[var(--lg-text-secondary)] hover:bg-white/45 hover:text-[var(--lg-text-primary)]',
-        link: 'text-[var(--brand-secondary)] underline-offset-4 hover:underline',
+        link: 'text-[var(--brand-accent)] underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

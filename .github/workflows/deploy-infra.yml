@@ -121,31 +121,34 @@ jobs:
 
       - name: Create Memory Strategies
         run: |
-          # Create RecurringPatterns strategy
-          echo "Creating RecurringPatterns memory strategy..."
-          aws bedrock-agentcore create-memory \
-            --name "galderma-recurring-patterns" \
-            --strategy-type "semantic" \
+          # Create RecurringPatterns memory (semantic strategy)
+          echo "Creating RecurringPatterns memory..."
+          agentcore memory create galderma_recurring_patterns \
+            --region ${{ env.AWS_REGION }} \
             --description "Recurring complaint patterns for auto-resolution" \
-            --region ${{ env.AWS_REGION }} || true
+            --event-expiry-days 90 \
+            --strategies '[{"semanticMemoryStrategy": {"name": "RecurringPatterns"}}]' \
+            --wait || echo "⚠️ RecurringPatterns already exists or failed"
 
-          # Create ResolutionTemplates strategy
-          echo "Creating ResolutionTemplates memory strategy..."
-          aws bedrock-agentcore create-memory \
-            --name "galderma-resolution-templates" \
-            --strategy-type "episodic" \
+          # Create ResolutionTemplates memory (semantic strategy)
+          echo "Creating ResolutionTemplates memory..."
+          agentcore memory create galderma_resolution_templates \
+            --region ${{ env.AWS_REGION }} \
             --description "Successful resolution templates" \
-            --region ${{ env.AWS_REGION }} || true
+            --event-expiry-days 90 \
+            --strategies '[{"semanticMemoryStrategy": {"name": "ResolutionTemplates"}}]' \
+            --wait || echo "⚠️ ResolutionTemplates already exists or failed"
 
-          # Create PolicyKnowledge strategy
-          echo "Creating PolicyKnowledge memory strategy..."
-          aws bedrock-agentcore create-memory \
-            --name "galderma-policy-knowledge" \
-            --strategy-type "semantic" \
+          # Create PolicyKnowledge memory (semantic strategy)
+          echo "Creating PolicyKnowledge memory..."
+          agentcore memory create galderma_policy_knowledge \
+            --region ${{ env.AWS_REGION }} \
             --description "Compliance policies and rules" \
-            --region ${{ env.AWS_REGION }} || true
+            --event-expiry-days 90 \
+            --strategies '[{"semanticMemoryStrategy": {"name": "PolicyKnowledge"}}]' \
+            --wait || echo "⚠️ PolicyKnowledge already exists or failed"
 
       - name: Verify Memory Strategies
         run: |
           echo "## AgentCore Memory Strategies" >> $GITHUB_STEP_SUMMARY
-          aws bedrock-agentcore list-memories --region ${{ env.AWS_REGION }} | jq -r '.memories[] | "- \(.name): \(.status)"' >> $GITHUB_STEP_SUMMARY
+          agentcore memory list --region ${{ env.AWS_REGION }} >> $GITHUB_STEP_SUMMARY 2>&1 || echo "⚠️ Failed to list memories" >> $GITHUB_STEP_SUMMARY

@@ -10,6 +10,19 @@
 #   agents/{agent-name}/agent.zip → S3://artifacts-bucket/agents/{agent-name}/agent.zip
 #   backend/ → S3://artifacts-bucket/backend/simulator.zip
 #
+# ZIP structure (agents):
+#   main.py                ← Generated BedrockAgentCoreApp entry point
+#   {module_name}/         ← Agent code (e.g., observer/agent.py)
+#   shared/                ← Shared library (models, tools, config)
+#   strands_agents/        ← ARM64 dependencies
+#   bedrock_agentcore/     ← ARM64 dependencies
+#   ...
+#
+# ZIP structure (simulator):
+#   main.py                ← Generated BedrockAgentCoreApp entry point
+#   src/                   ← FastAPI backend code
+#   fastapi/               ← ARM64 dependencies
+#   ...
 
 name: Deploy Agents
 
@@ -67,45 +80,65 @@ jobs:
           # TrackWise Simulator (Backend)
           - name: simulator
             source_path: backend
+            module_name: simulator
             s3_prefix: backend
             zip_name: simulator.zip
+            is_simulator: true
           # 9 Strands Agents
           - name: observer
             source_path: agents/observer
+            module_name: observer
             s3_prefix: agents/observer
             zip_name: agent.zip
+            is_simulator: false
           - name: case-understanding
             source_path: agents/case_understanding
+            module_name: case_understanding
             s3_prefix: agents/case-understanding
             zip_name: agent.zip
+            is_simulator: false
           - name: recurring-detector
             source_path: agents/recurring_detector
+            module_name: recurring_detector
             s3_prefix: agents/recurring-detector
             zip_name: agent.zip
+            is_simulator: false
           - name: compliance-guardian
             source_path: agents/compliance_guardian
+            module_name: compliance_guardian
             s3_prefix: agents/compliance-guardian
             zip_name: agent.zip
+            is_simulator: false
           - name: resolution-composer
             source_path: agents/resolution_composer
+            module_name: resolution_composer
             s3_prefix: agents/resolution-composer
             zip_name: agent.zip
+            is_simulator: false
           - name: inquiry-bridge
             source_path: agents/inquiry_bridge
+            module_name: inquiry_bridge
             s3_prefix: agents/inquiry-bridge
             zip_name: agent.zip
+            is_simulator: false
           - name: writeback
             source_path: agents/writeback
+            module_name: writeback
             s3_prefix: agents/writeback
             zip_name: agent.zip
+            is_simulator: false
           - name: memory-curator
             source_path: agents/memory_curator
+            module_name: memory_curator
             s3_prefix: agents/memory-curator
             zip_name: agent.zip
+            is_simulator: false
           - name: csv-pack
             source_path: agents/csv_pack
+            module_name: csv_pack
             s3_prefix: agents/csv-pack
             zip_name: agent.zip
+            is_simulator: false
 
     steps:
       - uses: actions/checkout@v4
@@ -125,12 +158,6 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install uv
-        if: steps.check.outputs.should_deploy == 'true'
-        uses: astral-sh/setup-uv@v4
-        with:
-          version: "0.5.14"
-
       - name: Configure AWS Credentials
         if: steps.check.outputs.should_deploy == 'true'
         uses: aws-actions/configure-aws-credentials@v4
@@ -139,34 +166,293 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install dependencies and create deployment package
-        if: steps.check.outputs.should_deploy == 'true'
+      # ─────────────────────────────────────────
+      # Package Agent (mirrors scripts/package-agents.sh)
+      # ─────────────────────────────────────────
+      - name: Build agent deployment package
+        if: steps.check.outputs.should_deploy == 'true' && matrix.is_simulator == false
         run: |
-          echo "📦 Building deployment package for ${{ matrix.name }}..."
+          echo "📦 Building agent package for ${{ matrix.name }}..."
 
-          cd ${{ matrix.source_path }}
+          BUILD_DIR=".build/${{ matrix.name }}"
+          rm -rf "$BUILD_DIR"
+          mkdir -p "$BUILD_DIR"
 
-          # Install dependencies to a temporary directory
-          mkdir -p .package
-          uv pip install --target .package -r pyproject.toml 2>/dev/null || \
-          uv pip install --target .package . 2>/dev/null || \
-          echo "No dependencies to install"
+          # 1. Copy agent code as Python package
+          cp -r "${{ matrix.source_path }}" "$BUILD_DIR/${{ matrix.module_name }}"
+          echo "✓ Copied agent code: ${{ matrix.module_name }}"
 
-          # Create ZIP with all source code and dependencies
-          cd .package 2>/dev/null && zip -r9 ../deployment.zip . 2>/dev/null && cd .. || true
-
-          # Add source code to ZIP (overwriting any conflicts)
-          if [[ -f deployment.zip ]]; then
-            # Add source files
-            zip -r9 deployment.zip . -x ".package/*" -x "*.pyc" -x "__pycache__/*" -x ".git/*" -x "*.egg-info/*" -x ".pytest_cache/*" -x ".ruff_cache/*"
-          else
-            # No dependencies, just zip source
-            zip -r9 deployment.zip . -x "*.pyc" -x "__pycache__/*" -x ".git/*" -x "*.egg-info/*" -x ".pytest_cache/*" -x ".ruff_cache/*"
+          # 2. Copy shared library
+          if [ -d "agents/shared" ]; then
+            cp -r agents/shared "$BUILD_DIR/shared"
+            echo "✓ Copied shared library"
           fi
 
-          # Rename to expected name
-          mv deployment.zip ${{ matrix.zip_name }}
+          # 3. Generate main.py entry point (BedrockAgentCoreApp)
+          cat > "$BUILD_DIR/main.py" << 'WRAPPER_EOF'
+          #!/usr/bin/env python3
+          """
+          AgentCore Runtime Entry Point for Galderma TrackWise Agent.
+          This wrapper loads the Strands agent and handles AgentCore invocations.
+          Generated by deploy-agents.yml — DO NOT EDIT MANUALLY.
+          """
+          import json
+          import logging
+          import os
+          import traceback
 
+          # Configure logging for CloudWatch
+          logging.basicConfig(
+              level=logging.INFO,
+              format='{"timestamp": "%(asctime)s", "level": "%(levelname)s", "agent": "%(name)s", "message": "%(message)s"}'
+          )
+          logger = logging.getLogger(__name__)
+
+          AGENT_NAME = os.environ.get("AGENT_NAME", "unknown")
+          logger.info(f"Initializing agent: {AGENT_NAME}")
+          WRAPPER_EOF
+
+          # Add agent-specific import (uses unquoted heredoc for GH Actions variable expansion)
+          # NOTE: Dollar signs in Python code must be escaped (\$) to avoid bash expansion
+          cat >> "$BUILD_DIR/main.py" << EOF
+
+          # Import the agent module
+          try:
+              from ${{ matrix.module_name }}.agent import invoke as agent_invoke
+              logger.info("Agent module '${{ matrix.module_name }}' loaded successfully")
+          except ImportError as e:
+              logger.error(f"Failed to import agent module: {e}")
+              agent_invoke = None
+          EOF
+
+          cat >> "$BUILD_DIR/main.py" << 'WRAPPER_EOF'
+
+
+          # Import BedrockAgentCoreApp
+          try:
+              from bedrock_agentcore.runtime import BedrockAgentCoreApp
+              app = BedrockAgentCoreApp()
+              USE_AGENTCORE = True
+          except ImportError:
+              USE_AGENTCORE = False
+              logger.warning("BedrockAgentCoreApp not available, using fallback mode")
+
+
+          def invoke_handler(event: dict, context=None) -> dict:
+              """AgentCore Runtime handler."""
+              logger.info(f"Received event: {json.dumps(event, default=str)[:500]}")
+
+              if agent_invoke is None:
+                  return {
+                      "success": False,
+                      "error": f"Agent module '{AGENT_NAME}' failed to load"
+                  }
+
+              try:
+                  if isinstance(event, dict):
+                      payload = event.get("prompt") or event.get("inputText") or event
+                  else:
+                      payload = event
+
+                  if isinstance(payload, str):
+                      try:
+                          payload = json.loads(payload)
+                      except json.JSONDecodeError:
+                          pass
+
+                  result = agent_invoke(payload)
+                  logger.info(f"Agent returned: {str(result)[:500]}")
+                  return result
+
+              except Exception as e:
+                  error_msg = f"Agent invocation failed: {str(e)}"
+                  logger.error(error_msg)
+                  logger.error(traceback.format_exc())
+                  return {
+                      "success": False,
+                      "error": error_msg,
+                      "traceback": traceback.format_exc()
+                  }
+
+
+          if USE_AGENTCORE:
+              @app.entrypoint
+              def handler(event: dict, context=None) -> dict:
+                  return invoke_handler(event, context)
+
+
+          if __name__ == "__main__":
+              if USE_AGENTCORE:
+                  logger.info("Starting BedrockAgentCoreApp on port 8080")
+                  app.run()
+              else:
+                  test_event = {"prompt": "ping"}
+                  result = invoke_handler(test_event)
+                  print(json.dumps(result, indent=2, default=str))
+          WRAPPER_EOF
+
+          echo "✓ Generated main.py entry point"
+
+          # 4. Create requirements.txt
+          cat > "$BUILD_DIR/requirements.txt" << 'REQS_EOF'
+          strands-agents>=0.1.0
+          bedrock-agentcore>=0.1.0
+          pydantic>=2.6.0
+          pydantic-settings>=2.2.0
+          anyio>=4.3.0
+          python-dateutil>=2.9.0
+          orjson>=3.9.0
+          REQS_EOF
+
+          # 5. Install ARM64 dependencies
+          echo "Installing ARM64 dependencies..."
+          pip install \
+            --target "$BUILD_DIR" \
+            --platform manylinux2014_aarch64 \
+            --python-version 3.12 \
+            --implementation cp \
+            --only-binary=:all: \
+            -r "$BUILD_DIR/requirements.txt" \
+            --quiet
+
+          # 6. Clean unnecessary files
+          find "$BUILD_DIR" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+          find "$BUILD_DIR" -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true
+          find "$BUILD_DIR" -name "*.pyc" -delete 2>/dev/null || true
+          find "$BUILD_DIR" -name "*.pyo" -delete 2>/dev/null || true
+          find "$BUILD_DIR" -name "*.dist-info" -type d -exec rm -rf {} + 2>/dev/null || true
+
+          # 7. Create ZIP
+          cd "$BUILD_DIR"
+          zip -rq "../../${{ matrix.zip_name }}" . -x ".DS_Store"
+          cd ../..
+          echo "✅ Created ${{ matrix.zip_name }} ($(du -h ${{ matrix.zip_name }} | cut -f1))"
+
+      # ─────────────────────────────────────────
+      # Package Simulator (mirrors scripts/package-backend.sh)
+      # ─────────────────────────────────────────
+      - name: Build simulator deployment package
+        if: steps.check.outputs.should_deploy == 'true' && matrix.is_simulator == true
+        run: |
+          echo "📦 Building simulator package..."
+
+          BUILD_DIR=".build/simulator"
+          rm -rf "$BUILD_DIR"
+          mkdir -p "$BUILD_DIR"
+
+          # 1. Copy backend source code
+          cp -r backend/src "$BUILD_DIR/src"
+          echo "✓ Copied backend source code"
+
+          # 2. Generate main.py entry point (BedrockAgentCoreApp + lazy-load)
+          cat > "$BUILD_DIR/main.py" << 'MAIN_EOF'
+          #!/usr/bin/env python3
+          """
+          AgentCore Runtime Entry Point for TrackWise Simulator.
+          This wrapper loads the FastAPI app and handles AgentCore invocations.
+          Generated by deploy-agents.yml — DO NOT EDIT MANUALLY.
+          IMPORTANT: Uses lazy imports to avoid cold start timeout.
+          """
+          import json
+          import logging
+          import os
+
+          # Configure logging FIRST (lightweight)
+          logging.basicConfig(
+              level=logging.INFO,
+              format='{"timestamp": "%(asctime)s", "level": "%(levelname)s", "service": "simulator", "message": "%(message)s"}',
+          )
+          logger = logging.getLogger("simulator")
+
+          # Import BedrockAgentCoreApp (lightweight)
+          from bedrock_agentcore.runtime import BedrockAgentCoreApp
+
+          # Initialize BedrockAgentCoreApp BEFORE heavy imports
+          agentcore_app = BedrockAgentCoreApp()
+
+          # Lazy-loaded module reference
+          _invocations_handler = None
+
+
+          def get_invocations_handler():
+              """Lazy-load the invocations handler to avoid cold start timeout."""
+              global _invocations_handler
+              if _invocations_handler is None:
+                  logger.info("Lazy-loading simulator modules...")
+                  from src.main import invocations
+                  _invocations_handler = invocations
+                  logger.info("Simulator modules loaded successfully")
+              return _invocations_handler
+
+
+          @agentcore_app.entrypoint
+          def handler(event: dict) -> dict:
+              """AgentCore Runtime handler for simulator."""
+              logger.info(f"Received event: {str(event)[:500]}")
+
+              import asyncio
+
+              try:
+                  invoke_handler = get_invocations_handler()
+
+                  loop = asyncio.new_event_loop()
+                  asyncio.set_event_loop(loop)
+                  try:
+                      result = loop.run_until_complete(invoke_handler(event))
+                      return result
+                  finally:
+                      loop.close()
+              except Exception as e:
+                  logger.error(f"Handler error: {e}")
+                  import traceback
+                  logger.error(traceback.format_exc())
+                  return {"success": False, "error": str(e)}
+
+
+          if __name__ == "__main__":
+              logger.info("Starting TrackWise Simulator on AgentCore Runtime")
+              agentcore_app.run()
+          MAIN_EOF
+
+          echo "✓ Generated main.py entry point"
+
+          # 3. Create requirements.txt
+          cat > "$BUILD_DIR/requirements.txt" << 'REQS_EOF'
+          bedrock-agentcore>=0.1.0
+          strands-agents>=0.1.0
+          fastapi>=0.110.0
+          uvicorn>=0.27.0
+          pydantic>=2.6.0
+          pydantic-settings>=2.2.0
+          httpx>=0.27.0
+          websockets>=12.0
+          boto3>=1.34.0
+          anyio>=4.3.0
+          python-dateutil>=2.9.0
+          python-ulid>=2.0.0
+          REQS_EOF
+
+          # 4. Install ARM64 dependencies
+          echo "Installing ARM64 dependencies..."
+          pip install \
+            --target "$BUILD_DIR" \
+            --platform manylinux2014_aarch64 \
+            --python-version 3.12 \
+            --implementation cp \
+            --only-binary=:all: \
+            -r "$BUILD_DIR/requirements.txt" \
+            --quiet
+
+          # 5. Clean unnecessary files
+          find "$BUILD_DIR" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+          find "$BUILD_DIR" -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true
+          find "$BUILD_DIR" -name "*.pyc" -delete 2>/dev/null || true
+          find "$BUILD_DIR" -name "*.pyo" -delete 2>/dev/null || true
+
+          # 6. Create ZIP (keep dist-info — required by importlib.metadata)
+          cd "$BUILD_DIR"
+          zip -rq "../../${{ matrix.zip_name }}" . -x ".DS_Store"
+          cd ../..
           echo "✅ Created ${{ matrix.zip_name }} ($(du -h ${{ matrix.zip_name }} | cut -f1))"
 
       - name: Upload to S3
@@ -175,7 +461,7 @@ jobs:
           echo "☁️ Uploading ${{ matrix.name }} to S3..."
 
           aws s3 cp \
-            ${{ matrix.source_path }}/${{ matrix.zip_name }} \
+            ${{ matrix.zip_name }} \
             s3://${{ env.ARTIFACTS_BUCKET }}/${{ matrix.s3_prefix }}/${{ matrix.zip_name }} \
             --content-type "application/zip"
 

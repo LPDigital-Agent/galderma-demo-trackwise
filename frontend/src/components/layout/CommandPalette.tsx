@@ -6,11 +6,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Command } from 'cmdk'
-import { Activity, FileText, Network, Brain, BookOpen, Package, RotateCcw, PlusCircle, FileBox } from 'lucide-react'
+import { Activity, FileText, Network, Brain, BookOpen, Package, RotateCcw, PlusCircle, FileBox, PanelLeft } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { cn } from '@/lib/utils'
 import { commandPalette as t, sidebar } from '@/i18n'
+import { useSidebarStore } from '@/stores'
 
 const PAGES = [
   { icon: Activity, label: sidebar.nav.agentRoom, route: '/agent-room' },
@@ -22,6 +23,7 @@ const PAGES = [
 ] as const
 
 const ACTIONS = [
+  { icon: PanelLeft, label: sidebar.toggleMenu, action: 'toggle-sidebar' },
   { icon: RotateCcw, label: t.actionLabels.resetDemo, action: 'reset' },
   { icon: PlusCircle, label: t.actionLabels.createCase, action: 'create' },
   { icon: FileBox, label: t.actionLabels.generateCsv, action: 'csv' },
@@ -55,6 +57,9 @@ export function CommandPalette() {
 
     // Handle actions
     switch (value) {
+      case 'toggle-sidebar':
+        useSidebarStore.getState().toggle()
+        break
       case 'reset':
         toast.success(t.toasts.resetRequested)
         break

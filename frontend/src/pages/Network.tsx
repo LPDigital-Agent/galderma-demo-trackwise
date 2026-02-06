@@ -246,9 +246,9 @@ export default function NetworkPage() {
   }, [])
 
   return (
-    <div className="flex flex-col h-full min-h-[600px]">
+    <div className="flex flex-col h-full min-h-[600px] gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="pb-4 border-b border-[var(--glass-border)]">
+      <div>
         <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
         <p className="text-sm text-[var(--text-secondary)] mt-1">
           {t.subtitle}
@@ -256,7 +256,7 @@ export default function NetworkPage() {
       </div>
 
       {/* React Flow Canvas */}
-      <div className="flex-1 min-h-[500px] bg-[var(--bg-base)]">
+      <div className="flex-1 min-h-[500px] glass-float overflow-hidden">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -293,7 +293,7 @@ export default function NetworkPage() {
       {/* Inline dark theme styles */}
       <style>{`
         .react-flow-dark {
-          background-color: var(--bg-base);
+          background-color: transparent;
         }
         .react-flow-dark .react-flow__node {
           cursor: pointer;

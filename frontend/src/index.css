@@ -72,6 +72,11 @@
   --mode-train: #D97706;
   --mode-act: #4A98B8;
 
+  /* Floating panel system */
+  --float-margin: 16px;
+  --float-radius: 28px;
+  --float-gap: 16px;
+
   /* Radii — rounder for Liquid Glass */
   --radius: 0.875rem;
   --border-radius-sm: 10px;
@@ -144,7 +149,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: Georgia, Cambria, 'Times New Roman', serif;
 }
 
-/* Subtle cyan gradient background — Galderma teal + blue */
+/* Rich wallpaper gradient — Galderma teal/blue + warm accents for Liquid Glass refraction */
 body::before {
   content: '';
   position: fixed;
@@ -153,11 +158,12 @@ body::before {
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(ellipse 120% 80% at 10% -20%, rgba(74, 152, 184, 0.35), transparent 60%),
-    radial-gradient(ellipse 100% 60% at 90% 100%, rgba(56, 96, 190, 0.25), transparent 55%),
-    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(161, 209, 232, 0.18), transparent 50%),
-    radial-gradient(ellipse 60% 40% at 30% 70%, rgba(139, 92, 246, 0.08), transparent 50%),
-    linear-gradient(135deg, #E8F0F6 0%, #F0EDF5 35%, #E6F2F8 65%, #F2F0F7 100%);
+    radial-gradient(ellipse 130% 80% at 15% -10%, rgba(74, 152, 184, 0.40), transparent 55%),
+    radial-gradient(ellipse 100% 70% at 85% 110%, rgba(56, 96, 190, 0.30), transparent 50%),
+    radial-gradient(ellipse 90% 60% at 50% 40%, rgba(161, 209, 232, 0.22), transparent 45%),
+    radial-gradient(ellipse 70% 50% at 25% 75%, rgba(139, 92, 246, 0.12), transparent 45%),
+    radial-gradient(ellipse 60% 40% at 75% 25%, rgba(236, 72, 153, 0.06), transparent 40%),
+    linear-gradient(145deg, #E2EDF5 0%, #EDEAF5 30%, #E0F0F8 60%, #F0EDF7 100%);
   pointer-events: none;
   z-index: -1;
 }
@@ -268,6 +274,78 @@ body::before {
   backdrop-filter: blur(48px) saturate(200%);
   -webkit-backdrop-filter: blur(48px) saturate(200%);
   border-right: 0.5px solid var(--sidebar-border);
+}
+
+/* Liquid Glass — Floating Panels */
+.glass-float {
+  background: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(60px) saturate(200%) brightness(1.06);
+  -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(1.06);
+  border: 0.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--float-radius);
+  box-shadow: var(--shadow-glass), var(--glass-inner-glow);
+  position: relative;
+  overflow: hidden;
+}
+.glass-float::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--glass-specular);
+  pointer-events: none;
+  z-index: 1;
+  mask-image: linear-gradient(black 0%, transparent 50%);
+  -webkit-mask-image: linear-gradient(black 0%, transparent 50%);
+}
+
+/* Liquid Glass — Floating Sidebar */
+.glass-float-sidebar {
+  background: rgba(255, 255, 255, 0.48);
+  backdrop-filter: blur(72px) saturate(200%) brightness(1.06);
+  -webkit-backdrop-filter: blur(72px) saturate(200%) brightness(1.06);
+  border: 0.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--float-radius);
+  box-shadow: var(--shadow-elevated), var(--glass-inner-glow);
+  position: relative;
+  overflow: hidden;
+}
+.glass-float-sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--glass-specular);
+  pointer-events: none;
+  z-index: 1;
+  mask-image: linear-gradient(black 0%, transparent 50%);
+  -webkit-mask-image: linear-gradient(black 0%, transparent 50%);
+}
+
+/* Liquid Glass — Status Pill */
+.glass-pill {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 0.5px solid rgba(255, 255, 255, 0.50);
+  border-radius: 9999px;
+  box-shadow: var(--shadow-glass);
+}
+
+/* Liquid Glass — Trigger Button */
+.glass-trigger {
+  background: rgba(255, 255, 255, 0.50);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 0.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  box-shadow: var(--shadow-glass);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.glass-trigger:hover {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-elevated);
 }
 
 /* ============================================

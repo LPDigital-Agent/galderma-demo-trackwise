@@ -28,6 +28,8 @@ export const sidebar = {
   collapse: 'Recolher',
   expandSidebar: 'Expandir barra lateral',
   collapseSidebar: 'Recolher barra lateral',
+  openMenu: 'Abrir menu',
+  toggleMenu: 'Alternar menu',
 } as const
 
 export const statusBar = {

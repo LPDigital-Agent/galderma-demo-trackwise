@@ -17,21 +17,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MetricCard, TimelineItem, GlassPanel, EmptyState } from '@/components/domain'
 
-/**
- * AgentRoom - Premium AI Agent Dashboard
- *
- * Main executive dashboard showing:
- * - Executive metrics (AI closed, hours saved, risks avoided)
- * - Status counters (total, open, in progress, closed)
- * - Real-time activity timeline with agent events
- *
- * Features:
- * - Auto-refreshing stats (5s interval)
- * - WebSocket-driven timeline updates
- * - Batch case creation
- * - Demo reset capability
- * - Agent-specific filtering
- */
 export default function AgentRoom() {
   const { data: executiveStats, isLoading: executiveLoading } = useExecutiveStats()
   const { data: stats, isLoading: statsLoading } = useStats()
@@ -54,7 +39,6 @@ export default function AgentRoom() {
     }
   }, [filteredEvents.length, autoScroll])
 
-  // Handle create batch mutation
   const handleCreateBatch = () => {
     createBatch.mutate(
       {
@@ -78,7 +62,6 @@ export default function AgentRoom() {
     )
   }
 
-  // Handle Galderma scenario mutation
   const handleCreateScenario = () => {
     createScenario.mutate(undefined, {
       onSuccess: (data) => {
@@ -94,7 +77,6 @@ export default function AgentRoom() {
     })
   }
 
-  // Handle reset demo mutation
   const handleResetDemo = () => {
     resetDemo.mutate(undefined, {
       onSuccess: (data) => {
@@ -111,7 +93,7 @@ export default function AgentRoom() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-[var(--float-gap)]">
       {/* Header Section */}
       <div className="flex items-start justify-between">
         <div>
@@ -149,12 +131,12 @@ export default function AgentRoom() {
       </div>
 
       {/* Executive Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-[var(--float-gap)]">
         {executiveLoading ? (
           <>
-            <Skeleton className="h-32 bg-white/20 backdrop-blur-sm rounded-2xl" />
-            <Skeleton className="h-32 bg-white/20 backdrop-blur-sm rounded-2xl" />
-            <Skeleton className="h-32 bg-white/20 backdrop-blur-sm rounded-2xl" />
+            <Skeleton className="h-32 glass-float" />
+            <Skeleton className="h-32 glass-float" />
+            <Skeleton className="h-32 glass-float" />
           </>
         ) : executiveStats ? (
           <>
@@ -189,9 +171,9 @@ export default function AgentRoom() {
 
       {/* Status Counters Row */}
       {statsLoading ? (
-        <Skeleton className="h-12 bg-white/20 backdrop-blur-sm rounded-2xl" />
+        <Skeleton className="h-12 glass-float" />
       ) : stats ? (
-        <GlassPanel variant="surface" className="px-6 py-4">
+        <GlassPanel variant="floating" className="px-6 py-4">
           <div className="flex items-center justify-center gap-8 text-sm">
             <div className="flex items-center gap-2">
               <span className="text-text-secondary">{t.counters.total}</span>
@@ -199,21 +181,21 @@ export default function AgentRoom() {
                 {stats.total_cases.toLocaleString()}
               </span>
             </div>
-            <div className="h-4 w-px bg-glass-border" />
+            <div className="h-4 w-px bg-black/10" />
             <div className="flex items-center gap-2">
               <span className="text-text-secondary">{t.counters.open}</span>
               <span className="text-status-warning font-mono font-semibold">
                 {stats.open_cases.toLocaleString()}
               </span>
             </div>
-            <div className="h-4 w-px bg-glass-border" />
+            <div className="h-4 w-px bg-black/10" />
             <div className="flex items-center gap-2">
               <span className="text-text-secondary">{t.counters.inProgress}</span>
               <span className="text-brand-accent font-mono font-semibold">
                 {stats.in_progress_cases.toLocaleString()}
               </span>
             </div>
-            <div className="h-4 w-px bg-glass-border" />
+            <div className="h-4 w-px bg-black/10" />
             <div className="flex items-center gap-2">
               <span className="text-text-secondary">{t.counters.closed}</span>
               <span className="text-status-success font-mono font-semibold">
@@ -225,11 +207,11 @@ export default function AgentRoom() {
       ) : null}
 
       {/* Activity Timeline Section */}
-      <GlassPanel className="p-6 space-y-4">
+      <GlassPanel variant="floating" className="p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-text-primary">{t.activityTimeline}</h2>
           <Select value={filter || 'all'} onValueChange={(value) => setFilter(value === 'all' ? null : value)}>
-            <SelectTrigger className="w-[200px] bg-bg-elevated border-glass-border">
+            <SelectTrigger className="w-[200px] bg-white/20 border-white/30">
               <SelectValue placeholder={t.filterByAgent} />
             </SelectTrigger>
             <SelectContent className="bg-bg-elevated border-glass-border">

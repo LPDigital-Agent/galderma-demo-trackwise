@@ -83,9 +83,9 @@ export default function Ledger() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-[var(--glass-border)]">
+      <div>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
@@ -127,7 +127,7 @@ export default function Ledger() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-8 overflow-auto">
+      <div className="flex-1 overflow-auto">
         {isLoading ? (
           <div className="space-y-2">
             {Array.from({ length: 10 }).map((_, i) => (
@@ -141,7 +141,7 @@ export default function Ledger() {
             description={t.empty.description}
           />
         ) : (
-          <div className="bg-[var(--bg-surface)] rounded-2xl border-[0.5px] border-[var(--glass-border)] backdrop-blur-xl shadow-[var(--shadow-glass)] overflow-hidden">
+          <div className="glass-float overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>

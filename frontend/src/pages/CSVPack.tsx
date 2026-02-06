@@ -83,9 +83,9 @@ export default function CSVPack() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-[var(--glass-border)]">
+      <div>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t.title}</h1>
@@ -115,7 +115,7 @@ export default function CSVPack() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-8 overflow-auto">
+      <div className="flex-1 overflow-auto">
         {!result ? (
           <EmptyState
             icon={Shield}
@@ -138,9 +138,9 @@ export default function CSVPack() {
             }
           />
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-[var(--float-gap)]">
             {/* Summary Banner */}
-            <GlassPanel className="p-6">
+            <GlassPanel variant="floating" className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-lg font-semibold text-[var(--text-primary)]">
@@ -231,7 +231,7 @@ export default function CSVPack() {
                 {result.artifacts.map((artifact) => {
                   const Icon = getArtifactIcon(artifact.artifact_type)
                   return (
-                    <GlassPanel key={artifact.artifact_id} className="p-5 hover:border-white/60 hover:shadow-lg transition-colors">
+                    <GlassPanel key={artifact.artifact_id} variant="floating" className="p-5 hover:shadow-lg transition-all">
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-[var(--brand-primary)]/10 flex items-center justify-center shrink-0">
                           <Icon className="w-5 h-5 text-[var(--brand-primary)]" />
@@ -284,7 +284,7 @@ export default function CSVPack() {
             </div>
 
             {/* Extensibility Roadmap */}
-            <GlassPanel className="p-6">
+            <GlassPanel variant="floating" className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 rounded-2xl backdrop-blur-sm bg-[var(--brand-accent)]/10 flex items-center justify-center">
                   <Rocket className="w-4 h-4 text-[var(--brand-accent)]" />

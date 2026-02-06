@@ -26,7 +26,7 @@ export function MetricCard({
   return (
     <div
       className={cn(
-        'glass p-6',
+        'glass-float p-6',
         className
       )}
     >

@@ -64,13 +64,13 @@ export default function CaseDetail() {
 
   if (caseLoading) {
     return (
-      <div className="flex gap-6 h-full">
-        <div className="w-1/3 space-y-4">
+      <div className="flex gap-[var(--float-gap)] h-full">
+        <div className="w-1/3 space-y-[var(--float-gap)]">
           <Skeleton className="h-10 w-32 bg-white/15" />
           <Skeleton className="h-64 bg-white/15" />
           <Skeleton className="h-48 bg-white/15" />
         </div>
-        <div className="w-2/3 space-y-4">
+        <div className="w-2/3 space-y-[var(--float-gap)]">
           <Skeleton className="h-96 bg-white/15" />
         </div>
       </div>
@@ -97,9 +97,9 @@ export default function CaseDetail() {
   const resolutionText = getResolutionForLanguage(caseData, language)
 
   return (
-    <div className="flex gap-6 h-full overflow-hidden">
+    <div className="flex gap-[var(--float-gap)] h-full overflow-hidden">
       {/* Left Column */}
-      <div className="w-1/3 flex flex-col gap-4 overflow-auto">
+      <div className="w-1/3 flex flex-col gap-[var(--float-gap)] overflow-auto">
         {/* Back Button */}
         <Button
           variant="ghost"
@@ -111,7 +111,7 @@ export default function CaseDetail() {
         </Button>
 
         {/* Case Info Card */}
-        <GlassPanel variant="surface">
+        <GlassPanel variant="floating">
           <div className="space-y-4">
             <div>
               <p className="text-text-muted text-sm mb-1">{t.labels.caseId}</p>
@@ -188,14 +188,14 @@ export default function CaseDetail() {
         </GlassPanel>
 
         {/* Complaint Text */}
-        <GlassPanel variant="surface">
+        <GlassPanel variant="floating">
           <h3 className="text-text-primary font-semibold mb-3">{t.complaint}</h3>
           <p className="text-text-secondary leading-relaxed">{caseData.complaint_text}</p>
         </GlassPanel>
 
         {/* Resolution Text */}
         {resolutionText && (
-          <GlassPanel variant="surface">
+          <GlassPanel variant="floating">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-text-primary font-semibold">{t.resolution}</h3>
               <Select value={language} onValueChange={(val) => setLanguage(val as Language)}>
@@ -217,7 +217,7 @@ export default function CaseDetail() {
 
         {/* Linked Case */}
         {caseData.linked_case_id && (
-          <GlassPanel variant="surface">
+          <GlassPanel variant="floating">
             <h3 className="text-text-primary font-semibold mb-3 flex items-center gap-2">
               <LinkIcon className="w-4 h-4" />
               {t.linkedCase}
@@ -233,9 +233,9 @@ export default function CaseDetail() {
       </div>
 
       {/* Right Column */}
-      <div className="w-2/3 flex flex-col gap-4 overflow-auto">
+      <div className="w-2/3 flex flex-col gap-[var(--float-gap)] overflow-auto">
         {/* Processing Timeline */}
-        <GlassPanel variant="surface" className="flex-1">
+        <GlassPanel variant="floating" className="flex-1">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-text-primary font-semibold text-lg">{t.processingTimeline}</h3>
             <Button
@@ -330,7 +330,7 @@ export default function CaseDetail() {
         </GlassPanel>
 
         {/* Audit Trail */}
-        <GlassPanel variant="surface">
+        <GlassPanel variant="floating">
           <h3 className="text-text-primary font-semibold text-lg mb-4">{t.auditTrail}</h3>
 
           {ledgerLoading ? (

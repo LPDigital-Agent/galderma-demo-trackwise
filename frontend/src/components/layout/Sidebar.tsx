@@ -1,13 +1,14 @@
 // ============================================
 // Galderma TrackWise AI Autopilot Demo
-// Sidebar Component - Linear/Cursor-inspired Navigation
+// Sidebar Component - Liquid Glass Floating Panel
 // ============================================
 
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
+import { AnimatePresence, motion } from 'motion/react'
 import { Activity, FileText, Network, Brain, BookOpen, Package, ChevronLeft, ChevronRight } from 'lucide-react'
 
-import { useTimelineStore } from '@/stores'
+import { useSidebarStore } from '@/stores'
 import { cn } from '@/lib/utils'
 import { sidebar as t } from '@/i18n'
 
@@ -20,107 +21,115 @@ const NAV_ITEMS = [
   { icon: Package, label: t.nav.csvPack, route: '/csv-pack' },
 ] as const
 
+const sidebarSpring = {
+  type: 'spring' as const,
+  stiffness: 300,
+  damping: 30,
+}
+
 export function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false)
-  const isConnected = useTimelineStore((s) => s.isConnected)
+  const { isOpen, close, toggle } = useSidebarStore()
+
+  // Escape key closes sidebar
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) close()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, close])
 
   return (
-    <aside
-      className={cn(
-        'h-full flex flex-col glass-sidebar border-r border-[var(--sidebar-border)]',
-        'transition-all duration-300 ease-in-out',
-        isCollapsed ? 'w-16' : 'w-60'
-      )}
-    >
-      {/* Logo Area */}
-      <div className="flex items-center gap-3 px-4 py-6 border-b border-[var(--sidebar-border)]">
-        {isCollapsed ? (
-          <span className="text-white font-bold text-lg mx-auto" style={{ fontFamily: 'Georgia, Cambria, serif' }}>G</span>
-        ) : (
-          <div className="flex flex-col">
-            <img
-              src="/assets/galderma-logo.svg"
-              alt="Galderma"
-              className="h-7 object-contain object-left"
-            />
-            <span className="text-xs text-[var(--sidebar-text-muted)] whitespace-nowrap">
-              {t.subtitle}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Navigation Items */}
-      <nav className="flex-1 py-4 px-2">
-        <ul className="space-y-1">
-          {NAV_ITEMS.map(({ icon: Icon, label, route }) => (
-            <li key={route}>
-              <NavLink
-                to={route}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl',
-                    'transition-all duration-200',
-                    'text-sm font-medium',
-                    isActive
-                      ? 'bg-white/15 border-l-2 border-[var(--brand-accent)] text-[var(--sidebar-text)]'
-                      : 'text-[var(--sidebar-text-muted)] hover:bg-white/10 hover:text-[var(--sidebar-text)] border-l-2 border-transparent'
-                  )
-                }
-              >
-                <Icon className="h-5 w-5 shrink-0" />
-                {!isCollapsed && (
-                  <span className="truncate transition-opacity duration-300">
-                    {label}
-                  </span>
-                )}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      {/* Bottom Section */}
-      <div className="border-t border-[var(--sidebar-border)] px-4 py-3">
-        {/* Connection Status */}
-        <div className="flex items-center gap-2 mb-3">
-          <div
+    <>
+      <AnimatePresence mode="wait">
+        {isOpen && (
+          <motion.aside
+            initial={{ x: -280, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -280, opacity: 0 }}
+            transition={sidebarSpring}
             className={cn(
-              'h-2 w-2 rounded-full transition-colors duration-300',
-              isConnected
-                ? 'bg-[var(--status-success)] animate-live-pulse'
-                : 'bg-[var(--status-error)]'
+              'fixed top-0 left-0 z-40',
+              'm-[var(--float-margin)]',
+              'h-[calc(100vh-var(--float-margin)*2)]',
+              'w-60',
+              'glass-float-sidebar',
+              'flex flex-col'
             )}
-          />
-          {!isCollapsed && (
-            <span className="text-xs text-[var(--sidebar-text-muted)]">
-              {isConnected ? t.live : t.offline}
-            </span>
-          )}
-        </div>
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 pt-6 pb-4">
+              <div className="flex flex-col">
+                <img
+                  src="/assets/galderma-logo.svg"
+                  alt="Galderma"
+                  className="h-7 object-contain object-left"
+                />
+                <span className="text-xs text-[var(--text-muted)] mt-0.5">
+                  {t.subtitle}
+                </span>
+              </div>
+              <button
+                onClick={close}
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/5 transition-colors"
+                aria-label={t.collapseSidebar}
+              >
+                <ChevronLeft className="h-4 w-4 text-[var(--text-secondary)]" />
+              </button>
+            </div>
 
-        {/* Collapse Toggle */}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className={cn(
-            'w-full flex items-center gap-2 px-2 py-1.5 rounded-xl',
-            'text-xs text-[var(--sidebar-text-muted)]',
-            'hover:bg-white/10 hover:text-[var(--sidebar-text)]',
-            'transition-colors duration-200',
-            isCollapsed && 'justify-center'
-          )}
-          aria-label={isCollapsed ? t.expandSidebar : t.collapseSidebar}
-        >
-          {isCollapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <>
-              <ChevronLeft className="h-4 w-4" />
-              <span>{t.collapse}</span>
-            </>
-          )}
-        </button>
-      </div>
-    </aside>
+            {/* Navigation Items */}
+            <nav className="flex-1 py-2 px-3">
+              <ul className="space-y-1">
+                {NAV_ITEMS.map(({ icon: Icon, label, route }) => (
+                  <li key={route}>
+                    <NavLink
+                      to={route}
+                      className={({ isActive }) =>
+                        cn(
+                          'flex items-center gap-3 px-3 py-2.5 rounded-2xl',
+                          'transition-all duration-200',
+                          'text-sm font-medium',
+                          isActive
+                            ? 'bg-[var(--brand-primary)]/12 text-[var(--brand-primary)]'
+                            : 'text-[var(--text-secondary)] hover:bg-black/5 hover:text-[var(--text-primary)]'
+                        )
+                      }
+                    >
+                      <Icon className="h-5 w-5 shrink-0" />
+                      <span className="truncate">{label}</span>
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Footer */}
+            <div className="px-5 pb-5 pt-2">
+              <div className="text-[10px] text-[var(--text-muted)] text-center">
+                TrackWise AI Autopilot
+              </div>
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
+      {/* Floating trigger button when sidebar is closed */}
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            onClick={toggle}
+            className="fixed top-[var(--float-margin)] left-[var(--float-margin)] z-40 w-11 h-11 glass-trigger flex items-center justify-center"
+            aria-label={t.openMenu}
+          >
+            <ChevronRight className="h-5 w-5 text-[var(--text-secondary)]" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </>
   )
 }

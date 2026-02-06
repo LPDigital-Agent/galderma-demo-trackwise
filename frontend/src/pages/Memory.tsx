@@ -45,9 +45,9 @@ export default function Memory() {
   const isEmpty = patterns.length === 0 && templates.length === 0 && policies.length === 0
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full gap-[var(--float-gap)]">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-[var(--glass-border)]">
+      <div>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-[var(--brand-primary)]/10 flex items-center justify-center">
             <Brain className="w-5 h-5 text-[var(--brand-primary)]" />
@@ -62,7 +62,7 @@ export default function Memory() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-8 overflow-auto">
+      <div className="flex-1 overflow-auto">
         {isLoading ? (
           <div className="space-y-4">
             <Skeleton className="h-10 w-full bg-glass-bg border border-glass-border rounded-lg" />
@@ -85,7 +85,7 @@ export default function Memory() {
 
             {/* Recurring Patterns Tab */}
             <TabsContent value="patterns">
-              <GlassPanel className="p-6">
+              <GlassPanel variant="floating" className="p-6">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                     {t.patterns.title}
@@ -137,7 +137,7 @@ export default function Memory() {
 
             {/* Resolution Templates Tab */}
             <TabsContent value="templates">
-              <GlassPanel className="p-6">
+              <GlassPanel variant="floating" className="p-6">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                     {t.templates.title}
@@ -189,7 +189,7 @@ export default function Memory() {
 
             {/* Policy Knowledge Tab */}
             <TabsContent value="policies">
-              <GlassPanel className="p-6">
+              <GlassPanel variant="floating" className="p-6">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                     {t.policies.title}

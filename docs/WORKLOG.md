@@ -4,6 +4,24 @@ Automatically maintained by Claude Code hooks.
 
 ---
 
+## 2026-02-06: Apple Liquid Glass UI Transformation
+
+**Commit:** `772abca` — `✨ feat(frontend): Transform UI to Apple Liquid Glass design language`
+
+**Changes (29 files, 349 insertions, 220 deletions):**
+- **CSS foundation** (`index.css`): Updated 17 CSS variables (translucent backgrounds, luminous white borders, softer text), added 3 specular highlight variables, updated 10 OKLCH tokens with alpha channels, replaced body gradient with 5-layer rich wallpaper, overhauled `.glass`/`.glass-surface`/`.glass-elevated` utilities with `::before` specular highlights + inner glow + `blur(40-48px)`, added `.glass-sidebar` utility
+- **GlassPanel + MetricCard**: Switched to CSS utility classes (specular highlights now automatic), icon squircle
+- **Layout**: Sidebar solid `#236B75` → translucent `rgba(35,107,117,0.55)` with `blur(48px)`, glass CommandPalette, pill-shaped StatusBar toggles, glass overlays (CreateCaseModal, AuditorView)
+- **Badges**: All solid pastels (`bg-{color}-50`) → translucent glass (`bg-{color}-500/10 backdrop-blur-sm`) across StatusBadge, SeverityBadge, AgentBadge, and inline page badges
+- **shadcn/ui**: Glass treatment on card, dialog, sheet, button, table, tabs, badge, select, input, skeleton (10 files)
+- **Pages**: All 7 pages updated — glass tables, skeletons (`bg-white/15`), confidence bars, Network React Flow (teal-tinted edges, glass AgentNodes, blurred controls/minimap)
+
+**Execution:** 4-agent parallel team (css-foundation → layout-updater + primitives-updater + pages-updater)
+
+**Verification:** `pnpm build` clean, `pnpm lint` 0 errors (13 pre-existing warnings)
+
+---
+
 ## 2026-02-06: AgentCore Runtime Entrypoint Fix
 
 **Commit:** `ab89304` — `🐛 fix(deploy): Rewrite agent packaging to include main.py entry point, shared lib, and ARM64 deps`
@@ -248,6 +266,142 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 ---
 
 ## Turn Log — 2026-02-06 02:18:29 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:19:27 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:23:50 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:24:16 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:33:40 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:33:51 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:33:54 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:33:56 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:34:20 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:34:25 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:34:40 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:34:44 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:35:17 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:44:30 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:50:12 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:54:18 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 02:55:38 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 03:10:23 UTC
 
 **User:** (no user message captured)
 

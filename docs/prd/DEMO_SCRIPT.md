@@ -34,6 +34,7 @@ Demonstrate that **multi-agent AI can assume the cognitive load** of TrackWise c
 | **Primary** | "AI agents can observe, learn, remember, and execute—while every step is visible, replayable, and exportable for audit/CSV." |
 | **Secondary** | "This is not a black box. Every decision has evidence, rationale, and traceability." |
 | **Tertiary** | "The system learns from feedback and improves over time." |
+| **Technical** | "All agents run on Gemini 3.0 Pro — temperature tiering (not model tiering) controls agent behavior. This proves the architecture is truly model-agnostic." |
 
 ### 1.3 Demo Timing
 
@@ -439,6 +440,7 @@ Pre-loaded mock cases:
 | Permissions | "Writeback agent can ONLY execute pre-approved actions from Compliance Guardian" |
 | Observability | "Full CloudWatch integration—logs, traces, metrics for every agent" |
 | No black box | "You can see every decision, every reasoning chain—this isn't magic, it's engineering" |
+| Model agnostic | "All 10 agents run on Gemini 3 Pro today—but the architecture is model-agnostic. Temperature tiering controls behavior, not vendor lock-in" |
 | Mode control | "Observe mode lets you watch without risk; Act mode requires explicit enablement" |
 
 ### 6.4 Executive Sponsor
@@ -504,7 +506,7 @@ Pre-loaded mock cases:
 
 > "This demo shows the target state. For production:
 > - Phase 1 (Core Wow): 4-6 weeks for MVP with 3 agents
-> - Phase 2 (Full): 8-12 weeks for all 9 agents + validation pack
+> - Phase 2 (Full): 8-12 weeks for all 10 agents + validation pack
 >
 > Plus your own validation activities. But you can start seeing value in Phase 1."
 

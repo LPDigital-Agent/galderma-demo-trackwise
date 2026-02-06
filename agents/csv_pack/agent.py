@@ -12,7 +12,7 @@
 # - Upload to S3 csv-packs bucket
 # - Create audit-ready documentation
 #
-# Model: Claude 4.5 Haiku (fast generation)
+# Model: Gemini 3 Pro (fast generation)
 # Memory Access: ALL (READ - documentation evidence)
 # ============================================
 
@@ -364,8 +364,8 @@ def generate_test_logs(run_ids: list[str] | None = None) -> dict[str, Any]:
             "environment": "Production",
             "aws_region": "us-east-2",
             "models": {
-                "critical": "claude-opus-4-5-20251101",
-                "operational": "claude-haiku-4-5-20251101",
+                "critical": "gemini-3-pro-preview",
+                "operational": "gemini-3-pro-preview",
             },
         },
     }
@@ -391,19 +391,19 @@ def generate_version_manifest() -> dict[str, Any]:
         "system_version": "1.0.0",
         "models": {
             "compliance_guardian": {
-                "model_id": "claude-opus-4-5-20251101",
-                "provider": "Anthropic via AWS Bedrock",
-                "purpose": "Critical compliance decisions",
+                "model_id": "gemini-3-pro-preview",
+                "provider": "Google via Strands GeminiModel",
+                "purpose": "Critical compliance decisions (temp 0.3)",
             },
             "resolution_composer": {
-                "model_id": "claude-opus-4-5-20251101",
-                "provider": "Anthropic via AWS Bedrock",
-                "purpose": "Quality multilingual generation",
+                "model_id": "gemini-3-pro-preview",
+                "provider": "Google via Strands GeminiModel",
+                "purpose": "Quality multilingual generation (temp 0.3)",
             },
             "operational_agents": {
-                "model_id": "claude-haiku-4-5-20251101",
-                "provider": "Anthropic via AWS Bedrock",
-                "purpose": "Fast operational tasks",
+                "model_id": "gemini-3-pro-preview",
+                "provider": "Google via Strands GeminiModel",
+                "purpose": "Fast operational tasks (temp 0.5)",
             },
         },
         "infrastructure": {
@@ -414,15 +414,15 @@ def generate_version_manifest() -> dict[str, Any]:
             "observability": "AWS CloudWatch via AgentCore",
         },
         "agents": [
-            {"name": "observer", "version": "1.0.0", "model": "haiku"},
-            {"name": "case_understanding", "version": "1.0.0", "model": "haiku"},
-            {"name": "recurring_detector", "version": "1.0.0", "model": "haiku"},
-            {"name": "compliance_guardian", "version": "1.0.0", "model": "opus"},
-            {"name": "resolution_composer", "version": "1.0.0", "model": "opus"},
-            {"name": "inquiry_bridge", "version": "1.0.0", "model": "haiku"},
-            {"name": "writeback", "version": "1.0.0", "model": "haiku"},
-            {"name": "memory_curator", "version": "1.0.0", "model": "haiku"},
-            {"name": "csv_pack", "version": "1.0.0", "model": "haiku"},
+            {"name": "observer", "version": "1.0.0", "model": "gemini-3-pro"},
+            {"name": "case_understanding", "version": "1.0.0", "model": "gemini-3-pro"},
+            {"name": "recurring_detector", "version": "1.0.0", "model": "gemini-3-pro"},
+            {"name": "compliance_guardian", "version": "1.0.0", "model": "gemini-3-pro"},
+            {"name": "resolution_composer", "version": "1.0.0", "model": "gemini-3-pro"},
+            {"name": "inquiry_bridge", "version": "1.0.0", "model": "gemini-3-pro"},
+            {"name": "writeback", "version": "1.0.0", "model": "gemini-3-pro"},
+            {"name": "memory_curator", "version": "1.0.0", "model": "gemini-3-pro"},
+            {"name": "csv_pack", "version": "1.0.0", "model": "gemini-3-pro"},
         ],
     }
 
@@ -506,7 +506,7 @@ def create_pack_manifest(
         "generator": {
             "agent": "csv_pack",
             "version": "1.0.0",
-            "model": "claude-haiku-4-5-20251101",
+            "model": "gemini-3-pro-preview",
         },
         "compliance": {
             "framework": "21 CFR Part 11",
@@ -591,7 +591,7 @@ def on_after_invocation(event: AfterInvocationEvent):
 csv_pack = Agent(
     name="csv_pack",
     system_prompt=SYSTEM_PROMPT,
-    model=config.get_model_id(),
+    model=config.get_model(),
     tools=[
         generate_urs,
         generate_risk_assessment,

@@ -12,7 +12,7 @@
 # - Recommend action based on confidence thresholds
 # - Write new patterns when approved (TRAIN mode)
 #
-# Model: Claude 4.5 Haiku (fast pattern matching)
+# Model: Gemini 3 Pro (fast pattern matching)
 # Memory Access: RecurringPatterns (READ + WRITE)
 # ============================================
 
@@ -555,7 +555,7 @@ def on_after_invocation(event: AfterInvocationEvent):
 recurring_detector = Agent(
     name="recurring_detector",
     system_prompt=SYSTEM_PROMPT,
-    model=config.get_model_id(),
+    model=config.get_model(),
     tools=[
         query_recurring_patterns,
         calculate_similarity,

@@ -6,7 +6,7 @@
 # The Resolution Composer generates high-quality multilingual resolutions.
 # It produces resolutions in PT, EN, ES, and FR simultaneously.
 #
-# ⚠️ CRITICAL: This agent uses Claude 4.5 OPUS for quality.
+# ⚠️ CRITICAL: This agent uses Gemini 3 Pro (temp 0.3) for quality.
 #
 # Responsibilities:
 # - Compose canonical (language-neutral) resolution
@@ -14,7 +14,7 @@
 # - Use ResolutionTemplates memory for consistency
 # - Ensure regulatory-compliant language
 #
-# Model: Claude 4.5 OPUS (quality writing)
+# Model: Gemini 3 Pro (quality writing, temperature 0.3)
 # Memory Access: ResolutionTemplates (READ)
 # ============================================
 
@@ -431,7 +431,7 @@ def create_resolution_package(
         "quality_score": round(quality_score, 2),
         "composed_at": datetime.utcnow().isoformat(),
         "agent": "resolution_composer",
-        "model": "claude-opus-4-5",
+        "model": "gemini-3-pro-preview",
     }
 
     return {
@@ -492,7 +492,7 @@ def on_before_invocation(event: BeforeInvocationEvent):
             {
                 "event": "invocation_started",
                 "session_id": event.agent.state.get("session_id"),
-                "model": "claude-opus-4-5",
+                "model": "gemini-3-pro-preview",
             }
         )
     )
@@ -507,7 +507,7 @@ def on_after_invocation(event: AfterInvocationEvent):
                 "session_id": event.agent.state.get("session_id"),
                 "duration_ms": getattr(event, "duration_ms", 0),
                 "stop_reason": event.stop_reason,
-                "model": "claude-opus-4-5",
+                "model": "gemini-3-pro-preview",
             }
         )
     )
@@ -519,7 +519,7 @@ def on_after_invocation(event: AfterInvocationEvent):
 resolution_composer = Agent(
     name="resolution_composer",
     system_prompt=SYSTEM_PROMPT,
-    model=config.get_model_id(),  # Will return OPUS for this agent
+    model=config.get_model(),  # Will return PRO with low temperature for this agent
     tools=[
         get_resolution_template,
         compose_canonical_resolution,

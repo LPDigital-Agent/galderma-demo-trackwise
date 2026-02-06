@@ -190,7 +190,7 @@ def get_agent_card(agent_type: str) -> dict[str, Any]:
         "case_understanding": {
             "name": "Case Understanding Agent",
             "description": "Analyzes TrackWise cases to extract product, category, severity, and initial classification",
-            "model_id": "anthropic.claude-haiku-4-5-20251101",
+            "model_id": "gemini-3-pro-preview",
             "capabilities": [
                 "product_classification",
                 "severity_assessment",
@@ -203,7 +203,7 @@ def get_agent_card(agent_type: str) -> dict[str, Any]:
         "recurring_detector": {
             "name": "Recurring Detector Agent",
             "description": "Detects recurring complaint patterns using semantic memory search",
-            "model_id": "anthropic.claude-haiku-4-5-20251101",
+            "model_id": "gemini-3-pro-preview",
             "capabilities": [
                 "pattern_matching",
                 "similarity_scoring",
@@ -215,7 +215,7 @@ def get_agent_card(agent_type: str) -> dict[str, Any]:
         "compliance_guardian": {
             "name": "Compliance Guardian Agent",
             "description": "Evaluates 5 compliance policies and gates high-impact actions",
-            "model_id": "anthropic.claude-opus-4-5-20251101",  # OPUS for critical decisions
+            "model_id": "gemini-3-pro-preview",  # Critical decisions (temp 0.3)
             "capabilities": [
                 "policy_evaluation",
                 "severity_gating",
@@ -229,7 +229,7 @@ def get_agent_card(agent_type: str) -> dict[str, Any]:
         "resolution_composer": {
             "name": "Resolution Composer Agent",
             "description": "Generates multilingual resolutions (PT/EN/ES/FR) simultaneously",
-            "model_id": "anthropic.claude-opus-4-5-20251101",  # OPUS for quality
+            "model_id": "gemini-3-pro-preview",  # Quality generation (temp 0.3)
             "capabilities": [
                 "multilingual_generation",
                 "template_application",
@@ -242,7 +242,7 @@ def get_agent_card(agent_type: str) -> dict[str, Any]:
         "inquiry_bridge": {
             "name": "Inquiry Bridge Agent",
             "description": "Handles factory complaint closure and linked inquiry processing",
-            "model_id": "anthropic.claude-haiku-4-5-20251101",
+            "model_id": "gemini-3-pro-preview",
             "capabilities": [
                 "linked_case_detection",
                 "inquiry_closure_decision",
@@ -253,7 +253,7 @@ def get_agent_card(agent_type: str) -> dict[str, Any]:
         "writeback": {
             "name": "Writeback Agent",
             "description": "Executes approved actions back to TrackWise Simulator",
-            "model_id": "anthropic.claude-haiku-4-5-20251101",
+            "model_id": "gemini-3-pro-preview",
             "capabilities": [
                 "case_update",
                 "case_closure",
@@ -265,7 +265,7 @@ def get_agent_card(agent_type: str) -> dict[str, Any]:
         "memory_curator": {
             "name": "Memory Curator Agent",
             "description": "Processes feedback and updates memory patterns",
-            "model_id": "anthropic.claude-haiku-4-5-20251101",
+            "model_id": "gemini-3-pro-preview",
             "capabilities": [
                 "feedback_processing",
                 "confidence_adjustment",
@@ -277,7 +277,7 @@ def get_agent_card(agent_type: str) -> dict[str, Any]:
         "csv_pack": {
             "name": "CSV Pack Agent",
             "description": "Generates CSV compliance documentation packs using Code Interpreter",
-            "model_id": "anthropic.claude-haiku-4-5-20251101",
+            "model_id": "gemini-3-pro-preview",
             "capabilities": [
                 "document_generation",
                 "code_execution",

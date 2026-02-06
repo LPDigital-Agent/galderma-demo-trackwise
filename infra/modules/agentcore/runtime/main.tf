@@ -78,6 +78,13 @@ variable "python_runtime" {
   default     = "PYTHON_3_12"
 }
 
+variable "gemini_api_key" {
+  description = "Google Gemini API key for Strands GeminiModel provider"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 # Agent configurations
 variable "agents" {
   description = "Configuration for each agent"
@@ -90,63 +97,63 @@ variable "agents" {
   }))
   default = {
     "observer" = {
-      model_id        = "anthropic.claude-haiku-4-5-20251101"
+      model_id        = "gemini-3-pro-preview"
       description     = "Orchestrator agent - routes events to specialists"
       entry_point     = ["main.py"]
       memory_access   = []
       is_orchestrator = true
     }
     "case-understanding" = {
-      model_id        = "anthropic.claude-haiku-4-5-20251101"
+      model_id        = "gemini-3-pro-preview"
       description     = "Analyzes and classifies TrackWise cases"
       entry_point     = ["main.py"]
       memory_access   = ["READ"]
       is_orchestrator = false
     }
     "recurring-detector" = {
-      model_id        = "anthropic.claude-haiku-4-5-20251101"
+      model_id        = "gemini-3-pro-preview"
       description     = "Detects recurring patterns in complaints"
       entry_point     = ["main.py"]
       memory_access   = ["READ", "WRITE"]
       is_orchestrator = false
     }
     "compliance-guardian" = {
-      model_id        = "anthropic.claude-opus-4-5-20251101"
+      model_id        = "gemini-3-pro-preview"
       description     = "Validates compliance with 5 policy rules"
       entry_point     = ["main.py"]
       memory_access   = ["READ"]
       is_orchestrator = false
     }
     "resolution-composer" = {
-      model_id        = "anthropic.claude-opus-4-5-20251101"
+      model_id        = "gemini-3-pro-preview"
       description     = "Composes multilingual resolutions"
       entry_point     = ["main.py"]
       memory_access   = ["READ"]
       is_orchestrator = false
     }
     "inquiry-bridge" = {
-      model_id        = "anthropic.claude-haiku-4-5-20251101"
+      model_id        = "gemini-3-pro-preview"
       description     = "Handles inquiry-linked complaints"
       entry_point     = ["main.py"]
       memory_access   = ["READ"]
       is_orchestrator = false
     }
     "writeback" = {
-      model_id        = "anthropic.claude-haiku-4-5-20251101"
+      model_id        = "gemini-3-pro-preview"
       description     = "Executes writeback to TrackWise Simulator"
       entry_point     = ["main.py"]
       memory_access   = ["WRITE"]
       is_orchestrator = false
     }
     "memory-curator" = {
-      model_id        = "anthropic.claude-haiku-4-5-20251101"
+      model_id        = "gemini-3-pro-preview"
       description     = "Manages memory updates from feedback"
       entry_point     = ["main.py"]
       memory_access   = ["READ", "WRITE"]
       is_orchestrator = false
     }
     "csv-pack" = {
-      model_id        = "anthropic.claude-haiku-4-5-20251101"
+      model_id        = "gemini-3-pro-preview"
       description     = "Generates CSV compliance packs"
       entry_point     = ["main.py"]
       memory_access   = ["READ"]
@@ -449,14 +456,16 @@ resource "aws_bedrockagentcore_agent_runtime" "agents" {
     server_protocol = "HTTP"
   }
 
-  # Environment variables for A2A discovery
+  # Environment variables for A2A discovery and model config
   environment_variables = merge(
     {
-      AGENT_NAME  = each.key
-      ENVIRONMENT = var.environment
-      MEMORY_ID   = var.memory_id
-      GATEWAY_URL = var.gateway_url
-      AWS_REGION  = var.aws_region
+      AGENT_NAME     = each.key
+      ENVIRONMENT    = var.environment
+      MEMORY_ID      = var.memory_id
+      GATEWAY_URL    = var.gateway_url
+      AWS_REGION     = var.aws_region
+      GEMINI_API_KEY = var.gemini_api_key
+      GEMINI_MODEL   = each.value.model_id
       # Code version hash triggers redeployment when ZIP changes
       CODE_VERSION = local.agent_code_hashes[each.key]
     },

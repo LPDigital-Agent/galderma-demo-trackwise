@@ -12,7 +12,7 @@
 # - Coordinate cascade closures
 # - Query RecurringPatterns for linked resolutions
 #
-# Model: Claude 4.5 Haiku (fast coordination)
+# Model: Gemini 3 Pro (fast coordination)
 # Memory Access: RecurringPatterns (READ)
 # ============================================
 
@@ -403,7 +403,7 @@ def on_after_invocation(event: AfterInvocationEvent):
 inquiry_bridge = Agent(
     name="inquiry_bridge",
     system_prompt=SYSTEM_PROMPT,
-    model=config.get_model_id(),
+    model=config.get_model(),
     tools=[
         get_linked_cases,
         check_closure_eligibility,

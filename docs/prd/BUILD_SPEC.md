@@ -1195,9 +1195,9 @@ async def test_complaint_flow_observe_mode():
 - [ ] Event emission to Gateway
 
 #### Week 3-4: Core Agents
-- [ ] Observer Agent (Strands + Haiku)
-- [ ] Case Understanding Agent (Haiku)
-- [ ] Resolution Composer Agent (OPUS)
+- [ ] Observer Agent (Strands + Gemini 3 Pro)
+- [ ] Case Understanding Agent (Gemini 3 Pro)
+- [ ] Resolution Composer Agent (Gemini 3 Pro)
 - [ ] A2A communication setup
 - [ ] AgentCore Memory integration
 - [ ] Basic logging/observability

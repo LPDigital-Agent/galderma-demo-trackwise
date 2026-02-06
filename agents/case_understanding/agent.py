@@ -12,7 +12,7 @@
 # - Query PolicyKnowledge memory for classification rules
 # - Emit structured CaseAnalysis to Recurring Detector
 #
-# Model: Claude 4.5 Haiku (fast classification)
+# Model: Gemini 3 Pro (fast classification)
 # Memory Access: PolicyKnowledge (READ only)
 # ============================================
 
@@ -490,7 +490,7 @@ def on_after_invocation(event: AfterInvocationEvent):
 case_understanding = Agent(
     name="case_understanding",
     system_prompt=SYSTEM_PROMPT,
-    model=config.get_model_id(),
+    model=config.get_model(),
     tools=[
         classify_product,
         assess_severity,

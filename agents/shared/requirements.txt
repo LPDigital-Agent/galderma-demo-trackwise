@@ -1,0 +1,22 @@
+# Shared dependencies for Galderma TrackWise agents
+# Used by packaging scripts to ensure consistent dependency versions
+
+# Core Strands SDK with Gemini provider
+strands-agents[gemini]>=0.1.0
+
+# AWS Bedrock AgentCore SDK
+bedrock-agentcore>=0.1.0
+
+# Google GenAI SDK (Gemini 3.0 model provider)
+google-genai>=1.0.0
+
+# Pydantic for structured data
+pydantic>=2.6.0
+pydantic-settings>=2.2.0
+
+# Async support
+anyio>=4.3.0
+
+# Utilities
+python-dateutil>=2.9.0
+orjson>=3.9.0

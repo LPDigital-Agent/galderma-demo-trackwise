@@ -173,12 +173,13 @@ Use all AgentCore components:
 
 ### 6.3 LLM Policy
 
-Per CLAUDE.md requirements, the following LLM assignment applies:
+All agents use **Gemini 3.0 Pro** (`gemini-3-pro-preview`) via Strands `GeminiModel` provider. Temperature tiering controls agent behavior:
 
-| Agent Type | Model | Rationale |
-|------------|-------|-----------|
-| Critical agents | **Claude 4.5 OPUS** | Maximum reasoning for policy enforcement, user-facing outputs |
-| Operational agents | **Claude 4.5 Haiku** | Speed + cost efficiency for high-volume tasks |
+| Agent Tier | Temperature | Agents | Rationale |
+|------------|-------------|--------|-----------|
+| Critical | **0.3** | Compliance Guardian, Resolution Composer | Conservative reasoning for policy enforcement |
+| Operational | **0.5** | Observer, Case Understanding, Recurring Detector, Inquiry Bridge, Writeback, Memory Curator, CSV Pack | Balanced reasoning for high-throughput tasks |
+| Creative | **0.8** | SAC Generator | Higher creativity for complaint generation |
 
 See [AGENT_ARCHITECTURE.md](./AGENT_ARCHITECTURE.md) for per-agent assignment.
 
@@ -202,7 +203,7 @@ The demo consists of 6 main components:
 
 1. **TrackWise Simulator** - API + event generator + UI for case creation
 2. **AgentCore Gateway** - API front door for Agent Room + simulator hooks
-3. **Multi-agent mesh (A2A)** - 9 agents deployed on AgentCore Runtime
+3. **Multi-agent mesh (A2A)** - 10 agents deployed on AgentCore Runtime
 4. **Agent Room UI** - Apple TV-like frosted dark glass interface
 5. **Audit Ledger + Artifacts store** - Immutable event log + downloadable CSV Pack
 6. **Memory layer** - AgentCore Memory with STM/LTM
@@ -249,19 +250,20 @@ sequenceDiagram
 
 ### 8.1 Agent Overview
 
-The system uses 9 specialized agents communicating via A2A protocol:
+The system uses 10 specialized agents communicating via A2A protocol. All agents use Gemini 3 Pro (`gemini-3-pro-preview`):
 
-| # | Agent | Model | Responsibility |
-|---|-------|-------|----------------|
-| 1 | **Observer** | Haiku | Consume simulator events, produce normalized envelopes |
-| 2 | **Case Understanding** | Haiku | Extract structure (product, lot, severity, category, narrative) |
-| 3 | **Recurring Detector** | Haiku | Match cases against "known recurring" patterns (memory-driven) |
-| 4 | **Compliance Guardian** | **OPUS** | Enforce policy guardrails, ensure evidence completeness |
-| 5 | **Resolution Composer** | **OPUS** | Generate user-facing summaries + audit records (4 languages) |
-| 6 | **Inquiry Bridge** | Haiku | Generate Inquiry closure when linked Complaint closes |
-| 7 | **Writeback** | Haiku | Perform simulator writebacks with pre-flight validation |
-| 8 | **Memory Curator** | Haiku | Decide what to persist, version learning artifacts |
-| 9 | **CSV Pack** | Haiku | Generate Validation Pack using Code Interpreter |
+| # | Agent | Temp | Responsibility |
+|---|-------|------|----------------|
+| 1 | **Observer** | 0.5 | Consume simulator events, produce normalized envelopes |
+| 2 | **Case Understanding** | 0.5 | Extract structure (product, lot, severity, category, narrative) |
+| 3 | **Recurring Detector** | 0.5 | Match cases against "known recurring" patterns (memory-driven) |
+| 4 | **Compliance Guardian** | 0.3 | Enforce policy guardrails, ensure evidence completeness |
+| 5 | **Resolution Composer** | 0.3 | Generate user-facing summaries + audit records (4 languages) |
+| 6 | **Inquiry Bridge** | 0.5 | Generate Inquiry closure when linked Complaint closes |
+| 7 | **Writeback** | 0.5 | Perform simulator writebacks with pre-flight validation |
+| 8 | **Memory Curator** | 0.5 | Decide what to persist, version learning artifacts |
+| 9 | **CSV Pack** | 0.5 | Generate Validation Pack using Code Interpreter |
+| 10 | **SAC Generator** | 0.8 | Generate realistic Brazilian consumer complaints |
 
 ### 8.2 A2A Agent Graph
 
@@ -666,7 +668,7 @@ The demo is considered **"Done"** when:
 ### 16.2 Phase 2: Full Demo
 
 **Scope**:
-- Full A2A agent mesh (all 9 agents)
+- Full A2A agent mesh (all 10 agents)
 - AgentCore Memory integration
 - Code Interpreter (CSV Pack Agent)
 - A2A Network view + Memory Inspector
@@ -691,8 +693,8 @@ The demo is considered **"Done"** when:
 ### Core Architecture
 | Decision | Answer |
 |----------|--------|
-| Agent Count | 9 agents (confirmed) |
-| LLM Policy | OPUS for critical (Guardian, Composer), Haiku for operational |
+| Agent Count | 10 agents (confirmed, incl. SAC Generator) |
+| LLM Policy | Gemini 3 Pro for all agents, temperature tiering (0.3/0.5/0.8) |
 | Autopilot Modes | Best practices with manual toggle |
 
 ### Data & Simulator

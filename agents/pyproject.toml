@@ -30,10 +30,10 @@ authors = [
 ]
 
 dependencies = [
-    # AWS Strands Agents (MANDATORY - Core SDK)
-    "strands-agents>=0.1.0",
+    # AWS Strands Agents (MANDATORY - Core SDK) — pinned to 1.25.0 for Gemini fixes
+    "strands-agents>=1.25.0",
     # Strands A2A Protocol (MANDATORY for inter-agent communication)
-    "strands-agents[a2a]>=0.1.0",
+    "strands-agents[a2a]>=1.25.0",
     # Strands Built-in Tools
     "strands-agents-tools>=0.1.0",
     # A2A Client for agent discovery
@@ -57,8 +57,8 @@ dependencies = [
     "ulid-py>=1.1.0",
     # JSON processing
     "orjson>=3.9.0",
-    # Gemini model provider for Strands (SAC Generator agent)
-    "strands-agents[gemini]>=0.1.0",
+    # Gemini model provider for Strands (ALL agents use Gemini 3 Pro)
+    "strands-agents[gemini]>=1.25.0",
 ]
 
 [project.optional-dependencies]

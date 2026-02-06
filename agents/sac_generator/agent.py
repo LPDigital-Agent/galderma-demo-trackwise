@@ -20,11 +20,9 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 from typing import Any
 
 from strands import Agent
-from strands.models.gemini import GeminiModel
 
 from sac_generator.prompts import SYSTEM_PROMPT
 from sac_generator.scenarios import SCENARIO_PROMPTS, ScenarioType
@@ -34,46 +32,19 @@ from sac_generator.tools import (
     generate_customer_profile,
     select_product,
 )
+from shared.config import AgentConfig
 
 
 # ============================================
 # Configuration
 # ============================================
+config = AgentConfig(name="sac-generator")
+
 logging.basicConfig(
-    level=logging.INFO,
+    level=getattr(logging, config.log_level),
     format='{"timestamp": "%(asctime)s", "agent": "sac_generator", "level": "%(levelname)s", "message": "%(message)s"}',
 )
 logger = logging.getLogger("sac_generator")
-
-
-# ============================================
-# Gemini 3 Pro Model Provider
-# ============================================
-def _build_gemini_model() -> GeminiModel:
-    """Build the Gemini 3 Pro model provider.
-
-    Returns:
-        Configured GeminiModel instance.
-
-    Raises:
-        ValueError: If GEMINI_API_KEY environment variable is not set.
-    """
-    api_key = os.environ.get("GEMINI_API_KEY", "")
-    if not api_key:
-        logger.warning("GEMINI_API_KEY not set — agent will fail on invocation")
-
-    return GeminiModel(
-        client_args={"api_key": api_key},
-        model_id="gemini-3-pro",
-        params={
-            "temperature": 0.8,
-            "max_output_tokens": 4096,
-            "top_p": 0.95,
-        },
-    )
-
-
-gemini_model = _build_gemini_model()
 
 
 # ============================================
@@ -82,7 +53,7 @@ gemini_model = _build_gemini_model()
 sac_generator = Agent(
     name="sac_generator",
     system_prompt=SYSTEM_PROMPT,
-    model=gemini_model,
+    model=config.get_model(),
     tools=[
         generate_complaint_text,
         generate_customer_profile,

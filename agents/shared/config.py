@@ -7,10 +7,12 @@
 # Uses pydantic-settings for environment variable loading.
 # ============================================
 
+import os
 from enum import StrEnum
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from strands.models.gemini import GeminiModel
 
 
 class ExecutionMode(StrEnum):
@@ -22,11 +24,24 @@ class ExecutionMode(StrEnum):
 
 
 class ModelId(StrEnum):
-    """Available Claude model IDs via Bedrock."""
+    """Available Gemini model IDs via Strands GeminiModel."""
 
-    # Claude 4.5 family (REQUIRED by CLAUDE.md)
-    OPUS = "anthropic.claude-opus-4-5-20251101"
-    HAIKU = "anthropic.claude-haiku-4-5-20251101"
+    PRO = "gemini-3-pro-preview"
+    FLASH = "gemini-3-flash-preview"
+
+
+def _build_gemini_model(model_id: str, temperature: float = 0.5) -> GeminiModel:
+    """Build a GeminiModel instance with the given parameters."""
+    api_key = os.environ.get("GEMINI_API_KEY", "")
+    return GeminiModel(
+        client_args={"api_key": api_key},
+        model_id=model_id,
+        params={
+            "temperature": temperature,
+            "max_output_tokens": 4096,
+            "top_p": 0.95,
+        },
+    )
 
 
 class AgentConfig(BaseSettings):
@@ -57,8 +72,8 @@ class AgentConfig(BaseSettings):
 
     # Model configuration
     model_id: str = Field(
-        default=ModelId.HAIKU.value,
-        description="Claude model ID to use",
+        default=ModelId.PRO.value,
+        description="Gemini model ID to use",
     )
 
     # AgentCore endpoints
@@ -111,10 +126,18 @@ class AgentConfig(BaseSettings):
         return self.name in opus_agents
 
     def get_model_id(self) -> str:
-        """Get appropriate model ID based on agent type."""
+        """Get appropriate model ID string."""
         if self.is_opus_required():
-            return ModelId.OPUS.value
+            return ModelId.PRO.value
         return self.model_id
+
+    def get_model(self) -> GeminiModel:
+        """Get configured GeminiModel instance for this agent."""
+        if self.is_opus_required():
+            return _build_gemini_model(ModelId.PRO.value, temperature=0.3)
+        if self.name == "sac-generator":
+            return _build_gemini_model(ModelId.PRO.value, temperature=0.8)
+        return _build_gemini_model(ModelId.PRO.value, temperature=0.5)
 
     def should_require_human_review(
         self,
@@ -186,39 +209,39 @@ def get_product_line(product_name: str) -> str | None:
 # Default agent configurations
 DEFAULT_AGENTS = {
     "observer": {
-        "model_id": ModelId.HAIKU.value,
+        "model_id": ModelId.PRO.value,
         "description": "Orchestrator agent - routes events to specialists",
     },
     "case-understanding": {
-        "model_id": ModelId.HAIKU.value,
+        "model_id": ModelId.PRO.value,
         "description": "Analyzes and classifies TrackWise cases",
     },
     "recurring-detector": {
-        "model_id": ModelId.HAIKU.value,
+        "model_id": ModelId.PRO.value,
         "description": "Detects recurring patterns in complaints",
     },
     "compliance-guardian": {
-        "model_id": ModelId.OPUS.value,  # OPUS for critical decisions
+        "model_id": ModelId.PRO.value,  # PRO for critical decisions
         "description": "Validates compliance with 5 policy rules",
     },
     "resolution-composer": {
-        "model_id": ModelId.OPUS.value,  # OPUS for quality
+        "model_id": ModelId.PRO.value,  # PRO for quality
         "description": "Composes multilingual resolutions (PT/EN/ES/FR)",
     },
     "inquiry-bridge": {
-        "model_id": ModelId.HAIKU.value,
+        "model_id": ModelId.PRO.value,
         "description": "Handles inquiry-linked complaints",
     },
     "writeback": {
-        "model_id": ModelId.HAIKU.value,
+        "model_id": ModelId.PRO.value,
         "description": "Executes writeback to TrackWise Simulator",
     },
     "memory-curator": {
-        "model_id": ModelId.HAIKU.value,
+        "model_id": ModelId.PRO.value,
         "description": "Manages memory updates from feedback",
     },
     "csv-pack": {
-        "model_id": ModelId.HAIKU.value,
+        "model_id": ModelId.PRO.value,
         "description": "Generates CSV compliance packs",
     },
 }

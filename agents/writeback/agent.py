@@ -12,7 +12,7 @@
 # - Log successful resolutions to memory
 # - Handle retry logic and error recovery
 #
-# Model: Claude 4.5 Haiku (fast execution)
+# Model: Gemini 3 Pro (fast execution)
 # Memory Access: ResolutionTemplates (WRITE - success logging)
 # ============================================
 
@@ -462,7 +462,7 @@ def on_after_invocation(event: AfterInvocationEvent):
 writeback = Agent(
     name="writeback",
     system_prompt=SYSTEM_PROMPT,
-    model=config.get_model_id(),
+    model=config.get_model(),
     tools=[
         validate_preflight,
         execute_writeback,

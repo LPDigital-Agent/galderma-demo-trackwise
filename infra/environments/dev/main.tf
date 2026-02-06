@@ -86,6 +86,13 @@ variable "project_name" {
   default     = "galderma-trackwise"
 }
 
+variable "gemini_api_key" {
+  description = "Google Gemini API key for Strands GeminiModel provider"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 # ============================================
 # Local Values
 # ============================================
@@ -202,6 +209,7 @@ module "agentcore_runtime" {
   dynamodb_table_arns   = module.dynamodb.all_table_arns
   s3_bucket_arns        = module.s3.all_bucket_arns
   log_group_arns        = module.cloudwatch.all_log_group_arns
+  gemini_api_key        = var.gemini_api_key
 
   depends_on = [
     module.agentcore_memory,

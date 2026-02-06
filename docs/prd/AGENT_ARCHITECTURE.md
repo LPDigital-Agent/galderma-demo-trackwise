@@ -24,7 +24,7 @@
 
 ### 1.1 Multi-Agent Mesh Architecture
 
-The Galderma TrackWise AI Autopilot uses a **9-agent mesh** architecture where specialized agents collaborate via the **A2A (Agent-to-Agent) protocol** on Amazon Bedrock AgentCore Runtime.
+The Galderma TrackWise AI Autopilot uses a **10-agent mesh** architecture where specialized agents collaborate via the **A2A (Agent-to-Agent) protocol** on Amazon Bedrock AgentCore Runtime.
 
 This architecture follows the **separation of concerns** principle - each agent has a single, well-defined responsibility, enabling:
 - **Modularity**: Agents can be updated/replaced independently
@@ -36,22 +36,26 @@ This architecture follows the **separation of concerns** principle - each agent 
 
 | # | Agent Name | Model | Role Type | Responsibility |
 |---|------------|-------|-----------|----------------|
-| 1 | Observer | Haiku | Ingestion | Event normalization, envelope creation |
-| 2 | Case Understanding | Haiku | Analysis | Structure extraction, classification |
-| 3 | Recurring Detector | Haiku | Analysis | Pattern matching, memory lookup |
-| 4 | Compliance Guardian | **OPUS** | Governance | Policy enforcement, evidence validation |
-| 5 | Resolution Composer | **OPUS** | Generation | Multi-language output, audit records |
-| 6 | Inquiry Bridge | Haiku | Orchestration | Inquiry-Complaint linking logic |
-| 7 | Writeback | Haiku | Execution | Simulator API calls, validation |
-| 8 | Memory Curator | Haiku | Persistence | Memory management, versioning |
-| 9 | CSV Pack | Haiku | Generation | Validation documentation |
+| 1 | Observer | Gemini 3 Pro (temp 0.5) | Ingestion | Event normalization, envelope creation |
+| 2 | Case Understanding | Gemini 3 Pro (temp 0.5) | Analysis | Structure extraction, classification |
+| 3 | Recurring Detector | Gemini 3 Pro (temp 0.5) | Analysis | Pattern matching, memory lookup |
+| 4 | Compliance Guardian | Gemini 3 Pro (temp 0.3) | Governance | Policy enforcement, evidence validation |
+| 5 | Resolution Composer | Gemini 3 Pro (temp 0.3) | Generation | Multi-language output, audit records |
+| 6 | Inquiry Bridge | Gemini 3 Pro (temp 0.5) | Orchestration | Inquiry-Complaint linking logic |
+| 7 | Writeback | Gemini 3 Pro (temp 0.5) | Execution | Simulator API calls, validation |
+| 8 | Memory Curator | Gemini 3 Pro (temp 0.5) | Persistence | Memory management, versioning |
+| 9 | CSV Pack | Gemini 3 Pro (temp 0.5) | Generation | Validation documentation |
+| 10 | SAC Generator | Gemini 3 Pro (temp 0.8) | Generation | Brazilian consumer complaint generation |
 
 ### 1.3 LLM Assignment Rationale
 
-| Model | Assigned To | Rationale |
-|-------|-------------|-----------|
-| **Claude 4.5 OPUS** | Compliance Guardian, Resolution Composer | Critical decision-making, user-facing outputs requiring maximum reasoning quality |
-| **Claude 4.5 Haiku** | Observer, Case Understanding, Recurring Detector, Inquiry Bridge, Writeback, Memory Curator, CSV Pack | High-throughput operational tasks, speed and cost efficiency |
+All agents use **Gemini 3.0 Pro** (`gemini-3-pro-preview`) via Strands `GeminiModel` provider. Agent behavior is controlled by **temperature tiering** rather than model tiering, proving the architecture is truly model-agnostic.
+
+| Temperature | Assigned To | Rationale |
+|-------------|-------------|-----------|
+| **0.3** (Critical) | Compliance Guardian, Resolution Composer | Conservative reasoning for policy enforcement, user-facing outputs |
+| **0.5** (Operational) | Observer, Case Understanding, Recurring Detector, Inquiry Bridge, Writeback, Memory Curator, CSV Pack | Balanced reasoning for high-throughput operational tasks |
+| **0.8** (Creative) | SAC Generator | Higher creativity for generating realistic Brazilian consumer complaints |
 
 ---
 
@@ -191,7 +195,7 @@ Per CLAUDE.md engineering principle:
 
 | Attribute | Value |
 |-----------|-------|
-| Model | Claude 4.5 Haiku |
+| Model | Gemini 3 Pro (temp 0.5) |
 | Input | Raw simulator events |
 | Output | Normalized event envelopes |
 | Tools | None (pure transformation) |
@@ -256,7 +260,7 @@ Rules:
 
 | Attribute | Value |
 |-----------|-------|
-| Model | Claude 4.5 Haiku |
+| Model | Gemini 3 Pro (temp 0.5) |
 | Input | Normalized event envelopes |
 | Output | Structured case analysis |
 | Tools | None (LLM reasoning only) |
@@ -323,7 +327,7 @@ Rules:
 
 | Attribute | Value |
 |-----------|-------|
-| Model | Claude 4.5 Haiku |
+| Model | Gemini 3 Pro (temp 0.5) |
 | Input | Structured case analysis |
 | Output | Pattern match results |
 | Tools | `memory_query` |
@@ -400,7 +404,7 @@ Rules:
 
 | Attribute | Value |
 |-----------|-------|
-| Model | **Claude 4.5 OPUS** |
+| Model | Gemini 3 Pro (temp 0.3) |
 | Input | Pattern match results, case analysis |
 | Output | Policy check results, approval/rejection |
 | Tools | `policy_check`, `evidence_validate` |
@@ -492,7 +496,7 @@ Policies you enforce:
 
 | Attribute | Value |
 |-----------|-------|
-| Model | **Claude 4.5 OPUS** |
+| Model | Gemini 3 Pro (temp 0.3) |
 | Input | Approved action, case data |
 | Output | Multi-language outputs, audit records |
 | Tools | `translate`, `format_audit` |
@@ -582,7 +586,7 @@ Output quality standards:
 
 | Attribute | Value |
 |-----------|-------|
-| Model | Claude 4.5 Haiku |
+| Model | Gemini 3 Pro (temp 0.5) |
 | Input | Complaint closure events, inquiry data |
 | Output | Inquiry closure recommendations |
 | Tools | `get_linked_inquiry` |
@@ -637,7 +641,7 @@ Rules:
 
 | Attribute | Value |
 |-----------|-------|
-| Model | Claude 4.5 Haiku |
+| Model | Gemini 3 Pro (temp 0.5) |
 | Input | Approved actions from Guardian |
 | Output | Execution confirmation |
 | Tools | `simulator_api`, `validate_writeback` |
@@ -704,7 +708,7 @@ Rules:
 
 | Attribute | Value |
 |-----------|-------|
-| Model | Claude 4.5 Haiku |
+| Model | Gemini 3 Pro (temp 0.5) |
 | Input | Run results, feedback signals |
 | Output | Memory operations |
 | Tools | `memory_write`, `memory_delete`, `memory_version` |
@@ -770,7 +774,7 @@ Rules:
 
 | Attribute | Value |
 |-----------|-------|
-| Model | Claude 4.5 Haiku |
+| Model | Gemini 3 Pro (temp 0.5) |
 | Input | Run data, ledger entries, evidence |
 | Output | Validation Pack artifacts |
 | Tools | `code_interpreter`, `s3_upload` |
@@ -1127,7 +1131,7 @@ resource "aws_agentcore_agent" "compliance_guardian" {
   description = "Compliance Guardian Agent"
 
   runtime_config {
-    model_id    = "anthropic.claude-opus-4-5-20251101"
+    model_id    = "gemini-3-pro-preview"
     timeout_ms  = 120000
     memory_mb   = 1024
   }

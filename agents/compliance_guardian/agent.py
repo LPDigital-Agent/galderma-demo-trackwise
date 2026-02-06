@@ -6,7 +6,7 @@
 # The Compliance Guardian is the GATEKEEPER for all auto-close decisions.
 # It validates actions against 5 compliance policies before approval.
 #
-# ⚠️ CRITICAL: This agent uses Claude 4.5 OPUS for high-stakes decisions.
+# ⚠️ CRITICAL: This agent uses Gemini 3 Pro (temp 0.3) for high-stakes decisions.
 #
 # Responsibilities:
 # - Evaluate 5 compliance policies
@@ -14,7 +14,7 @@
 # - Log all policy evaluations to ledger
 # - Ensure Human-in-the-Loop for violations
 #
-# Model: Claude 4.5 OPUS (critical decision-making)
+# Model: Gemini 3 Pro (critical decision-making, temperature 0.3)
 # Memory Access: PolicyKnowledge (READ)
 # ============================================
 
@@ -544,7 +544,7 @@ def create_compliance_decision(
         "urgency": urgency,
         "evaluated_at": datetime.utcnow().isoformat(),
         "agent": "compliance_guardian",
-        "model": "claude-opus-4-5",  # Mark as OPUS decision
+        "model": "gemini-3-pro-preview",  # Critical decision model
     }
 
     return {
@@ -563,7 +563,7 @@ def on_before_invocation(event: BeforeInvocationEvent):
             {
                 "event": "invocation_started",
                 "session_id": event.agent.state.get("session_id"),
-                "model": "claude-opus-4-5",
+                "model": "gemini-3-pro-preview",
             }
         )
     )
@@ -578,7 +578,7 @@ def on_after_invocation(event: AfterInvocationEvent):
                 "session_id": event.agent.state.get("session_id"),
                 "duration_ms": getattr(event, "duration_ms", 0),
                 "stop_reason": event.stop_reason,
-                "model": "claude-opus-4-5",
+                "model": "gemini-3-pro-preview",
             }
         )
     )
@@ -590,7 +590,7 @@ def on_after_invocation(event: AfterInvocationEvent):
 compliance_guardian = Agent(
     name="compliance_guardian",
     system_prompt=SYSTEM_PROMPT,
-    model=config.get_model_id(),  # Will return OPUS for this agent
+    model=config.get_model(),  # Will return PRO with low temperature for this agent
     tools=[
         check_policy_001_severity,
         check_policy_002_evidence,

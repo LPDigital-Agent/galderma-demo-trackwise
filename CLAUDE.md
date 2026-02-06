@@ -6,7 +6,7 @@ We are in year 2026. Always verify with current official docs before concluding.
 
 See @docs/IMMUTABLE_RULES.md for the complete, non-negotiable rules governing this repo.
 
-Key constraints: **AI-FIRST** architecture, **Strands SDK**, **Bedrock AgentCore**, **Claude 4.5 family**, **OBSERVE→THINK→LEARN→ACT** loop, **HUMAN-IN-THE-LOOP** for high-impact decisions.
+Key constraints: **AI-FIRST** architecture, **Strands SDK**, **Bedrock AgentCore**, **Gemini 3.0 family**, **OBSERVE→THINK→LEARN→ACT** loop, **HUMAN-IN-THE-LOOP** for high-impact decisions.
 
 ## Engineering Principle
 
@@ -14,10 +14,10 @@ See @docs/SANDWICH_PATTERN.md — **CODE → LLM → CODE** is mandatory for all
 
 ## Project Overview
 
-A **sales demo** showcasing AI-first, fully agentic TrackWise Complaints Autopilot using a 9-agent mesh architecture on AWS Bedrock AgentCore.
+A **sales demo** showcasing AI-first, fully agentic TrackWise Complaints Autopilot using a 10-agent mesh architecture on AWS Bedrock AgentCore.
 
 ```
-TrackWise Simulator → AgentCore Gateway → A2A Agent Mesh (9 agents) → Memory/Ledger
+TrackWise Simulator → AgentCore Gateway → A2A Agent Mesh (10 agents) → Memory/Ledger
                                               ↓
                                         Agent Room UI (React)
 ```
@@ -27,7 +27,7 @@ TrackWise Simulator → AgentCore Gateway → A2A Agent Mesh (9 agents) → Memo
 | Directory | Purpose | Module Docs |
 |-----------|---------|-------------|
 | `backend/` | FastAPI API layer (ingress adapter) | See `backend/CLAUDE.md` |
-| `agents/` | 9 Strands agents + A2A protocol | See `agents/CLAUDE.md` |
+| `agents/` | 10 Strands agents + A2A protocol | See `agents/CLAUDE.md` |
 | `frontend/` | React Agent Room UI (dark glassmorphism) | See `frontend/CLAUDE.md` |
 | `infra/` | Terraform environments + modules | See `infra/CLAUDE.md` |
 | `scripts/` | Utility scripts (reset, seed, verify) | — |
@@ -38,7 +38,7 @@ TrackWise Simulator → AgentCore Gateway → A2A Agent Mesh (9 agents) → Memo
 | Document | Purpose |
 |----------|---------|
 | `docs/prd/PRD.md` | Main requirements |
-| `docs/prd/AGENT_ARCHITECTURE.md` | 9 agents specs, A2A contracts, system prompts |
+| `docs/prd/AGENT_ARCHITECTURE.md` | 10 agents specs, A2A contracts, system prompts |
 | `docs/prd/DATA_MODEL.md` | JSON schemas for Case, Run, Ledger Entry |
 | `docs/prd/UI_DESIGN_SYSTEM.md` | Dark glassmorphism specs, Tailwind tokens |
 | `docs/prd/BUILD_SPEC.md` | Repo structure, implementation guide |

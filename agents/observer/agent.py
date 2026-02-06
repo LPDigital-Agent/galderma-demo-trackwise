@@ -12,7 +12,7 @@
 # - Invoke specialist agents via A2A
 # - Track run lifecycle
 #
-# Model: Claude 4.5 Haiku (fast routing decisions)
+# Model: Gemini 3 Pro (fast routing decisions)
 # Memory Access: None (stateless router)
 # ============================================
 
@@ -312,7 +312,7 @@ def on_after_invocation(event: AfterInvocationEvent):
 observer = Agent(
     name="observer",
     system_prompt=SYSTEM_PROMPT,
-    model=config.get_model_id(),
+    model=config.get_model(),
     tools=[
         validate_event,
         create_run,

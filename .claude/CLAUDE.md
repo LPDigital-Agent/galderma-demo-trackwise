@@ -31,11 +31,12 @@ To be used on web research we are in year 2026.
 
 ## 2) LLM Policy (IMMUTABLE)
 
-- **LLM POLICY (IMMUTABLE & MANDATORY):** Keep the existing rule exactly as currently defined:
-  - ALL agents MUST use Claude 4.5 FAMILY**.
-  - CRITICAL inventory agents MUST use Claude 4.5  OPUS.
-  - Non-critical agents MAY use Claude 4.5 Haiku.
-  - Temporary exception for Strands SDK limitations applies ONLY as currently stated.
+- **LLM POLICY (IMMUTABLE & MANDATORY):** ALL agents use **Gemini 3.0 Pro** (`gemini-3-pro-preview`) via Strands `GeminiModel` provider.
+  - **Temperature tiering** controls agent behavior (not model tiering):
+    - Critical agents (Compliance Guardian, Resolution Composer): **temperature 0.3**
+    - Operational agents (Observer, Case Understanding, Recurring Detector, Inquiry Bridge, Writeback, Memory Curator, CSV Pack): **temperature 0.5**
+    - Creative agents (SAC Generator): **temperature 0.8**
+  - Centralized via `config.get_model()` in `agents/shared/config.py`.
 
 ## 3) Source of Truth & Recency (IMMUTABLE)
 
@@ -163,14 +164,14 @@ Production-grade agentic workflows MUST follow:
 
 ## Project: Galderma TrackWise AI Autopilot (DEMO)
 
-A **sales demo** showcasing AI-first, fully agentic TrackWise Complaints Autopilot using a 9-agent mesh architecture on AWS Bedrock AgentCore.
+A **sales demo** showcasing AI-first, fully agentic TrackWise Complaints Autopilot using a 10-agent mesh architecture on AWS Bedrock AgentCore.
 
 ### Key Documentation
 
 | Document | Purpose |
 |----------|---------|
 | `docs/prd/PRD.md` | Main requirements document |
-| `docs/prd/AGENT_ARCHITECTURE.md` | 9 agents specs, A2A contracts, system prompts |
+| `docs/prd/AGENT_ARCHITECTURE.md` | 10 agents specs, A2A contracts, system prompts |
 | `docs/prd/DATA_MODEL.md` | JSON schemas for Case, Run, Ledger Entry |
 | `docs/prd/UI_DESIGN_SYSTEM.md` | Dark glassmorphism specs, Tailwind tokens |
 | `docs/prd/BUILD_SPEC.md` | Repo structure, implementation guide, commands |
@@ -179,14 +180,13 @@ A **sales demo** showcasing AI-first, fully agentic TrackWise Complaints Autopil
 ### Architecture Overview
 
 ```
-TrackWise Simulator → AgentCore Gateway → A2A Agent Mesh (9 agents) → Memory/Ledger
+TrackWise Simulator → AgentCore Gateway → A2A Agent Mesh (10 agents) → Memory/Ledger
                                               ↓
                                         Agent Room UI (React)
 ```
 
-**9 Agents** (via A2A protocol on port 9000):
-- **OPUS models**: Compliance Guardian, Resolution Composer (critical decisions)
-- **Haiku models**: Observer, Case Understanding, Recurring Detector, Inquiry Bridge, Writeback, Memory Curator, CSV Pack
+**10 Agents** (via A2A protocol on port 9000):
+- **All agents**: Gemini 3 Pro (`gemini-3-pro-preview`) — critical agents (Guardian, Composer) use temp 0.3, operational agents temp 0.5, SAC Generator temp 0.8
 
 ### Development Commands
 

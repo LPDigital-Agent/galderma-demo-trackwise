@@ -12,7 +12,7 @@
 # - Write new patterns when approved
 # - Maintain memory version history
 #
-# Model: Claude 4.5 Haiku (fast processing)
+# Model: Gemini 3 Pro (fast processing)
 # Memory Access: ALL (READ + WRITE)
 # ============================================
 
@@ -518,7 +518,7 @@ def on_after_invocation(event: AfterInvocationEvent):
 memory_curator = Agent(
     name="memory_curator",
     system_prompt=SYSTEM_PROMPT,
-    model=config.get_model_id(),
+    model=config.get_model(),
     tools=[
         process_feedback,
         update_pattern_confidence,

@@ -19,10 +19,12 @@
 
 ## 2) LLM Policy (IMMUTABLE)
 
-- ALL agents MUST use **Claude 4.5 FAMILY**.
-- CRITICAL agents (Compliance Guardian, Resolution Composer) MUST use **Claude 4.5 Opus**.
-- Non-critical agents MAY use **Claude 4.5 Haiku**.
-- Temporary exception for Strands SDK limitations applies ONLY as currently stated.
+- ALL agents MUST use **Gemini 3.0 Pro** via Strands `GeminiModel` provider.
+- Model ID: `gemini-3-pro-preview`.
+- Temperature tiering controls agent behavior:
+  - **0.3** — Critical agents (Compliance Guardian, Resolution Composer)
+  - **0.5** — Operational agents (Observer, Case Understanding, Recurring Detector, Inquiry Bridge, Writeback, Memory Curator, CSV Pack)
+  - **0.8** — Creative agents (SAC Generator)
 
 ## 3) Source of Truth & Recency (IMMUTABLE)
 

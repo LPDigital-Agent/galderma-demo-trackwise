@@ -41,15 +41,15 @@ AGENT_DISPLAY = {
 }
 
 MODEL_MAP = {
-    "observer": "claude-4.5-haiku",
-    "case_understanding": "claude-4.5-haiku",
-    "recurring_detector": "claude-4.5-haiku",
-    "compliance_guardian": "claude-4.5-opus",
-    "resolution_composer": "claude-4.5-opus",
-    "inquiry_bridge": "claude-4.5-haiku",
-    "writeback": "claude-4.5-haiku",
-    "memory_curator": "claude-4.5-haiku",
-    "csv_pack": "claude-4.5-haiku",
+    "observer": "gemini-3-pro",
+    "case_understanding": "gemini-3-pro",
+    "recurring_detector": "gemini-3-pro",
+    "compliance_guardian": "gemini-3-pro",
+    "resolution_composer": "gemini-3-pro",
+    "inquiry_bridge": "gemini-3-pro",
+    "writeback": "gemini-3-pro",
+    "memory_curator": "gemini-3-pro",
+    "csv_pack": "gemini-3-pro",
 }
 
 
@@ -119,7 +119,7 @@ def generate_runs_for_cases(
                 "completed_at": _time_offset(base_time, step_time + step_duration),
                 "duration_ms": int(step_duration * 1000),
                 "tokens_used": 350 + (i * 180),
-                "model_id": MODEL_MAP.get(agent, "claude-4.5-haiku"),
+                "model_id": MODEL_MAP.get(agent, "gemini-3-pro"),
             }
             agent_steps.append(step)
             step_time += step_duration + 0.3
@@ -199,7 +199,7 @@ def _generate_case_ledger(
         ],
         "policies_evaluated": [],
         "policy_violations": [],
-        "model_id": "claude-4.5-haiku",
+        "model_id": "gemini-3-pro",
         "tokens_used": 420,
         "latency_ms": 1200,
         "entry_hash": entry_hash,
@@ -241,7 +241,7 @@ def _generate_case_ledger(
         "state_changes": [],
         "policies_evaluated": [],
         "policy_violations": [],
-        "model_id": "claude-4.5-haiku",
+        "model_id": "gemini-3-pro",
         "tokens_used": 380,
         "latency_ms": 1800,
         "memory_strategy": "RecurringPatterns",
@@ -273,7 +273,7 @@ def _generate_case_ledger(
                 "state_changes": [],
                 "policies_evaluated": ["POL-001", "POL-002", "POL-003"],
                 "policy_violations": ["POL-003: Confidence below threshold"],
-                "model_id": "claude-4.5-opus",
+                "model_id": "gemini-3-pro",
                 "tokens_used": 650,
                 "latency_ms": 2800,
                 "requires_human_action": True,
@@ -310,7 +310,7 @@ def _generate_case_ledger(
         "state_changes": [],
         "policies_evaluated": ["POL-001", "POL-002", "POL-003", "POL-004", "POL-005"],
         "policy_violations": [] if severity_pass else ["POL-001: Severity too high for auto-close"],
-        "model_id": "claude-4.5-opus",
+        "model_id": "gemini-3-pro",
         "tokens_used": 780,
         "latency_ms": 3200,
         "entry_hash": entry_hash,
@@ -345,7 +345,7 @@ def _generate_case_ledger(
             "state_changes": [],
             "policies_evaluated": [],
             "policy_violations": [],
-            "model_id": "claude-4.5-haiku",
+            "model_id": "gemini-3-pro",
             "tokens_used": 320,
             "latency_ms": 1100,
             "linked_case_id": case.linked_case_id,
@@ -377,7 +377,7 @@ def _generate_case_ledger(
         "state_changes": [],
         "policies_evaluated": [],
         "policy_violations": [],
-        "model_id": "claude-4.5-opus",
+        "model_id": "gemini-3-pro",
         "tokens_used": 1200,
         "latency_ms": 4500,
         "memory_strategy": "ResolutionTemplates",
@@ -415,7 +415,7 @@ def _generate_case_ledger(
         ],
         "policies_evaluated": [],
         "policy_violations": [],
-        "model_id": "claude-4.5-haiku",
+        "model_id": "gemini-3-pro",
         "tokens_used": 280,
         "latency_ms": 800,
         "entry_hash": entry_hash,
@@ -648,7 +648,7 @@ def _generate_test_logs_artifact(
         },
         "test_environment": {
             "platform": "AWS Bedrock AgentCore",
-            "models": ["claude-4.5-opus", "claude-4.5-haiku"],
+            "models": ["gemini-3-pro", "gemini-3-pro"],
             "agents": 9,
             "memory_strategies": ["RecurringPatterns", "ResolutionTemplates", "PolicyKnowledge"],
         },
@@ -670,8 +670,8 @@ def _generate_version_history_artifact(pack_id: str) -> dict[str, Any]:
         ],
         "current_version": "1.2.1",
         "model_versions": {
-            "critical_agents": "claude-4.5-opus",
-            "standard_agents": "claude-4.5-haiku",
+            "critical_agents": "gemini-3-pro",
+            "standard_agents": "gemini-3-pro",
         },
     }
 

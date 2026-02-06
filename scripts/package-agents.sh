@@ -69,11 +69,14 @@ create_minimal_requirements() {
     local agent_tf_name=$1
 
     cat > "$BUILD_DIR/$agent_tf_name/requirements.txt" << 'EOF'
-# Core Strands SDK (lightweight)
-strands-agents>=0.1.0
+# Core Strands SDK with Gemini provider
+strands-agents[gemini]>=0.1.0
 
 # AWS Bedrock AgentCore SDK (REQUIRED for BedrockAgentCoreApp)
 bedrock-agentcore>=0.1.0
+
+# Google GenAI SDK (Gemini 3.0 model provider)
+google-genai>=1.0.0
 
 # Pydantic for structured data
 pydantic>=2.6.0

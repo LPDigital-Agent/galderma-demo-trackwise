@@ -165,7 +165,25 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 03:25:20 UTC
+## 2026-02-06: UI Polish — Logo, Global Rail, Text Contrast
+
+**Commits:** `43d9394` → `8bc9d1c` (7 commits)
+
+**Changes (9 files):**
+- **Logo pill fix** (`Sidebar.tsx`): Widened logo container (`inline-flex` → `flex`, `min-w-0 flex-1`), widened SVG viewBox (300→360), then replaced SVG `<img>` with HTML `<span>` text (Georgia serif, `tracking-[0.18em]`) to eliminate cross-browser clipping. Centered with `justify-center`.
+- **Global rail disabled** (`shellMeta.ts`): Set `showGlobalRail: false` on all routes (Cases, CaseDetail, Memory, Ledger) — executive KPI cards and live timeline strip now only appear on Agent Room.
+- **Test fix** (`AppLayout.test.tsx`): Updated assertions to verify rail is hidden (`queryByText` + `.not.toBeInTheDocument()`) after shellMeta change.
+- **Text contrast** (`Cases.tsx`, `Memory.tsx`, `Ledger.tsx`, `CSVPack.tsx`, `button.tsx`): Changed monospace ID text from `--brand-secondary` (indigo #5856D6, ~2.5:1 contrast) to `--brand-accent` (teal #5AC8FA, ~7:1 contrast) on dark glass backgrounds.
+
+**Root Causes:**
+- SVG `<text>` clipping: Font metric variations across browsers made viewBox sizing unreliable. HTML `<span>` renders consistently.
+- Blue-on-blue: Indigo accent color was nearly invisible against the dark glass panel backgrounds.
+
+**Verification:** `pnpm build` clean, `pnpm test` pass, deployed via GH Actions.
+
+---
+
+## Turn Log — 2026-02-06 14:53:37 UTC
 
 **User:** (no user message captured)
 
@@ -173,7 +191,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 05:01:46 UTC
+## Turn Log — 2026-02-06 14:57:25 UTC
 
 **User:** (no user message captured)
 
@@ -181,7 +199,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 05:16:02 UTC
+## Turn Log — 2026-02-06 15:35:01 UTC
 
 **User:** (no user message captured)
 
@@ -189,7 +207,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 05:16:58 UTC
+## Turn Log — 2026-02-06 15:36:31 UTC
 
 **User:** (no user message captured)
 
@@ -197,7 +215,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 13:27:57 UTC
+## Turn Log — 2026-02-06 15:37:08 UTC
 
 **User:** (no user message captured)
 
@@ -205,7 +223,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 13:37:50 UTC
+## Turn Log — 2026-02-06 15:37:17 UTC
 
 **User:** (no user message captured)
 
@@ -213,7 +231,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 13:38:49 UTC
+## Turn Log — 2026-02-06 15:42:31 UTC
 
 **User:** (no user message captured)
 
@@ -221,7 +239,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 13:42:30 UTC
+## Turn Log — 2026-02-06 15:43:31 UTC
 
 **User:** (no user message captured)
 
@@ -229,7 +247,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 13:43:30 UTC
+## Turn Log — 2026-02-06 16:04:18 UTC
 
 **User:** (no user message captured)
 
@@ -237,7 +255,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 13:51:18 UTC
+## Turn Log — 2026-02-06 16:06:45 UTC
 
 **User:** (no user message captured)
 
@@ -245,7 +263,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 13:58:35 UTC
+## Turn Log — 2026-02-06 16:06:47 UTC
 
 **User:** (no user message captured)
 
@@ -253,7 +271,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:02:39 UTC
+## Turn Log — 2026-02-06 16:06:52 UTC
 
 **User:** (no user message captured)
 
@@ -261,7 +279,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:15:49 UTC
+## Turn Log — 2026-02-06 16:06:53 UTC
 
 **User:** (no user message captured)
 
@@ -269,7 +287,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:16:33 UTC
+## Turn Log — 2026-02-06 16:06:57 UTC
 
 **User:** (no user message captured)
 
@@ -277,7 +295,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:19:30 UTC
+## Turn Log — 2026-02-06 16:08:21 UTC
 
 **User:** (no user message captured)
 
@@ -285,7 +303,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:22:17 UTC
+## Turn Log — 2026-02-06 16:08:27 UTC
 
 **User:** (no user message captured)
 
@@ -293,7 +311,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:24:04 UTC
+## Turn Log — 2026-02-06 16:09:09 UTC
 
 **User:** (no user message captured)
 
@@ -301,7 +319,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:29:11 UTC
+## Turn Log — 2026-02-06 16:09:20 UTC
 
 **User:** (no user message captured)
 
@@ -309,7 +327,23 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 14:45:22 UTC
+## Turn Log — 2026-02-06 16:09:34 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 16:10:13 UTC
+
+**User:** (no user message captured)
+
+**Assistant:** (no assistant response captured)
+
+---
+
+## Turn Log — 2026-02-06 16:12:00 UTC
 
 **User:** (no user message captured)
 

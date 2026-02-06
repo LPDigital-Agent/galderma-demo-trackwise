@@ -1,21 +1,22 @@
-# Agents — 9-Agent A2A Mesh on Strands SDK
+# Agents — 10-Agent A2A Mesh on Strands SDK
 
 ## Purpose
-The core intelligence layer. 9 specialized agents communicating via A2A protocol (JSON-RPC on port 9000), deployed to AWS Bedrock AgentCore.
+The core intelligence layer. 10 specialized agents communicating via A2A protocol (JSON-RPC on port 9000), deployed to AWS Bedrock AgentCore.
 
 ## Agent Inventory
 
 | Agent | Model | Role |
 |-------|-------|------|
-| Observer | Haiku | Monitors incoming TrackWise events |
-| Case Understanding | Haiku | Extracts complaint structure and severity |
-| Recurring Detector | Haiku | Identifies repeat complaints and patterns |
-| Compliance Guardian | **Opus** | Validates regulatory compliance (21 CFR Part 11) |
-| Resolution Composer | **Opus** | Generates resolution recommendations |
-| Inquiry Bridge | Haiku | Handles clarification requests to humans |
-| Writeback | Haiku | Writes decisions back to TrackWise |
-| Memory Curator | Haiku | Manages AgentCore STM/LTM lifecycle |
-| CSV Pack | Haiku | Generates Computer System Validation docs |
+| Observer | Gemini 3 Pro | Monitors incoming TrackWise events |
+| Case Understanding | Gemini 3 Pro | Extracts complaint structure and severity |
+| Recurring Detector | Gemini 3 Pro | Identifies repeat complaints and patterns |
+| Compliance Guardian | Gemini 3 Pro | Validates regulatory compliance (21 CFR Part 11) |
+| Resolution Composer | Gemini 3 Pro | Generates resolution recommendations |
+| Inquiry Bridge | Gemini 3 Pro | Handles clarification requests to humans |
+| Writeback | Gemini 3 Pro | Writes decisions back to TrackWise |
+| Memory Curator | Gemini 3 Pro | Manages AgentCore STM/LTM lifecycle |
+| CSV Pack | Gemini 3 Pro | Generates Computer System Validation docs |
+| SAC Generator | Gemini 3 Pro | Generates realistic Brazilian consumer complaints |
 
 ## Architecture
 ```
@@ -45,8 +46,8 @@ agentcore launch                               # deploy to AgentCore
 - ALL agents MUST use Strands SDK `Agent` class
 - Tools MUST use @tool decorator with typed parameters + docstrings
 - Follow OBSERVE → THINK → LEARN → ACT loop
-- Opus agents: complex reasoning, regulatory decisions
-- Haiku agents: fast, deterministic, high-throughput tasks
+- All agents use Gemini 3 Pro (`gemini-3-pro-preview`) via Strands GeminiModel
+- Temperature tiering: 0.3 (critical), 0.5 (operational), 0.8 (creative)
 - See @docs/IMMUTABLE_RULES.md for full constraints
 - See @docs/SANDWICH_PATTERN.md for LLM vs Python boundaries
 - See @docs/prd/AGENT_ARCHITECTURE.md for A2A contracts and system prompts

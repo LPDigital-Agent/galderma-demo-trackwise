@@ -70,7 +70,7 @@ describe('AppLayout shell persistence', () => {
     expect(screen.getByText('Agent room content')).toBeInTheDocument()
   })
 
-  it('preserves shell panels when switching routes', async () => {
+  it('hides global rail when navigating to cases', async () => {
     const user = userEvent.setup()
 
     render(
@@ -87,7 +87,7 @@ describe('AppLayout shell persistence', () => {
     await user.click(screen.getByRole('link', { name: 'Go to cases' }))
 
     expect(screen.getByText('Cases content')).toBeInTheDocument()
-    expect(screen.getByText('Fluxo em Tempo Real')).toBeInTheDocument()
-    expect(screen.getByText('Fechados por IA')).toBeInTheDocument()
+    expect(screen.queryByText('Fluxo em Tempo Real')).not.toBeInTheDocument()
+    expect(screen.queryByText('Fechados por IA')).not.toBeInTheDocument()
   })
 })

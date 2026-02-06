@@ -6,19 +6,16 @@
 import { useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { Activity, Brain, BookOpen, ChevronLeft, ChevronRight, FileText, Network, Package } from 'lucide-react'
+import { Brain, BookOpen, ChevronLeft, ChevronRight, FileText } from 'lucide-react'
 
 import { sidebar as t } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { useSidebarStore } from '@/stores'
 
 const NAV_ITEMS = [
-  { icon: Activity, label: t.nav.agentRoom, route: '/agent-room' },
   { icon: FileText, label: t.nav.cases, route: '/cases' },
-  { icon: Network, label: t.nav.network, route: '/network' },
   { icon: Brain, label: t.nav.memory, route: '/memory' },
   { icon: BookOpen, label: t.nav.ledger, route: '/ledger' },
-  { icon: Package, label: t.nav.csvPack, route: '/csv-pack' },
 ] as const
 
 const sidebarSpring = {
@@ -40,8 +37,8 @@ function SidebarBody({ onNavigate, onClose, showCloseButton = false }: SidebarBo
       <div className="px-5 pb-4 pt-5">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/8 px-2.5 py-1">
-              <img src="/assets/galderma-logo.svg" alt="Galderma" className="h-4 object-contain object-left brightness-0 invert" />
+            <div className="inline-flex items-center rounded-2xl border border-white/15 bg-white/8 px-4 py-1.5">
+              <img src="/assets/galderma-logo.svg" alt="Galderma" className="h-6 w-full object-contain object-left brightness-0 invert" />
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--lg-text-tertiary)]">TrackWise</p>

@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Command } from 'cmdk'
-import { Activity, FileText, Network, Brain, BookOpen, Package, RotateCcw, PlusCircle, FileBox, PanelLeft } from 'lucide-react'
+import { FileText, Brain, BookOpen, RotateCcw, PlusCircle, PanelLeft } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { cn } from '@/lib/utils'
@@ -14,19 +14,15 @@ import { commandPalette as t, sidebar } from '@/i18n'
 import { useSidebarStore } from '@/stores'
 
 const PAGES = [
-  { icon: Activity, label: sidebar.nav.agentRoom, route: '/agent-room' },
   { icon: FileText, label: sidebar.nav.cases, route: '/cases' },
-  { icon: Network, label: sidebar.nav.network, route: '/network' },
   { icon: Brain, label: sidebar.nav.memory, route: '/memory' },
   { icon: BookOpen, label: sidebar.nav.ledger, route: '/ledger' },
-  { icon: Package, label: sidebar.nav.csvPack, route: '/csv-pack' },
 ] as const
 
 const ACTIONS = [
   { icon: PanelLeft, label: sidebar.toggleMenu, action: 'toggle-sidebar' },
   { icon: RotateCcw, label: t.actionLabels.resetDemo, action: 'reset' },
   { icon: PlusCircle, label: t.actionLabels.createCase, action: 'create' },
-  { icon: FileBox, label: t.actionLabels.generateCsv, action: 'csv' },
 ] as const
 
 export function CommandPalette() {
@@ -65,10 +61,6 @@ export function CommandPalette() {
       case 'create':
         navigate('/cases')
         toast.info(t.toasts.openingCreate)
-        break
-      case 'csv':
-        navigate('/csv-pack')
-        toast.info(t.toasts.openingCsv)
         break
     }
     setIsOpen(false)

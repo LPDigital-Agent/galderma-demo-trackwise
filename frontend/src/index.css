@@ -248,7 +248,13 @@ body::after {
    3-layer system: element (bg + border + shadow)
                    ::before (specular highlight)
                    children (z-index above specular)
+
+   IMPORTANT: Wrapped in @layer components so that
+   Tailwind utility classes (fixed, hidden, overflow-*)
+   can override base glass positioning.
    ════════════════════════════════════════════════ */
+
+@layer components {
 
 .glass-shell,
 .glass-card,
@@ -437,6 +443,8 @@ body::after {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+} /* end @layer components */
 
 /* ════════════════ Animations ════════════════ */
 

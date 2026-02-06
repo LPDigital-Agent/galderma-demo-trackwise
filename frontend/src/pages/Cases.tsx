@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FileText, Plus, Link as LinkIcon } from 'lucide-react'
+import { Plus, Link as LinkIcon } from 'lucide-react'
 import { cases as t, DATE_LOCALE } from '@/i18n'
 import { useCases } from '@/hooks'
-import { StatusBadge, SeverityBadge, EmptyState } from '@/components/domain'
+import { StatusBadge, SeverityBadge } from '@/components/domain'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -157,24 +157,6 @@ export default function Cases() {
           </TableBody>
         </Table>
 
-        {!isLoading && data && data.cases.length === 0 && (
-          <div className="flex items-center justify-center h-64">
-            <EmptyState
-              icon={FileText}
-              title={t.empty.title}
-              description={t.empty.description}
-              action={
-                <Button
-                  onClick={() => setCreateModalOpen(true)}
-                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary)]/90 text-white"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t.empty.createCase}
-                </Button>
-              }
-            />
-          </div>
-        )}
       </div>
 
       {/* Create Case Modal */}

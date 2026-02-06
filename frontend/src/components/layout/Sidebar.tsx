@@ -27,7 +27,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'h-full flex flex-col bg-[var(--bg-sidebar)] border-r border-[var(--sidebar-border)]',
+        'h-full flex flex-col glass-sidebar border-r border-[var(--sidebar-border)]',
         'transition-all duration-300 ease-in-out',
         isCollapsed ? 'w-16' : 'w-60'
       )}
@@ -59,12 +59,12 @@ export function Sidebar() {
                 to={route}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-lg',
+                    'flex items-center gap-3 px-3 py-2.5 rounded-xl',
                     'transition-all duration-200',
                     'text-sm font-medium',
                     isActive
-                      ? 'bg-white/10 border-l-2 border-[var(--brand-accent)] text-[var(--sidebar-text)]'
-                      : 'text-[var(--sidebar-text-muted)] hover:bg-white/5 hover:text-[var(--sidebar-text)] border-l-2 border-transparent'
+                      ? 'bg-white/15 border-l-2 border-[var(--brand-accent)] text-[var(--sidebar-text)]'
+                      : 'text-[var(--sidebar-text-muted)] hover:bg-white/10 hover:text-[var(--sidebar-text)] border-l-2 border-transparent'
                   )
                 }
               >
@@ -103,9 +103,9 @@ export function Sidebar() {
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className={cn(
-            'w-full flex items-center gap-2 px-2 py-1.5 rounded-md',
+            'w-full flex items-center gap-2 px-2 py-1.5 rounded-xl',
             'text-xs text-[var(--sidebar-text-muted)]',
-            'hover:bg-white/5 hover:text-[var(--sidebar-text)]',
+            'hover:bg-white/10 hover:text-[var(--sidebar-text)]',
             'transition-colors duration-200',
             isCollapsed && 'justify-center'
           )}

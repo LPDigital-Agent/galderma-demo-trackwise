@@ -74,7 +74,7 @@ export function CommandPalette() {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 bg-black/30 backdrop-blur-md animate-fade-in"
       onClick={() => setIsOpen(false)}
     >
       <div
@@ -83,8 +83,8 @@ export function CommandPalette() {
       >
         <Command
           className={cn(
-            'rounded-xl overflow-hidden',
-            'bg-[var(--bg-elevated)] border border-[var(--glass-border)]',
+            'rounded-2xl overflow-hidden',
+            'bg-[var(--glass-bg)] backdrop-blur-3xl border-[0.5px] border-[var(--glass-border)]',
             'shadow-[var(--shadow-elevated)]'
           )}
         >
@@ -116,9 +116,9 @@ export function CommandPalette() {
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer',
                     'text-sm text-[var(--text-secondary)]',
-                    'hover:bg-black/5 hover:text-[var(--text-primary)]',
+                    'hover:bg-white/20 hover:text-[var(--text-primary)]',
                     'transition-colors duration-150',
-                    'aria-selected:bg-black/5 aria-selected:text-[var(--text-primary)]'
+                    'aria-selected:bg-white/25 aria-selected:text-[var(--text-primary)]'
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -140,9 +140,9 @@ export function CommandPalette() {
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer',
                     'text-sm text-[var(--text-secondary)]',
-                    'hover:bg-black/5 hover:text-[var(--text-primary)]',
+                    'hover:bg-white/20 hover:text-[var(--text-primary)]',
                     'transition-colors duration-150',
-                    'aria-selected:bg-black/5 aria-selected:text-[var(--text-primary)]'
+                    'aria-selected:bg-white/25 aria-selected:text-[var(--text-primary)]'
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />

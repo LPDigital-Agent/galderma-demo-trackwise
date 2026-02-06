@@ -31,11 +31,11 @@ export default function Memory() {
     switch (status) {
       case 'ACTIVE':
       case 'ENFORCED':
-        return 'bg-green-50 text-green-600 border-green-200'
+        return 'bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30'
       case 'PENDING':
-        return 'bg-amber-50 text-amber-600 border-amber-200'
+        return 'bg-amber-500/10 backdrop-blur-sm text-amber-600 border-amber-300/30'
       default:
-        return 'bg-gray-100 text-gray-600 border-gray-200'
+        return 'bg-gray-500/10 backdrop-blur-sm text-gray-600 border-gray-300/30'
     }
   }
 
@@ -49,7 +49,7 @@ export default function Memory() {
       {/* Header */}
       <div className="px-8 py-6 border-b border-[var(--glass-border)]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[var(--brand-primary)]/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-[var(--brand-primary)]/10 flex items-center justify-center">
             <Brain className="w-5 h-5 text-[var(--brand-primary)]" />
           </div>
           <div>

@@ -153,14 +153,14 @@ export default function CSVPack() {
                 <div className="flex items-center gap-2">
                   <Badge
                     variant="outline"
-                    className="bg-green-50 text-green-600 border-green-200"
+                    className="bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30"
                   >
                     <CheckCircle2 className="w-3 h-3 mr-1" />
                     {t.auditReady}
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="bg-green-50 text-green-600 border-green-200"
+                    className="bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30"
                   >
                     {result.status}
                   </Badge>
@@ -231,9 +231,9 @@ export default function CSVPack() {
                 {result.artifacts.map((artifact) => {
                   const Icon = getArtifactIcon(artifact.artifact_type)
                   return (
-                    <GlassPanel key={artifact.artifact_id} className="p-5 hover:border-[var(--brand-primary)]/30 transition-colors">
+                    <GlassPanel key={artifact.artifact_id} className="p-5 hover:border-white/60 hover:shadow-lg transition-colors">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-[var(--brand-primary)]/10 flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-2xl backdrop-blur-sm bg-[var(--brand-primary)]/10 flex items-center justify-center shrink-0">
                           <Icon className="w-5 h-5 text-[var(--brand-primary)]" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -249,8 +249,8 @@ export default function CSVPack() {
                               className={cn(
                                 'text-[10px]',
                                 artifact.status === 'COMPLETE'
-                                  ? 'bg-green-50 text-green-600 border-green-200'
-                                  : 'bg-amber-50 text-amber-600 border-amber-200'
+                                  ? 'bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30'
+                                  : 'bg-amber-500/10 backdrop-blur-sm text-amber-600 border-amber-300/30'
                               )}
                             >
                               {artifact.status}
@@ -286,7 +286,7 @@ export default function CSVPack() {
             {/* Extensibility Roadmap */}
             <GlassPanel className="p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-[var(--brand-accent)]/10 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-2xl backdrop-blur-sm bg-[var(--brand-accent)]/10 flex items-center justify-center">
                   <Rocket className="w-4 h-4 text-[var(--brand-accent)]" />
                 </div>
                 <div>
@@ -302,7 +302,7 @@ export default function CSVPack() {
                 {t.extensibility.items.map((item) => (
                   <div
                     key={item.name}
-                    className="flex items-center justify-between p-3 rounded-lg bg-[var(--bg-elevated)]/50 border border-[var(--glass-border)]"
+                    className="flex items-center justify-between p-3 rounded-xl bg-white/15 backdrop-blur-sm border-[0.5px] border-[var(--glass-border)]"
                   >
                     <div className="flex-1">
                       <div className="text-sm font-medium text-[var(--text-primary)]">
@@ -317,8 +317,8 @@ export default function CSVPack() {
                       className={cn(
                         'ml-4 shrink-0 text-[10px]',
                         item.status === 'EM DESENVOLVIMENTO'
-                          ? 'bg-amber-50 text-amber-600 border-amber-200'
-                          : 'bg-blue-50 text-blue-600 border-blue-200'
+                          ? 'bg-amber-500/10 backdrop-blur-sm text-amber-600 border-amber-300/30'
+                          : 'bg-blue-500/10 backdrop-blur-sm text-blue-600 border-blue-300/30'
                       )}
                     >
                       {item.status}

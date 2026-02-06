@@ -66,12 +66,12 @@ export default function CaseDetail() {
     return (
       <div className="flex gap-6 h-full">
         <div className="w-1/3 space-y-4">
-          <Skeleton className="h-10 w-32 bg-black/5" />
-          <Skeleton className="h-64 bg-black/5" />
-          <Skeleton className="h-48 bg-black/5" />
+          <Skeleton className="h-10 w-32 bg-white/15" />
+          <Skeleton className="h-64 bg-white/15" />
+          <Skeleton className="h-48 bg-white/15" />
         </div>
         <div className="w-2/3 space-y-4">
-          <Skeleton className="h-96 bg-black/5" />
+          <Skeleton className="h-96 bg-white/15" />
         </div>
       </div>
     )
@@ -224,7 +224,7 @@ export default function CaseDetail() {
             </h3>
             <div
               onClick={() => navigate(`/cases/${caseData.linked_case_id}`)}
-              className="flex items-center justify-between p-3 rounded-lg bg-bg-elevated border border-glass-border hover:bg-black/[0.02] cursor-pointer transition-colors"
+              className="flex items-center justify-between p-3 rounded-xl bg-bg-elevated backdrop-blur-sm border-[0.5px] border-glass-border hover:bg-white/15 cursor-pointer transition-colors"
             >
               <span className="font-mono text-brand-accent">{caseData.linked_case_id}</span>
             </div>
@@ -251,7 +251,7 @@ export default function CaseDetail() {
           {runsLoading ? (
             <div className="space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-24 bg-black/5" />
+                <Skeleton key={i} className="h-24 bg-white/15" />
               ))}
             </div>
           ) : agentSteps.length > 0 ? (
@@ -266,7 +266,7 @@ export default function CaseDetail() {
                   <div className="flex gap-4">
                     {/* Agent dot */}
                     <div className="relative flex-shrink-0">
-                      <div className="w-6 h-6 rounded-full bg-brand-primary/20 border-2 border-brand-primary flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-brand-primary/15 backdrop-blur-sm border-[1.5px] border-brand-primary/60 flex items-center justify-center">
                         <div className="w-2 h-2 rounded-full bg-brand-primary" />
                       </div>
                     </div>
@@ -311,7 +311,7 @@ export default function CaseDetail() {
                             {t.reasoning}
                           </button>
                           {expandedSteps.has(step.step_number) && (
-                            <div className="mt-2 p-3 rounded-lg bg-bg-elevated border border-glass-border">
+                            <div className="mt-2 p-3 rounded-xl bg-bg-elevated backdrop-blur-xl border-[0.5px] border-glass-border">
                               <p className="text-text-secondary text-sm leading-relaxed">
                                 {step.reasoning}
                               </p>
@@ -336,7 +336,7 @@ export default function CaseDetail() {
           {ledgerLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-20 bg-black/5" />
+                <Skeleton key={i} className="h-20 bg-white/15" />
               ))}
             </div>
           ) : ledger && ledger.length > 0 ? (
@@ -345,7 +345,7 @@ export default function CaseDetail() {
                 {ledger.map((entry) => (
                   <div
                     key={entry.ledger_id}
-                    className="p-4 rounded-lg bg-bg-elevated border border-glass-border"
+                    className="p-4 rounded-xl bg-bg-elevated backdrop-blur-xl border-[0.5px] border-glass-border"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -366,7 +366,7 @@ export default function CaseDetail() {
                     {entry.confidence !== undefined && (
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-text-muted text-xs">{t.confidence}</span>
-                        <div className="flex-1 h-1.5 bg-bg-base rounded-full overflow-hidden max-w-xs">
+                        <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden max-w-xs">
                           <div
                             className={cn(
                               'h-full transition-all',

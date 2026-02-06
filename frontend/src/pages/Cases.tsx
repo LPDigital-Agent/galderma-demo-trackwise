@@ -44,7 +44,7 @@ export default function Cases() {
           {data && (
             <Badge
               variant="outline"
-              className="bg-brand-primary/10 border-brand-primary/20 text-brand-primary"
+              className="bg-brand-primary/8 backdrop-blur-sm border-brand-primary/15 text-brand-primary"
             >
               {data.total}
             </Badge>
@@ -96,7 +96,7 @@ export default function Cases() {
       </div>
 
       {/* Table */}
-      <div className="flex-1 rounded-lg border border-glass-border bg-glass-bg overflow-hidden">
+      <div className="flex-1 rounded-2xl border-[0.5px] border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl shadow-[var(--shadow-glass)] overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="border-glass-border hover:bg-transparent">
@@ -113,12 +113,12 @@ export default function Cases() {
               // Loading skeletons
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i} className="border-glass-border">
-                  <TableCell><Skeleton className="h-4 w-24 bg-black/5" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-32 bg-black/5" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-20 bg-black/5" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-16 bg-black/5" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24 bg-black/5" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-28 bg-black/5" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24 bg-white/15" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32 bg-white/15" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-20 bg-white/15" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-16 bg-white/15" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24 bg-white/15" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-28 bg-white/15" /></TableCell>
                 </TableRow>
               ))
             ) : data && data.cases.length > 0 ? (
@@ -126,7 +126,7 @@ export default function Cases() {
                 <TableRow
                   key={caseItem.case_id}
                   onClick={() => navigate(`/cases/${caseItem.case_id}`)}
-                  className="border-glass-border hover:bg-black/[0.02] cursor-pointer transition-colors"
+                  className="border-glass-border hover:bg-white/15 cursor-pointer transition-colors"
                 >
                   <TableCell className="font-mono text-brand-accent">
                     <div className="flex items-center gap-2">

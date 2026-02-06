@@ -4,6 +4,73 @@ Automatically maintained by Claude Code hooks.
 
 ---
 
+## 2026-02-06: AgentCore Runtime Entrypoint Fix
+
+**Commit:** `ab89304` — `🐛 fix(deploy): Rewrite agent packaging to include main.py entry point, shared lib, and ARM64 deps`
+
+**Changes (1 file, ~550 lines rewritten):**
+- Complete rewrite of `.github/workflows/deploy-agents.yml` packaging logic
+- Each agent ZIP now includes: `main.py` (BedrockAgentCoreApp entry point), agent code as Python package, `shared/` library, ARM64 dependencies
+- Simulator ZIP includes: `main.py` wrapper, `src/` FastAPI app, ARM64 dependencies
+- Added `module_name` and `is_simulator` matrix fields for correct import paths
+- ZIP sizes went from ~4KB (broken) to ~25MB (correct)
+
+**Root Cause:** Previous workflow zipped only agent source files without the entry point, shared library, or ARM64-compiled dependencies that AgentCore requires.
+
+**Verification:** GH Actions run `21735590108` — all 10 S3 uploads + Terraform apply succeeded.
+
+---
+
+## 2026-02-05: CORS Fix, Lambda Proxy Routes, Invocations Dispatcher
+
+**Commit:** `150f04f` — `🐛 fix: Resolve CORS duplication, add missing Lambda proxy routes, and complete invocations dispatcher`
+
+**Changes:**
+- Fixed duplicate CORS middleware in FastAPI backend
+- Added missing Lambda proxy routes for all API endpoints
+- Completed invocations dispatcher for AgentCore Runtime
+
+---
+
+## 2026-02-05: Galderma Corporate Light Theme
+
+**Commit:** `d7f42ed` — `🎨 feat(frontend): Transform dark theme to Galderma corporate light theme`
+
+**Changes:**
+- Migrated from dark glassmorphism to Galderma corporate light theme
+- Updated CSS custom properties, OKLCH tokens, badge colors, opacity inversions
+- Fixed React Flow canvas colors (edges, grid, minimap) for light background
+
+---
+
+## 2026-02-05: Dark Cyan Sidebar + Logo Fix
+
+**Commits:** `3ccb448`, `ae42a6c`
+
+- Added dark cyan sidebar (#236B75) with white text for Galderma branding
+- Widened Galderma SVG wordmark viewBox to prevent text clipping
+
+---
+
+## 2026-02-05: AgentCore Memory CLI Fix
+
+**Commit:** `454ed43` — `🐛 fix(ci): Use correct AgentCore CLI for memory setup`
+
+Fixed the deploy-infra workflow to use the correct AgentCore CLI command for memory namespace creation.
+
+---
+
+## 2026-02-05: Galderma Demo Scenario + Memory API + CSV Pack
+
+**Commit:** `7302397` — `✨ feat: Add Galderma demo scenario, live Memory API, and CSV Pack enhancements`
+
+**Changes:**
+- Added pre-built "Cenário Galderma" demo scenario with deterministic data
+- Connected Memory page to live AgentCore Memory API
+- Enhanced CSV Pack with 6 compliance artifact types
+
+---
+
 ## 2026-02-05: PT-BR Translation + Galderma Brand Identity
 
 **Commit:** `f1514ca` — `🌐 feat: Full PT-BR translation and Galderma brand identity`
@@ -36,7 +103,7 @@ Full frontend rebuild with shadcn/ui, React Flow, Motion v12, cmdk command palet
 Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, removed redundant endpoints.
 
 ---
-## Turn Log — 2026-02-05 23:43:08 UTC
+## Turn Log — 2026-02-06 01:54:00 UTC
 
 **User:** (no user message captured)
 
@@ -44,7 +111,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-05 23:44:03 UTC
+## Turn Log — 2026-02-06 01:56:52 UTC
 
 **User:** (no user message captured)
 
@@ -52,7 +119,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 00:27:23 UTC
+## Turn Log — 2026-02-06 02:13:47 UTC
 
 **User:** (no user message captured)
 
@@ -60,7 +127,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 00:34:43 UTC
+## Turn Log — 2026-02-06 02:15:40 UTC
 
 **User:** (no user message captured)
 
@@ -68,7 +135,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 00:37:43 UTC
+## Turn Log — 2026-02-06 02:15:48 UTC
 
 **User:** (no user message captured)
 
@@ -76,7 +143,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 00:46:49 UTC
+## Turn Log — 2026-02-06 02:15:59 UTC
 
 **User:** (no user message captured)
 
@@ -84,7 +151,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 00:59:04 UTC
+## Turn Log — 2026-02-06 02:16:06 UTC
 
 **User:** (no user message captured)
 
@@ -92,7 +159,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:05:21 UTC
+## Turn Log — 2026-02-06 02:16:15 UTC
 
 **User:** (no user message captured)
 
@@ -100,7 +167,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:13:08 UTC
+## Turn Log — 2026-02-06 02:16:17 UTC
 
 **User:** (no user message captured)
 
@@ -108,7 +175,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:13:24 UTC
+## Turn Log — 2026-02-06 02:16:19 UTC
 
 **User:** (no user message captured)
 
@@ -116,7 +183,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:14:06 UTC
+## Turn Log — 2026-02-06 02:16:26 UTC
 
 **User:** (no user message captured)
 
@@ -124,7 +191,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:15:04 UTC
+## Turn Log — 2026-02-06 02:16:30 UTC
 
 **User:** (no user message captured)
 
@@ -132,7 +199,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:26:17 UTC
+## Turn Log — 2026-02-06 02:16:32 UTC
 
 **User:** (no user message captured)
 
@@ -140,7 +207,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:28:09 UTC
+## Turn Log — 2026-02-06 02:16:34 UTC
 
 **User:** (no user message captured)
 
@@ -148,7 +215,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:31:14 UTC
+## Turn Log — 2026-02-06 02:16:38 UTC
 
 **User:** (no user message captured)
 
@@ -156,7 +223,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:31:18 UTC
+## Turn Log — 2026-02-06 02:16:43 UTC
 
 **User:** (no user message captured)
 
@@ -164,7 +231,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:33:24 UTC
+## Turn Log — 2026-02-06 02:17:44 UTC
 
 **User:** (no user message captured)
 
@@ -172,7 +239,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:34:54 UTC
+## Turn Log — 2026-02-06 02:17:59 UTC
 
 **User:** (no user message captured)
 
@@ -180,7 +247,7 @@ Fixed deploy race conditions, lint errors, AgentCore UPDATE_FAILED recovery, rem
 
 ---
 
-## Turn Log — 2026-02-06 01:38:34 UTC
+## Turn Log — 2026-02-06 02:18:29 UTC
 
 **User:** (no user message captured)
 

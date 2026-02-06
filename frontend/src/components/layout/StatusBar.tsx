@@ -25,7 +25,7 @@ export function StatusBar() {
   const { language, setLanguage } = useLanguageStore()
 
   return (
-    <footer className="h-9 bg-[var(--bg-surface)] border-t border-[var(--glass-border)] flex items-center justify-between px-4 text-xs">
+    <footer className="h-9 bg-[var(--bg-surface)] backdrop-blur-2xl border-t border-[var(--glass-border)] flex items-center justify-between px-4 text-xs">
       {/* Left: WebSocket Status */}
       <div className="flex items-center gap-2">
         <div
@@ -48,7 +48,7 @@ export function StatusBar() {
             key={m.value}
             onClick={() => setMode(m.value)}
             className={cn(
-              'px-3 py-1 rounded transition-all duration-200',
+              'px-3 py-1 rounded-full transition-all duration-200',
               mode === m.value
                 ? 'text-white font-medium'
                 : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
@@ -88,7 +88,7 @@ export function StatusBar() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <kbd className="px-2 py-0.5 rounded bg-[var(--bg-elevated)] border border-[var(--glass-border)] text-[var(--text-muted)] font-mono">
+        <kbd className="px-2 py-0.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--glass-border)] text-[var(--text-muted)] font-mono">
           ⌘K
         </kbd>
       </div>

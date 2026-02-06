@@ -13,9 +13,9 @@ export interface GlassPanelProps {
 }
 
 const variantClasses = {
-  default: 'bg-[var(--glass-bg)] backdrop-blur-xl border border-[var(--glass-border)] rounded-xl p-6',
-  surface: 'bg-[var(--bg-surface)] border border-[var(--glass-border)] rounded-xl p-6',
-  elevated: 'bg-[var(--bg-elevated)] border border-[var(--glass-border)] rounded-xl shadow-lg p-6',
+  default: 'glass p-6',
+  surface: 'glass-surface p-6',
+  elevated: 'glass-elevated p-6',
 } as const
 
 export function GlassPanel({ children, className, variant = 'default' }: GlassPanelProps) {

@@ -119,7 +119,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[600px] sm:w-[700px] bg-bg-surface border-glass-border overflow-y-auto">
+      <SheetContent className="w-[600px] sm:w-[700px] bg-bg-surface backdrop-blur-3xl border-glass-border overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-text-primary flex items-center gap-2">
             <Shield className="w-5 h-5 text-brand-primary" />
@@ -132,9 +132,9 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
 
         {isLoading ? (
           <div className="space-y-4 mt-6">
-            <Skeleton className="h-24 bg-black/5" />
-            <Skeleton className="h-32 bg-black/5" />
-            <Skeleton className="h-48 bg-black/5" />
+            <Skeleton className="h-24 bg-white/15" />
+            <Skeleton className="h-32 bg-white/15" />
+            <Skeleton className="h-48 bg-white/15" />
           </div>
         ) : ledger && ledger.length > 0 ? (
           <ScrollArea className="h-[calc(100vh-120px)] mt-6">
@@ -142,10 +142,10 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               {/* Integrity Banner */}
               <div
                 className={cn(
-                  'p-4 rounded-lg border',
+                  'p-4 rounded-xl border',
                   integrity?.valid
-                    ? 'bg-green-50 border-green-300'
-                    : 'bg-yellow-50 border-yellow-300'
+                    ? 'bg-green-500/10 backdrop-blur-sm border-green-300/40'
+                    : 'bg-yellow-500/10 backdrop-blur-sm border-yellow-300/40'
                 )}
               >
                 <div className="flex items-center gap-2 mb-2">
@@ -177,7 +177,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               </div>
 
               {/* Policy Summary */}
-              <div className="p-4 rounded-lg bg-glass-bg border border-glass-border">
+              <div className="p-4 rounded-lg bg-glass-bg backdrop-blur-xl border-[0.5px] border-glass-border">
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="w-4 h-4 text-brand-primary" />
                   <span className="text-sm font-semibold text-text-primary">{t.policySummary}</span>
@@ -224,7 +224,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                     {decisionEntries.map((entry) => (
                       <div
                         key={entry.ledger_id}
-                        className="p-4 rounded-lg bg-glass-bg border border-glass-border"
+                        className="p-4 rounded-lg bg-glass-bg backdrop-blur-xl border-[0.5px] border-glass-border"
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
@@ -250,7 +250,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                                 {(entry.confidence * 100).toFixed(0)}%
                               </span>
                             </div>
-                            <div className="h-2 bg-bg-base rounded-full overflow-hidden">
+                            <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                               <div
                                 className={cn(
                                   'h-full transition-all',
@@ -327,7 +327,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
               )}
 
               {/* Footer: Model Stats */}
-              <div className="p-4 rounded-lg bg-glass-bg border border-glass-border">
+              <div className="p-4 rounded-lg bg-glass-bg backdrop-blur-xl border-[0.5px] border-glass-border">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
                     <p className="text-xs text-text-muted mb-1">{t.modelStats.model}</p>

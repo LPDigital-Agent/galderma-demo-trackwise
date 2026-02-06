@@ -26,10 +26,10 @@ export function AgentBadge({ agent, showModel = false, className }: AgentBadgePr
       {showModel && (
         <span
           className={cn(
-            'text-[10px] font-mono uppercase px-1.5 py-0.5 rounded',
+            'text-[10px] font-mono uppercase px-1.5 py-0.5 rounded-full',
             agentInfo.model === 'OPUS'
-              ? 'bg-red-50 text-red-600 border border-red-200'
-              : 'bg-cyan-50 text-cyan-600 border border-cyan-200'
+              ? 'bg-red-500/10 backdrop-blur-sm text-red-600 border-[0.5px] border-red-300/30'
+              : 'bg-cyan-500/10 backdrop-blur-sm text-cyan-600 border-[0.5px] border-cyan-300/30'
           )}
         >
           {agentInfo.model}

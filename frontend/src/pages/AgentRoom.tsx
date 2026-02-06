@@ -122,7 +122,7 @@ export default function AgentRoom() {
           <Button
             onClick={handleCreateScenario}
             disabled={createScenario.isPending}
-            className="bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold shadow-lg shadow-brand-primary/20"
+            className="bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold shadow-lg shadow-brand-primary/15"
           >
             <Sparkles className="mr-2 h-4 w-4" />
             {createScenario.isPending ? t.creatingScenario : t.createScenario}
@@ -152,9 +152,9 @@ export default function AgentRoom() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {executiveLoading ? (
           <>
-            <Skeleton className="h-32 bg-glass-bg border border-glass-border rounded-xl" />
-            <Skeleton className="h-32 bg-glass-bg border border-glass-border rounded-xl" />
-            <Skeleton className="h-32 bg-glass-bg border border-glass-border rounded-xl" />
+            <Skeleton className="h-32 bg-white/20 backdrop-blur-sm rounded-2xl" />
+            <Skeleton className="h-32 bg-white/20 backdrop-blur-sm rounded-2xl" />
+            <Skeleton className="h-32 bg-white/20 backdrop-blur-sm rounded-2xl" />
           </>
         ) : executiveStats ? (
           <>
@@ -189,7 +189,7 @@ export default function AgentRoom() {
 
       {/* Status Counters Row */}
       {statsLoading ? (
-        <Skeleton className="h-12 bg-glass-bg border border-glass-border rounded-lg" />
+        <Skeleton className="h-12 bg-white/20 backdrop-blur-sm rounded-2xl" />
       ) : stats ? (
         <GlassPanel variant="surface" className="px-6 py-4">
           <div className="flex items-center justify-center gap-8 text-sm">

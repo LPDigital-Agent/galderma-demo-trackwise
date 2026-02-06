@@ -26,7 +26,7 @@ export function MetricCard({
   return (
     <div
       className={cn(
-        'bg-[var(--glass-bg)] backdrop-blur-xl border border-[var(--glass-border)] rounded-xl p-6',
+        'glass p-6',
         className
       )}
     >
@@ -44,7 +44,7 @@ export function MetricCard({
           )}
         </div>
         <div
-          className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+          className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
           style={{ backgroundColor: `${color}10` }}
         >
           <Icon className="w-6 h-6" style={{ color }} />

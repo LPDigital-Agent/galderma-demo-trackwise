@@ -23,12 +23,12 @@ import { toast } from 'sonner'
 // Action Badge Helper
 // ============================================
 function getActionColor(action: string): string {
-  if (action.includes('APPROVED') || action.includes('GENERATED')) return 'bg-green-50 text-green-600 border-green-200'
-  if (action.includes('REVIEW') || action.includes('PENDING')) return 'bg-amber-50 text-amber-600 border-amber-200'
-  if (action.includes('REJECTED') || action.includes('ERROR') || action.includes('ESCALATED')) return 'bg-red-50 text-red-600 border-red-200'
-  if (action.includes('PATTERN')) return 'bg-cyan-50 text-cyan-600 border-cyan-200'
-  if (action.includes('COMPLIANCE')) return 'bg-purple-50 text-purple-600 border-purple-200'
-  return 'bg-gray-100 text-gray-600 border-gray-200'
+  if (action.includes('APPROVED') || action.includes('GENERATED')) return 'bg-green-500/10 backdrop-blur-sm text-green-600 border-green-300/30'
+  if (action.includes('REVIEW') || action.includes('PENDING')) return 'bg-amber-500/10 backdrop-blur-sm text-amber-600 border-amber-300/30'
+  if (action.includes('REJECTED') || action.includes('ERROR') || action.includes('ESCALATED')) return 'bg-red-500/10 backdrop-blur-sm text-red-600 border-red-300/30'
+  if (action.includes('PATTERN')) return 'bg-cyan-500/10 backdrop-blur-sm text-cyan-600 border-cyan-300/30'
+  if (action.includes('COMPLIANCE')) return 'bg-purple-500/10 backdrop-blur-sm text-purple-600 border-purple-300/30'
+  return 'bg-gray-500/10 backdrop-blur-sm text-gray-600 border-gray-300/30'
 }
 
 // ============================================
@@ -141,7 +141,7 @@ export default function Ledger() {
             description={t.empty.description}
           />
         ) : (
-          <div className="bg-[var(--bg-surface)] rounded-xl border border-[var(--glass-border)] overflow-hidden">
+          <div className="bg-[var(--bg-surface)] rounded-2xl border-[0.5px] border-[var(--glass-border)] backdrop-blur-xl shadow-[var(--shadow-glass)] overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -159,7 +159,7 @@ export default function Ledger() {
                   <TableRow
                     key={entry.ledger_id}
                     className={cn(
-                      'cursor-pointer hover:bg-[var(--bg-elevated)]/50 transition-colors',
+                      'cursor-pointer hover:bg-white/15 transition-colors',
                       entry.requires_human_action && 'border-l-2 border-amber-500'
                     )}
                     onClick={() => navigate(`/cases/${entry.case_id}`)}

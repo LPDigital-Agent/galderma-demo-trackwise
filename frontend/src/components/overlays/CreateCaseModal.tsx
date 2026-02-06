@@ -70,7 +70,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-bg-surface border-glass-border">
+      <DialogContent className="sm:max-w-[600px] bg-[var(--glass-bg)] backdrop-blur-3xl border-[0.5px] border-[var(--glass-border)] rounded-2xl shadow-[var(--shadow-elevated)]">
         <DialogHeader>
           <DialogTitle className="text-text-primary">{t.title}</DialogTitle>
           <DialogDescription className="text-text-secondary">
@@ -89,7 +89,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
               placeholder={t.placeholders.customerName}
-              className="bg-glass-bg border-glass-border text-text-primary"
+              className="bg-white/20 backdrop-blur-sm border-[0.5px] border-[var(--glass-border)] text-text-primary"
               required
             />
           </div>
@@ -100,7 +100,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
               {t.fields.productBrand} <span className="text-red-500">*</span>
             </Label>
             <Select value={productBrand} onValueChange={setProductBrand} required>
-              <SelectTrigger className="bg-glass-bg border-glass-border text-text-primary">
+              <SelectTrigger className="bg-white/20 backdrop-blur-sm border-[0.5px] border-[var(--glass-border)] text-text-primary">
                 <SelectValue placeholder={t.placeholders.selectBrand} />
               </SelectTrigger>
               <SelectContent>
@@ -123,7 +123,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
               placeholder={t.placeholders.productName}
-              className="bg-glass-bg border-glass-border text-text-primary"
+              className="bg-white/20 backdrop-blur-sm border-[0.5px] border-[var(--glass-border)] text-text-primary"
               required
             />
           </div>
@@ -138,7 +138,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
               value={complaintText}
               onChange={(e) => setComplaintText(e.target.value)}
               placeholder={t.placeholders.complaintText}
-              className="bg-glass-bg border-glass-border text-text-primary min-h-[100px]"
+              className="bg-white/20 backdrop-blur-sm border-[0.5px] border-[var(--glass-border)] text-text-primary min-h-[100px]"
               required
             />
           </div>
@@ -149,7 +149,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
               {t.fields.caseType} <span className="text-red-500">*</span>
             </Label>
             <Select value={caseType} onValueChange={(val) => setCaseType(val as CaseType)} required>
-              <SelectTrigger className="bg-glass-bg border-glass-border text-text-primary">
+              <SelectTrigger className="bg-white/20 backdrop-blur-sm border-[0.5px] border-[var(--glass-border)] text-text-primary">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -166,7 +166,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
               {t.fields.category}
             </Label>
             <Select value={category} onValueChange={(val) => setCategory(val as ComplaintCategory)}>
-              <SelectTrigger className="bg-glass-bg border-glass-border text-text-primary">
+              <SelectTrigger className="bg-white/20 backdrop-blur-sm border-[0.5px] border-[var(--glass-border)] text-text-primary">
                 <SelectValue placeholder={t.placeholders.selectCategory} />
               </SelectTrigger>
               <SelectContent>
@@ -191,7 +191,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
               value={lotNumber}
               onChange={(e) => setLotNumber(e.target.value)}
               placeholder={t.placeholders.lotNumber}
-              className="bg-glass-bg border-glass-border text-text-primary font-mono"
+              className="bg-white/20 backdrop-blur-sm border-[0.5px] border-[var(--glass-border)] text-text-primary font-mono"
             />
           </div>
 

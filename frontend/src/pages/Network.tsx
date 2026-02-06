@@ -34,7 +34,7 @@ function AgentNode({ data }: { data: AgentNodeData }) {
   return (
     <div
       className={cn(
-        'px-6 py-4 rounded-xl bg-[var(--bg-elevated)] border-[var(--glass-border)] border',
+        'px-6 py-4 rounded-2xl bg-[var(--glass-bg)] backdrop-blur-xl border-[0.5px] border-[var(--glass-border)]',
         'min-w-[240px] max-w-[280px]',
         'transition-all duration-300 hover:scale-105'
       )}
@@ -67,8 +67,8 @@ function AgentNode({ data }: { data: AgentNodeData }) {
         className={cn(
           'text-[10px] font-mono uppercase px-2 py-0.5',
           agentInfo.model === 'OPUS'
-            ? 'bg-red-50 text-red-600 border-red-200'
-            : 'bg-cyan-50 text-cyan-600 border-cyan-200'
+            ? 'bg-red-500/10 backdrop-blur-sm text-red-600 border-red-300/30'
+            : 'bg-cyan-500/10 backdrop-blur-sm text-cyan-600 border-cyan-300/30'
         )}
       >
         {agentInfo.model}
@@ -165,35 +165,35 @@ export default function NetworkPage() {
         source: 'observer',
         target: 'case_understanding',
         animated: true,
-        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
+        style: { stroke: 'rgba(74, 152, 184, 0.25)', strokeWidth: 2 },
       },
       {
         id: 'e-case_understanding-recurring_detector',
         source: 'case_understanding',
         target: 'recurring_detector',
         animated: true,
-        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
+        style: { stroke: 'rgba(74, 152, 184, 0.25)', strokeWidth: 2 },
       },
       {
         id: 'e-recurring_detector-compliance_guardian',
         source: 'recurring_detector',
         target: 'compliance_guardian',
         animated: true,
-        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
+        style: { stroke: 'rgba(74, 152, 184, 0.25)', strokeWidth: 2 },
       },
       {
         id: 'e-compliance_guardian-resolution_composer',
         source: 'compliance_guardian',
         target: 'resolution_composer',
         animated: true,
-        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
+        style: { stroke: 'rgba(74, 152, 184, 0.25)', strokeWidth: 2 },
       },
       {
         id: 'e-resolution_composer-writeback',
         source: 'resolution_composer',
         target: 'writeback',
         animated: true,
-        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
+        style: { stroke: 'rgba(74, 152, 184, 0.25)', strokeWidth: 2 },
       },
       // Inquiry bridge path
       {
@@ -271,9 +271,9 @@ export default function NetworkPage() {
           className="react-flow-dark"
         >
           <Background
-            color="#ddd"
-            gap={16}
-            size={1}
+            color="rgba(0,0,0,0.05)"
+            gap={20}
+            size={0.5}
           />
           <Controls className="react-flow-controls-dark" />
           <MiniMap
@@ -281,7 +281,7 @@ export default function NetworkPage() {
               const agent = node.data.agent as AgentName
               return AGENTS[agent].color
             }}
-            maskColor="rgba(240, 240, 245, 0.8)"
+            maskColor="rgba(234, 232, 238, 0.6)"
             style={{
               backgroundColor: 'var(--bg-elevated)',
               border: '1px solid var(--glass-border)',
@@ -299,13 +299,14 @@ export default function NetworkPage() {
           cursor: pointer;
         }
         .react-flow-dark .react-flow__edge-path {
-          stroke: rgba(0, 0, 0, 0.15);
+          stroke: rgba(74, 152, 184, 0.25);
         }
         .react-flow-dark .react-flow__controls {
           background: var(--bg-elevated);
           border: 1px solid var(--glass-border);
-          border-radius: 8px;
+          border-radius: 16px;
           overflow: hidden;
+          backdrop-filter: blur(20px);
         }
         .react-flow-dark .react-flow__controls button {
           background: var(--bg-elevated);
@@ -323,7 +324,8 @@ export default function NetworkPage() {
         .react-flow-dark .react-flow__minimap {
           background: var(--bg-elevated) !important;
           border: 1px solid var(--glass-border) !important;
-          border-radius: 8px;
+          border-radius: 12px;
+          backdrop-filter: blur(20px);
         }
         .react-flow-dark .react-flow__attribution {
           background: var(--bg-elevated);

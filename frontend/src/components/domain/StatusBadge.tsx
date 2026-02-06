@@ -15,29 +15,29 @@ export interface StatusBadgeProps {
 
 const statusConfig = {
   OPEN: {
-    bgClass: 'bg-blue-50',
+    bgClass: 'bg-blue-500/10 backdrop-blur-sm',
     textClass: 'text-blue-600',
-    borderClass: 'border-blue-200',
+    borderClass: 'border-blue-300/30',
   },
   IN_PROGRESS: {
-    bgClass: 'bg-amber-50',
+    bgClass: 'bg-amber-500/10 backdrop-blur-sm',
     textClass: 'text-amber-600',
-    borderClass: 'border-amber-200',
+    borderClass: 'border-amber-300/30',
   },
   PENDING_REVIEW: {
-    bgClass: 'bg-violet-50',
+    bgClass: 'bg-violet-500/10 backdrop-blur-sm',
     textClass: 'text-violet-600',
-    borderClass: 'border-violet-200',
+    borderClass: 'border-violet-300/30',
   },
   RESOLVED: {
-    bgClass: 'bg-green-50',
+    bgClass: 'bg-green-500/10 backdrop-blur-sm',
     textClass: 'text-green-600',
-    borderClass: 'border-green-200',
+    borderClass: 'border-green-300/30',
   },
   CLOSED: {
-    bgClass: 'bg-gray-100',
+    bgClass: 'bg-gray-500/10 backdrop-blur-sm',
     textClass: 'text-gray-600',
-    borderClass: 'border-gray-200',
+    borderClass: 'border-gray-300/30',
   },
 } as const
 

@@ -82,7 +82,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Customer Name */}
           <div>
             <Label htmlFor="customerName" className="text-text-secondary">
-              {t.fields.customerName} <span className="text-red-400">*</span>
+              {t.fields.customerName} <span className="text-red-500">*</span>
             </Label>
             <Input
               id="customerName"
@@ -97,7 +97,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Product Brand */}
           <div>
             <Label htmlFor="productBrand" className="text-text-secondary">
-              {t.fields.productBrand} <span className="text-red-400">*</span>
+              {t.fields.productBrand} <span className="text-red-500">*</span>
             </Label>
             <Select value={productBrand} onValueChange={setProductBrand} required>
               <SelectTrigger className="bg-glass-bg border-glass-border text-text-primary">
@@ -116,7 +116,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Product Name */}
           <div>
             <Label htmlFor="productName" className="text-text-secondary">
-              {t.fields.productName} <span className="text-red-400">*</span>
+              {t.fields.productName} <span className="text-red-500">*</span>
             </Label>
             <Input
               id="productName"
@@ -131,7 +131,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Complaint Text */}
           <div>
             <Label htmlFor="complaintText" className="text-text-secondary">
-              {t.fields.complaintText} <span className="text-red-400">*</span>
+              {t.fields.complaintText} <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="complaintText"
@@ -146,7 +146,7 @@ export function CreateCaseModal({ open, onOpenChange }: CreateCaseModalProps) {
           {/* Case Type */}
           <div>
             <Label htmlFor="caseType" className="text-text-secondary">
-              {t.fields.caseType} <span className="text-red-400">*</span>
+              {t.fields.caseType} <span className="text-red-500">*</span>
             </Label>
             <Select value={caseType} onValueChange={(val) => setCaseType(val as CaseType)} required>
               <SelectTrigger className="bg-glass-bg border-glass-border text-text-primary">

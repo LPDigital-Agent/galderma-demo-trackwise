@@ -153,14 +153,14 @@ export default function CSVPack() {
                 <div className="flex items-center gap-2">
                   <Badge
                     variant="outline"
-                    className="bg-green-500/10 text-green-400 border-green-500/20"
+                    className="bg-green-50 text-green-600 border-green-200"
                   >
                     <CheckCircle2 className="w-3 h-3 mr-1" />
                     {t.auditReady}
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="bg-green-500/10 text-green-400 border-green-500/20"
+                    className="bg-green-50 text-green-600 border-green-200"
                   >
                     {result.status}
                   </Badge>
@@ -172,7 +172,7 @@ export default function CSVPack() {
                   <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">
                     {t.summary.packId}
                   </div>
-                  <div className="text-sm font-mono text-cyan-400 mt-1">
+                  <div className="text-sm font-mono text-cyan-600 mt-1">
                     {result.pack_id}
                   </div>
                 </div>
@@ -207,7 +207,7 @@ export default function CSVPack() {
                   <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">
                     {t.summary.closedCases}
                   </div>
-                  <div className="text-sm font-mono text-green-400 mt-1">
+                  <div className="text-sm font-mono text-green-600 mt-1">
                     {result.closed_cases}
                   </div>
                 </div>
@@ -249,8 +249,8 @@ export default function CSVPack() {
                               className={cn(
                                 'text-[10px]',
                                 artifact.status === 'COMPLETE'
-                                  ? 'bg-green-500/10 text-green-400 border-green-500/20'
-                                  : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                  ? 'bg-green-50 text-green-600 border-green-200'
+                                  : 'bg-amber-50 text-amber-600 border-amber-200'
                               )}
                             >
                               {artifact.status}
@@ -270,7 +270,7 @@ export default function CSVPack() {
                       <div className="mt-3 pt-3 border-t border-[var(--glass-border)]">
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-[var(--text-muted)]">{t.artifactId}</span>
-                          <span className="font-mono text-cyan-400">{artifact.artifact_id}</span>
+                          <span className="font-mono text-cyan-600">{artifact.artifact_id}</span>
                         </div>
                         <div className="flex items-center justify-between text-xs mt-1">
                           <span className="text-[var(--text-muted)]">{t.type}</span>
@@ -317,8 +317,8 @@ export default function CSVPack() {
                       className={cn(
                         'ml-4 shrink-0 text-[10px]',
                         item.status === 'EM DESENVOLVIMENTO'
-                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                          : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                          ? 'bg-amber-50 text-amber-600 border-amber-200'
+                          : 'bg-blue-50 text-blue-600 border-blue-200'
                       )}
                     >
                       {item.status}

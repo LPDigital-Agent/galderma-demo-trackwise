@@ -1,7 +1,7 @@
 # Frontend — React Agent Room UI
 
 ## Purpose
-Real-time dashboard showing the 9-agent mesh in action. Galderma corporate brand theme (dark) with PT-BR localization, optimized for sales demo impact.
+Real-time dashboard showing the 9-agent mesh in action. Galderma corporate light theme (matching galderma.com) with PT-BR localization, optimized for sales demo impact.
 
 ## Stack
 - **Framework:** React 19 + TypeScript strict mode
@@ -40,10 +40,10 @@ pnpm lint         # eslint
 ```
 
 ## Design System
-- Galderma corporate dark theme: `#080B10` base, glass surfaces, teal/blue accents
-- Brand colors: Primary teal `#4A98B8`, Secondary blue `#3860BE`, Accent `#6AAAE4`
+- Galderma corporate light theme: `#FFFFFF` base, light glass surfaces, teal/blue accents
+- Brand colors: Primary teal `#4A98B8`, Secondary blue `#3860BE`, Accent `#A1D1E8`
 - CSS variables in `src/index.css` (--bg-base, --bg-surface, --glass-bg, etc.)
-- Dark theme ONLY (demo requirement)
+- Light theme matching galderma.com brand identity
 - All UI strings in PT-BR via centralized i18n constants
 - Galderma logo SVG wordmark in sidebar (`public/assets/galderma-logo.svg`)
 - WebSocket connection for real-time agent activity feed

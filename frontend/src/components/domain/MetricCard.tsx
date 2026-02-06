@@ -34,10 +34,7 @@ export function MetricCard({
         <div className="flex-1">
           <div
             className="text-4xl font-bold tracking-tight mb-2"
-            style={{
-              color,
-              textShadow: `0 0 20px ${color}40`,
-            }}
+            style={{ color }}
           >
             {value}
           </div>

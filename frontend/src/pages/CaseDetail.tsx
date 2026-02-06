@@ -66,12 +66,12 @@ export default function CaseDetail() {
     return (
       <div className="flex gap-6 h-full">
         <div className="w-1/3 space-y-4">
-          <Skeleton className="h-10 w-32 bg-white/5" />
-          <Skeleton className="h-64 bg-white/5" />
-          <Skeleton className="h-48 bg-white/5" />
+          <Skeleton className="h-10 w-32 bg-black/5" />
+          <Skeleton className="h-64 bg-black/5" />
+          <Skeleton className="h-48 bg-black/5" />
         </div>
         <div className="w-2/3 space-y-4">
-          <Skeleton className="h-96 bg-white/5" />
+          <Skeleton className="h-96 bg-black/5" />
         </div>
       </div>
     )
@@ -224,7 +224,7 @@ export default function CaseDetail() {
             </h3>
             <div
               onClick={() => navigate(`/cases/${caseData.linked_case_id}`)}
-              className="flex items-center justify-between p-3 rounded-lg bg-bg-elevated border border-glass-border hover:bg-white/[0.02] cursor-pointer transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg bg-bg-elevated border border-glass-border hover:bg-black/[0.02] cursor-pointer transition-colors"
             >
               <span className="font-mono text-brand-accent">{caseData.linked_case_id}</span>
             </div>
@@ -251,7 +251,7 @@ export default function CaseDetail() {
           {runsLoading ? (
             <div className="space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-24 bg-white/5" />
+                <Skeleton key={i} className="h-24 bg-black/5" />
               ))}
             </div>
           ) : agentSteps.length > 0 ? (
@@ -336,7 +336,7 @@ export default function CaseDetail() {
           {ledgerLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-20 bg-white/5" />
+                <Skeleton key={i} className="h-20 bg-black/5" />
               ))}
             </div>
           ) : ledger && ledger.length > 0 ? (
@@ -390,9 +390,9 @@ export default function CaseDetail() {
                         {entry.state_changes.map((change, idx) => (
                           <div key={idx} className="text-xs">
                             <span className="text-text-muted">{change.field}:</span>{' '}
-                            <span className="text-red-400">{change.before || 'null'}</span>
+                            <span className="text-red-600">{change.before || 'null'}</span>
                             {' → '}
-                            <span className="text-green-400">{change.after || 'null'}</span>
+                            <span className="text-green-600">{change.after || 'null'}</span>
                           </div>
                         ))}
                       </div>

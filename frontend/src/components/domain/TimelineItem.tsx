@@ -43,7 +43,7 @@ export function TimelineItem({ event, className }: TimelineItemProps) {
   return (
     <div
       className={cn(
-        'px-4 py-3 border-b border-[var(--glass-border)] hover:bg-white/[0.02] transition-colors',
+        'px-4 py-3 border-b border-[var(--glass-border)] hover:bg-black/[0.02] transition-colors',
         className
       )}
       style={{
@@ -58,7 +58,7 @@ export function TimelineItem({ event, className }: TimelineItemProps) {
         <div className="flex-1 min-w-0">
           <div className="text-sm text-[var(--text-primary)]">{displayMessage}</div>
           {event.case_id && (
-            <div className="text-xs text-cyan-400 font-mono mt-1">
+            <div className="text-xs text-cyan-600 font-mono mt-1">
               {timeline.casePrefix} {event.case_id}
             </div>
           )}

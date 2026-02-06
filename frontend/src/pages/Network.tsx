@@ -67,8 +67,8 @@ function AgentNode({ data }: { data: AgentNodeData }) {
         className={cn(
           'text-[10px] font-mono uppercase px-2 py-0.5',
           agentInfo.model === 'OPUS'
-            ? 'bg-red-500/10 text-red-400 border-red-500/20'
-            : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+            ? 'bg-red-50 text-red-600 border-red-200'
+            : 'bg-cyan-50 text-cyan-600 border-cyan-200'
         )}
       >
         {agentInfo.model}
@@ -165,35 +165,35 @@ export default function NetworkPage() {
         source: 'observer',
         target: 'case_understanding',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
+        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
       },
       {
         id: 'e-case_understanding-recurring_detector',
         source: 'case_understanding',
         target: 'recurring_detector',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
+        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
       },
       {
         id: 'e-recurring_detector-compliance_guardian',
         source: 'recurring_detector',
         target: 'compliance_guardian',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
+        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
       },
       {
         id: 'e-compliance_guardian-resolution_composer',
         source: 'compliance_guardian',
         target: 'resolution_composer',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
+        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
       },
       {
         id: 'e-resolution_composer-writeback',
         source: 'resolution_composer',
         target: 'writeback',
         animated: true,
-        style: { stroke: 'rgba(255, 255, 255, 0.5)', strokeWidth: 2 },
+        style: { stroke: 'rgba(0, 0, 0, 0.15)', strokeWidth: 2 },
       },
       // Inquiry bridge path
       {
@@ -271,7 +271,7 @@ export default function NetworkPage() {
           className="react-flow-dark"
         >
           <Background
-            color="#333"
+            color="#ddd"
             gap={16}
             size={1}
           />
@@ -281,7 +281,7 @@ export default function NetworkPage() {
               const agent = node.data.agent as AgentName
               return AGENTS[agent].color
             }}
-            maskColor="rgba(10, 10, 15, 0.8)"
+            maskColor="rgba(240, 240, 245, 0.8)"
             style={{
               backgroundColor: 'var(--bg-elevated)',
               border: '1px solid var(--glass-border)',
@@ -299,7 +299,7 @@ export default function NetworkPage() {
           cursor: pointer;
         }
         .react-flow-dark .react-flow__edge-path {
-          stroke: rgba(255, 255, 255, 0.5);
+          stroke: rgba(0, 0, 0, 0.15);
         }
         .react-flow-dark .react-flow__controls {
           background: var(--bg-elevated);

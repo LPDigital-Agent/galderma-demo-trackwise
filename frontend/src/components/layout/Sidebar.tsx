@@ -63,8 +63,8 @@ export function Sidebar() {
                     'transition-all duration-200',
                     'text-sm font-medium',
                     isActive
-                      ? 'bg-white/5 border-l-2 border-[var(--brand-primary)] text-[var(--text-primary)]'
-                      : 'text-[var(--text-secondary)] hover:bg-white/[0.02] hover:text-[var(--text-primary)] border-l-2 border-transparent'
+                      ? 'bg-black/5 border-l-2 border-[var(--brand-primary)] text-[var(--text-primary)]'
+                      : 'text-[var(--text-secondary)] hover:bg-black/[0.02] hover:text-[var(--text-primary)] border-l-2 border-transparent'
                   )
                 }
               >
@@ -105,7 +105,7 @@ export function Sidebar() {
           className={cn(
             'w-full flex items-center gap-2 px-2 py-1.5 rounded-md',
             'text-xs text-[var(--text-muted)]',
-            'hover:bg-white/[0.02] hover:text-[var(--text-secondary)]',
+            'hover:bg-black/[0.02] hover:text-[var(--text-secondary)]',
             'transition-colors duration-200',
             isCollapsed && 'justify-center'
           )}

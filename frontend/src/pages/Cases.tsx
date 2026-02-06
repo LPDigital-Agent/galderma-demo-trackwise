@@ -113,12 +113,12 @@ export default function Cases() {
               // Loading skeletons
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i} className="border-glass-border">
-                  <TableCell><Skeleton className="h-4 w-24 bg-white/5" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-32 bg-white/5" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-20 bg-white/5" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-16 bg-white/5" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24 bg-white/5" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-28 bg-white/5" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24 bg-black/5" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32 bg-black/5" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-20 bg-black/5" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-16 bg-black/5" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24 bg-black/5" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-28 bg-black/5" /></TableCell>
                 </TableRow>
               ))
             ) : data && data.cases.length > 0 ? (
@@ -126,7 +126,7 @@ export default function Cases() {
                 <TableRow
                   key={caseItem.case_id}
                   onClick={() => navigate(`/cases/${caseItem.case_id}`)}
-                  className="border-glass-border hover:bg-white/[0.02] cursor-pointer transition-colors"
+                  className="border-glass-border hover:bg-black/[0.02] cursor-pointer transition-colors"
                 >
                   <TableCell className="font-mono text-brand-accent">
                     <div className="flex items-center gap-2">

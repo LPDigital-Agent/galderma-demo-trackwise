@@ -132,9 +132,9 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
 
         {isLoading ? (
           <div className="space-y-4 mt-6">
-            <Skeleton className="h-24 bg-white/5" />
-            <Skeleton className="h-32 bg-white/5" />
-            <Skeleton className="h-48 bg-white/5" />
+            <Skeleton className="h-24 bg-black/5" />
+            <Skeleton className="h-32 bg-black/5" />
+            <Skeleton className="h-48 bg-black/5" />
           </div>
         ) : ledger && ledger.length > 0 ? (
           <ScrollArea className="h-[calc(100vh-120px)] mt-6">
@@ -144,8 +144,8 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                 className={cn(
                   'p-4 rounded-lg border',
                   integrity?.valid
-                    ? 'bg-green-500/10 border-green-500/30'
-                    : 'bg-yellow-500/10 border-yellow-500/30'
+                    ? 'bg-green-50 border-green-300'
+                    : 'bg-yellow-50 border-yellow-300'
                 )}
               >
                 <div className="flex items-center gap-2 mb-2">
@@ -190,11 +190,11 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                     <p className="text-xs text-text-muted">{t.evaluated}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-green-400">{policySummary.passed}</p>
+                    <p className="text-2xl font-bold text-green-600">{policySummary.passed}</p>
                     <p className="text-xs text-text-muted">{t.passed}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-red-400">{policySummary.violated}</p>
+                    <p className="text-2xl font-bold text-red-600">{policySummary.violated}</p>
                     <p className="text-xs text-text-muted">{t.violated}</p>
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                     <div className="space-y-1">
                       {policySummary.violations.map((violation, idx) => (
                         <div key={idx} className="flex items-start gap-2">
-                          <XCircle className="w-3 h-3 text-red-400 mt-0.5 flex-shrink-0" />
+                          <XCircle className="w-3 h-3 text-red-600 mt-0.5 flex-shrink-0" />
                           <p className="text-xs text-text-secondary">{violation}</p>
                         </div>
                       ))}
@@ -270,7 +270,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                           <div className="space-y-1">
                             {entry.policies_evaluated.map((policy, idx) => (
                               <div key={idx} className="flex items-start gap-2">
-                                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                                <CheckCircle2 className="w-3 h-3 text-green-600 mt-0.5 flex-shrink-0" />
                                 <p className="text-xs text-text-secondary">{policy}</p>
                               </div>
                             ))}
@@ -281,7 +281,7 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                           <div className="space-y-1 mt-2">
                             {entry.policy_violations.map((violation, idx) => (
                               <div key={idx} className="flex items-start gap-2">
-                                <XCircle className="w-3 h-3 text-red-400 mt-0.5 flex-shrink-0" />
+                                <XCircle className="w-3 h-3 text-red-600 mt-0.5 flex-shrink-0" />
                                 <p className="text-xs text-text-secondary">{violation}</p>
                               </div>
                             ))}
@@ -312,10 +312,10 @@ export function AuditorView({ caseId, open, onOpenChange }: AuditorViewProps) {
                             <TableCell className="text-xs text-text-primary font-medium">
                               {change.field}
                             </TableCell>
-                            <TableCell className="text-xs text-red-400 font-mono">
+                            <TableCell className="text-xs text-red-600 font-mono">
                               {change.before || 'null'}
                             </TableCell>
-                            <TableCell className="text-xs text-green-400 font-mono">
+                            <TableCell className="text-xs text-green-600 font-mono">
                               {change.after || 'null'}
                             </TableCell>
                           </TableRow>

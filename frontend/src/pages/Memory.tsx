@@ -22,20 +22,20 @@ export default function Memory() {
   const { data: memory, isLoading } = useMemory()
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'text-green-400'
-    if (confidence >= 0.5) return 'text-amber-400'
-    return 'text-red-400'
+    if (confidence >= 0.8) return 'text-green-600'
+    if (confidence >= 0.5) return 'text-amber-600'
+    return 'text-red-600'
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE':
       case 'ENFORCED':
-        return 'bg-green-500/10 text-green-400 border-green-500/20'
+        return 'bg-green-50 text-green-600 border-green-200'
       case 'PENDING':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+        return 'bg-amber-50 text-amber-600 border-amber-200'
       default:
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+        return 'bg-gray-100 text-gray-600 border-gray-200'
     }
   }
 
@@ -108,7 +108,7 @@ export default function Memory() {
                   <TableBody>
                     {patterns.map((pattern) => (
                       <TableRow key={pattern.id}>
-                        <TableCell className="font-mono text-cyan-400">
+                        <TableCell className="font-mono text-cyan-600">
                           {pattern.id}
                         </TableCell>
                         <TableCell className="font-medium text-[var(--text-primary)]">
@@ -160,7 +160,7 @@ export default function Memory() {
                   <TableBody>
                     {templates.map((template) => (
                       <TableRow key={template.id}>
-                        <TableCell className="font-mono text-cyan-400">
+                        <TableCell className="font-mono text-cyan-600">
                           {template.id}
                         </TableCell>
                         <TableCell className="font-medium text-[var(--text-primary)]">
@@ -213,7 +213,7 @@ export default function Memory() {
                   <TableBody>
                     {policies.map((policy) => (
                       <TableRow key={policy.id}>
-                        <TableCell className="font-mono text-cyan-400">
+                        <TableCell className="font-mono text-cyan-600">
                           {policy.id}
                         </TableCell>
                         <TableCell className="font-medium text-[var(--text-primary)]">
@@ -230,7 +230,7 @@ export default function Memory() {
                         </TableCell>
                         <TableCell className={cn(
                           'text-right font-mono',
-                          policy.violations === 0 ? 'text-green-400' : 'text-amber-400'
+                          policy.violations === 0 ? 'text-green-600' : 'text-amber-600'
                         )}>
                           {policy.violations}
                         </TableCell>

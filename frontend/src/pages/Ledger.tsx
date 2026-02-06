@@ -23,12 +23,12 @@ import { toast } from 'sonner'
 // Action Badge Helper
 // ============================================
 function getActionColor(action: string): string {
-  if (action.includes('APPROVED') || action.includes('GENERATED')) return 'bg-green-500/10 text-green-400 border-green-500/20'
-  if (action.includes('REVIEW') || action.includes('PENDING')) return 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-  if (action.includes('REJECTED') || action.includes('ERROR') || action.includes('ESCALATED')) return 'bg-red-500/10 text-red-400 border-red-500/20'
-  if (action.includes('PATTERN')) return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
-  if (action.includes('COMPLIANCE')) return 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-  return 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+  if (action.includes('APPROVED') || action.includes('GENERATED')) return 'bg-green-50 text-green-600 border-green-200'
+  if (action.includes('REVIEW') || action.includes('PENDING')) return 'bg-amber-50 text-amber-600 border-amber-200'
+  if (action.includes('REJECTED') || action.includes('ERROR') || action.includes('ESCALATED')) return 'bg-red-50 text-red-600 border-red-200'
+  if (action.includes('PATTERN')) return 'bg-cyan-50 text-cyan-600 border-cyan-200'
+  if (action.includes('COMPLIANCE')) return 'bg-purple-50 text-purple-600 border-purple-200'
+  return 'bg-gray-100 text-gray-600 border-gray-200'
 }
 
 // ============================================
@@ -65,7 +65,7 @@ export default function Ledger() {
   const getConfidenceDisplay = (confidence?: number) => {
     if (!confidence) return null
     const percent = Math.round(confidence * 100)
-    const colorClass = confidence >= 0.8 ? 'text-green-400' : confidence >= 0.5 ? 'text-amber-400' : 'text-red-400'
+    const colorClass = confidence >= 0.8 ? 'text-green-600' : confidence >= 0.5 ? 'text-amber-600' : 'text-red-600'
     return <span className={cn('font-mono', colorClass)}>{percent}%</span>
   }
 
@@ -182,7 +182,7 @@ export default function Ledger() {
                       {getConfidenceDisplay(entry.confidence) || '—'}
                     </TableCell>
                     <TableCell
-                      className="font-mono text-cyan-400 hover:underline"
+                      className="font-mono text-cyan-600 hover:underline"
                       onClick={(e) => {
                         e.stopPropagation()
                         navigate(`/cases/${entry.case_id}`)

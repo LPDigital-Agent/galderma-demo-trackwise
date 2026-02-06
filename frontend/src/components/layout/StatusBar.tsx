@@ -79,7 +79,7 @@ export function StatusBar() {
                 onClick={() => setLanguage(lang)}
                 className={cn(
                   'cursor-pointer',
-                  language === lang && 'bg-white/5'
+                  language === lang && 'bg-black/5'
                 )}
               >
                 {languageLabels[lang]}

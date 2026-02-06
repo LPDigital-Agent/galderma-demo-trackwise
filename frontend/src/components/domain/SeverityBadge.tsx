@@ -17,27 +17,27 @@ export interface SeverityBadgeProps {
 const severityConfig = {
   LOW: {
     color: 'green',
-    bgClass: 'bg-green-500/10',
-    textClass: 'text-green-400',
-    borderClass: 'border-green-500/20',
+    bgClass: 'bg-green-50',
+    textClass: 'text-green-600',
+    borderClass: 'border-green-200',
   },
   MEDIUM: {
     color: 'amber',
-    bgClass: 'bg-amber-500/10',
-    textClass: 'text-amber-400',
-    borderClass: 'border-amber-500/20',
+    bgClass: 'bg-amber-50',
+    textClass: 'text-amber-600',
+    borderClass: 'border-amber-200',
   },
   HIGH: {
     color: 'orange',
-    bgClass: 'bg-orange-500/10',
-    textClass: 'text-orange-400',
-    borderClass: 'border-orange-500/20',
+    bgClass: 'bg-orange-50',
+    textClass: 'text-orange-600',
+    borderClass: 'border-orange-200',
   },
   CRITICAL: {
     color: 'red',
-    bgClass: 'bg-red-500/10',
-    textClass: 'text-red-400',
-    borderClass: 'border-red-500/20',
+    bgClass: 'bg-red-50',
+    textClass: 'text-red-600',
+    borderClass: 'border-red-200',
   },
 } as const
 

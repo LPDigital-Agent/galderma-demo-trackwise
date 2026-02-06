@@ -28,8 +28,8 @@ export function AgentBadge({ agent, showModel = false, className }: AgentBadgePr
           className={cn(
             'text-[10px] font-mono uppercase px-1.5 py-0.5 rounded',
             agentInfo.model === 'OPUS'
-              ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-              : 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+              ? 'bg-red-50 text-red-600 border border-red-200'
+              : 'bg-cyan-50 text-cyan-600 border border-cyan-200'
           )}
         >
           {agentInfo.model}

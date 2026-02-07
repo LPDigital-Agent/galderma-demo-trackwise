@@ -85,7 +85,7 @@ SLA_DAYS: dict[CaseSeverity, int] = {
 
 def _weighted_choice(weights: list[tuple]) -> object:
     """Pick a random item based on weights."""
-    items, w = zip(*weights)
+    items, w = zip(*weights, strict=True)
     return random.choices(items, weights=w, k=1)[0]
 
 

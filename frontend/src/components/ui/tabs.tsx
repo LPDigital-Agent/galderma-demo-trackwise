@@ -30,7 +30,7 @@ const tabsListVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white/26 border-[0.5px] border-white/65 backdrop-blur-2xl shadow-[var(--shadow-glass)]",
+        default: "bg-white/14 border-[0.5px] border-white/25 backdrop-blur-2xl shadow-[var(--shadow-glass)]",
         line: "gap-1 bg-transparent",
       },
     },
@@ -66,7 +66,7 @@ function TabsTrigger({
       className={cn(
         "focus-visible:ring-[3px] focus-visible:ring-[color:var(--ring)]/50 text-[var(--text-secondary)] hover:text-[var(--text-primary)] relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-xl border border-transparent px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start disabled:pointer-events-none disabled:opacity-50 group-data-[variant=default]/tabs-list:data-[state=active]:shadow-sm group-data-[variant=line]/tabs-list:data-[state=active]:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent",
-        "data-[state=active]:bg-white/52 data-[state=active]:border-white/75 data-[state=active]:text-[var(--text-primary)] data-[state=active]:shadow-[var(--shadow-glass)]",
+        "data-[state=active]:bg-white/22 data-[state=active]:border-white/30 data-[state=active]:text-[var(--text-primary)] data-[state=active]:shadow-[var(--shadow-glass)]",
         "after:bg-foreground after:absolute after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
         className
       )}

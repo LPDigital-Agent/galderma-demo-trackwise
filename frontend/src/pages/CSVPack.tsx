@@ -234,7 +234,7 @@ export default function CSVPack() {
                     <GlassPanel
                       key={artifact.artifact_id}
                       variant="card"
-                      className="p-5 transition-all hover:-translate-y-[1px] hover:shadow-[0_18px_28px_rgba(0,0,0,0.35)]"
+                      className="p-5 transition-all hover:-translate-y-[1px] hover:shadow-[0_18px_28px_rgba(0,0,0,0.08)]"
                     >
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-2xl border border-white/15 bg-white/8 backdrop-blur-sm flex items-center justify-center shrink-0">

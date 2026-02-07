@@ -22,7 +22,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
   return (
     <tfoot
       data-slot="table-footer"
-      className={cn('border-t border-white/55 bg-white/40 font-medium backdrop-blur-xl [&>tr]:last:border-b-0', className)}
+      className={cn('border-t border-white/20 bg-white/10 font-medium backdrop-blur-xl [&>tr]:last:border-b-0', className)}
       {...props}
     />
   )
@@ -33,7 +33,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
     <tr
       data-slot="table-row"
       className={cn(
-        'border-b border-white/45 transition-colors hover:bg-white/38 data-[state=selected]:bg-white/42',
+        'border-b border-white/15 transition-colors hover:bg-white/10 data-[state=selected]:bg-white/15',
         className
       )}
       {...props}
@@ -46,7 +46,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
     <th
       data-slot="table-head"
       className={cn(
-        'h-10 bg-white/44 px-3 text-left align-middle text-xs font-semibold tracking-[0.03em] whitespace-nowrap text-[var(--lg-text-secondary)] [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+        'h-10 bg-white/12 px-3 text-left align-middle text-xs font-semibold tracking-[0.03em] whitespace-nowrap text-[var(--lg-text-secondary)] [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
         className
       )}
       {...props}

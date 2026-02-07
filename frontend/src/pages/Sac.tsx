@@ -229,7 +229,7 @@ export default function Sac() {
               >
                 <div
                   onClick={() => navigate(`/cases/${c.case_id}`)}
-                  className="glass-card cursor-pointer rounded-xl p-4 transition-all hover:-translate-y-[1px] hover:shadow-[0_18px_28px_rgba(0,0,0,0.35)]"
+                  className="glass-card cursor-pointer rounded-xl p-4 transition-all hover:-translate-y-[1px] hover:shadow-[0_18px_28px_rgba(0,0,0,0.08)]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">

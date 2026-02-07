@@ -14,10 +14,10 @@ const buttonVariants = cva(
         destructive:
           'text-white border-[0.5px] border-red-200/60 bg-[linear-gradient(135deg,#f87171_0%,#d93030_100%)] shadow-[0_12px_24px_rgba(188,34,34,0.3)] hover:brightness-105 hover:-translate-y-[1px]',
         outline:
-          'glass-control text-[var(--lg-text-primary)] hover:bg-white/60',
+          'glass-control text-[var(--lg-text-primary)] hover:bg-white/28',
         secondary:
-          'border-[0.5px] border-white/55 bg-white/44 text-[var(--lg-text-secondary)] backdrop-blur-2xl shadow-[var(--shadow-control)] hover:bg-white/60 hover:text-[var(--lg-text-primary)]',
-        ghost: 'text-[var(--lg-text-secondary)] hover:bg-white/45 hover:text-[var(--lg-text-primary)]',
+          'border-[0.5px] border-white/25 bg-white/18 text-[var(--lg-text-secondary)] backdrop-blur-2xl shadow-[var(--shadow-control)] hover:bg-white/28 hover:text-[var(--lg-text-primary)]',
+        ghost: 'text-[var(--lg-text-secondary)] hover:bg-white/18 hover:text-[var(--lg-text-primary)]',
         link: 'text-[var(--brand-accent)] underline-offset-4 hover:underline',
       },
       size: {

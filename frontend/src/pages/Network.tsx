@@ -34,7 +34,7 @@ function AgentNode({ data }: { data: AgentNodeData }) {
   return (
     <div
       className={cn(
-        'px-6 py-4 rounded-2xl bg-white/12 backdrop-blur-2xl border border-white/15 shadow-[0_14px_24px_rgba(0,0,0,0.35)]',
+        'px-6 py-4 rounded-2xl bg-white/12 backdrop-blur-2xl border border-white/15 shadow-[0_14px_24px_rgba(0,0,0,0.08)]',
         'min-w-[240px] max-w-[280px]',
         'transition-all duration-300 hover:scale-105'
       )}

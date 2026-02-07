@@ -72,7 +72,7 @@ function SidebarBody({ onNavigate, onClose, showCloseButton = false }: SidebarBo
                   cn(
                     'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200',
                     isActive
-                      ? 'bg-white/18 text-[var(--lg-text-primary)] shadow-[0_4px_16px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.15)]'
+                      ? 'bg-white/18 text-[var(--lg-text-primary)] shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]'
                       : 'text-[var(--lg-text-secondary)] hover:bg-white/10 hover:text-[var(--lg-text-primary)]'
                   )
                 }

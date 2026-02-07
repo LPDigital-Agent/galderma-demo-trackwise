@@ -11,18 +11,18 @@
      ═══════════════════════════════════════════════ */
 
   /* Wallpaper tones (vibrant gradient underneath glass) */
-  --wallpaper-start: #1a1040;
-  --wallpaper-mid: #0f2b5c;
-  --wallpaper-end: #0a2448;
-  --wallpaper-accent-1: #3b1a8e;
-  --wallpaper-accent-2: #0c4a8a;
-  --wallpaper-accent-3: #1e6ca8;
+  --wallpaper-start: #2a1d60;
+  --wallpaper-mid: #183d78;
+  --wallpaper-end: #143562;
+  --wallpaper-accent-1: #5030b0;
+  --wallpaper-accent-2: #1862aa;
+  --wallpaper-accent-3: #2a82c0;
 
   /* Glass materials — Apple specs */
-  --glass-white-thick: rgba(255, 255, 255, 0.38);
-  --glass-white-regular: rgba(255, 255, 255, 0.22);
-  --glass-white-thin: rgba(255, 255, 255, 0.12);
-  --glass-white-ultra: rgba(255, 255, 255, 0.06);
+  --glass-white-thick: rgba(255, 255, 255, 0.18);
+  --glass-white-regular: rgba(255, 255, 255, 0.10);
+  --glass-white-thin: rgba(255, 255, 255, 0.06);
+  --glass-white-ultra: rgba(255, 255, 255, 0.03);
 
   /* Text on glass (high contrast for readability) */
   --lg-text-primary: rgba(255, 255, 255, 0.95);
@@ -30,21 +30,21 @@
   --lg-text-tertiary: rgba(255, 255, 255, 0.45);
 
   /* Borders — luminous white edges */
-  --lg-border-strong: rgba(255, 255, 255, 0.35);
-  --lg-border-soft: rgba(255, 255, 255, 0.18);
-  --lg-border-subtle: rgba(255, 255, 255, 0.10);
+  --lg-border-strong: rgba(255, 255, 255, 0.40);
+  --lg-border-soft: rgba(255, 255, 255, 0.22);
+  --lg-border-subtle: rgba(255, 255, 255, 0.13);
 
   /* Specular highlight gradients */
   --lg-specular: linear-gradient(
     168deg,
-    rgba(255, 255, 255, 0.48) 0%,
-    rgba(255, 255, 255, 0.14) 18%,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.08) 18%,
     rgba(255, 255, 255, 0) 42%
   );
   --lg-specular-subtle: linear-gradient(
     168deg,
-    rgba(255, 255, 255, 0.30) 0%,
-    rgba(255, 255, 255, 0.08) 16%,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.04) 16%,
     rgba(255, 255, 255, 0) 36%
   );
 
@@ -52,24 +52,24 @@
   --shadow-shell:
     0 24px 48px rgba(0, 0, 0, 0.08),
     0 8px 16px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   --shadow-card:
     0 16px 32px rgba(0, 0, 0, 0.06),
     0 4px 12px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
   --shadow-control:
     0 8px 20px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   --shadow-elevated:
     0 32px 64px rgba(0, 0, 0, 0.12),
     0 12px 24px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
   --shadow-glass: var(--shadow-card);
 
   /* Backdrop-filter presets */
-  --glass-blur-shell: blur(40px) saturate(180%) brightness(1.1);
-  --glass-blur-card: blur(30px) saturate(170%) brightness(1.08);
-  --glass-blur-control: blur(20px) saturate(160%) brightness(1.06);
+  --glass-blur-shell: blur(12px) saturate(200%) brightness(1.15) contrast(1.05);
+  --glass-blur-card: blur(8px) saturate(190%) brightness(1.12) contrast(1.06);
+  --glass-blur-control: blur(4px) saturate(185%) brightness(1.10) contrast(1.08);
 
   /* Apple System Colors */
   --system-blue: #007AFF;
@@ -132,17 +132,17 @@
   /* shadcn/ui tokens — translucent-on-vibrant palette (light enough for glass) */
   --background: oklch(0.16 0.04 260 / 0%);
   --foreground: oklch(0.96 0.01 0);
-  --card: oklch(0.35 0.02 260 / 15%);
+  --card: oklch(0.40 0.02 260 / 8%);
   --card-foreground: oklch(0.96 0.01 0);
-  --popover: oklch(0.22 0.03 258 / 60%);
+  --popover: oklch(0.28 0.03 258 / 40%);
   --popover-foreground: oklch(0.96 0.01 0);
   --primary: oklch(0.65 0.20 255);
   --primary-foreground: oklch(0.99 0.002 0);
-  --secondary: oklch(0.40 0.03 258 / 20%);
+  --secondary: oklch(0.45 0.03 258 / 12%);
   --secondary-foreground: oklch(0.90 0.02 0);
-  --muted: oklch(0.35 0.03 258 / 18%);
+  --muted: oklch(0.40 0.03 258 / 10%);
   --muted-foreground: oklch(0.65 0.02 0);
-  --accent: oklch(0.45 0.04 255 / 20%);
+  --accent: oklch(0.50 0.04 255 / 12%);
   --accent-foreground: oklch(0.96 0.01 0);
   --destructive: oklch(0.58 0.22 28);
   --border: oklch(0.99 0.003 0 / 18%);
@@ -153,11 +153,11 @@
   --chart-3: oklch(0.65 0.18 160);
   --chart-4: oklch(0.75 0.15 90);
   --chart-5: oklch(0.60 0.22 340);
-  --sidebar: oklch(0.22 0.04 258 / 35%);
+  --sidebar: oklch(0.28 0.04 258 / 20%);
   --sidebar-foreground: oklch(0.96 0.01 0);
   --sidebar-primary: oklch(0.65 0.20 255);
   --sidebar-primary-foreground: oklch(0.99 0.002 0);
-  --sidebar-accent: oklch(0.40 0.05 258 / 25%);
+  --sidebar-accent: oklch(0.45 0.05 258 / 15%);
   --sidebar-accent-foreground: oklch(0.96 0.01 0);
   --sidebar-border: oklch(0.99 0.003 0 / 18%);
   --sidebar-ring: oklch(0.65 0.20 255);
@@ -208,9 +208,9 @@ body::after {
   pointer-events: none;
   z-index: -1;
   background:
-    radial-gradient(ellipse 50% 30% at 70% 20%, rgba(90, 200, 250, 0.08), transparent),
-    radial-gradient(ellipse 40% 25% at 30% 70%, rgba(88, 86, 214, 0.06), transparent);
-  opacity: 0.8;
+    radial-gradient(ellipse 50% 30% at 70% 20%, rgba(90, 200, 250, 0.14), transparent),
+    radial-gradient(ellipse 40% 25% at 30% 70%, rgba(88, 86, 214, 0.10), transparent);
+  opacity: 1.0;
 }
 
 #root {
@@ -314,7 +314,7 @@ body::after {
 
 .glass-shell::before {
   background: var(--lg-specular);
-  opacity: 0.55;
+  opacity: 0.35;
   mask-image: linear-gradient(black 0%, transparent 55%);
   -webkit-mask-image: linear-gradient(black 0%, transparent 55%);
 }
@@ -337,7 +337,7 @@ body::after {
 .glass-surface::before,
 .glass::before {
   background: var(--lg-specular-subtle);
-  opacity: 0.45;
+  opacity: 0.28;
   mask-image: linear-gradient(black 0%, transparent 48%);
   -webkit-mask-image: linear-gradient(black 0%, transparent 48%);
 }
@@ -354,7 +354,7 @@ body::after {
 
 .glass-control::before {
   background: var(--lg-specular-subtle);
-  opacity: 0.35;
+  opacity: 0.20;
 }
 
 /* — Pill: status bar, tags — */
@@ -369,7 +369,7 @@ body::after {
 
 .glass-pill::before {
   background: var(--lg-specular);
-  opacity: 0.42;
+  opacity: 0.25;
   mask-image: linear-gradient(black 0%, transparent 60%);
   -webkit-mask-image: linear-gradient(black 0%, transparent 60%);
 }
@@ -381,8 +381,8 @@ body::after {
   border-radius: var(--float-radius);
   border: 0.5px solid var(--lg-border-strong);
   background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(48px) saturate(180%) brightness(1.08);
-  -webkit-backdrop-filter: blur(48px) saturate(180%) brightness(1.08);
+  backdrop-filter: blur(14px) saturate(200%) brightness(1.14) contrast(1.05);
+  -webkit-backdrop-filter: blur(14px) saturate(200%) brightness(1.14) contrast(1.05);
   box-shadow: var(--shadow-elevated);
 }
 
@@ -390,7 +390,7 @@ body::after {
 .glass-float-sidebar::before,
 .glass-elevated::before {
   background: var(--lg-specular);
-  opacity: 0.45;
+  opacity: 0.28;
 }
 
 /* — Trigger: standalone floating buttons — */

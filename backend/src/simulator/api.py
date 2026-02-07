@@ -82,10 +82,21 @@ DEMO_COMPLAINTS = {
 }
 
 DEMO_CUSTOMER_NAMES = [
-    "Maria Silva", "João Santos", "Ana Oliveira", "Pedro Costa",
-    "Carla Ferreira", "Lucas Almeida", "Julia Ribeiro", "Rafael Pereira",
-    "Fernanda Lima", "Bruno Souza", "Patricia Gomes", "Marcos Rodrigues",
-    "Beatriz Martins", "Gustavo Carvalho", "Camila Araújo",
+    "Maria Silva",
+    "João Santos",
+    "Ana Oliveira",
+    "Pedro Costa",
+    "Carla Ferreira",
+    "Lucas Almeida",
+    "Julia Ribeiro",
+    "Rafael Pereira",
+    "Fernanda Lima",
+    "Bruno Souza",
+    "Patricia Gomes",
+    "Marcos Rodrigues",
+    "Beatriz Martins",
+    "Gustavo Carvalho",
+    "Camila Araújo",
 ]
 
 
@@ -118,19 +129,12 @@ class SimulatorAPI:
         Returns:
             Tuple of (created case, emitted event)
         """
-        case = Case(
-            product_brand=case_data.product_brand,
-            product_name=case_data.product_name,
-            complaint_text=case_data.complaint_text,
-            customer_name=case_data.customer_name,
-            customer_email=case_data.customer_email,
-            customer_phone=case_data.customer_phone,
-            case_type=case_data.case_type,
-            category=case_data.category,
-            lot_number=case_data.lot_number,
-            linked_case_id=case_data.linked_case_id,
-            **({"severity": case_data.severity} if case_data.severity else {}),
-        )
+        # Pass through ALL CaseCreate fields to Case.
+        # Both inherit from CaseBase, so field names match.
+        # exclude_none=True preserves Case defaults (e.g. severity=MEDIUM)
+        # when CaseCreate fields aren't set.
+        case_fields = case_data.model_dump(exclude_none=True)
+        case = Case(**case_fields)
 
         self._cases[case.case_id] = case
         logger.info(f"Case created: {case.case_id}")
@@ -480,19 +484,21 @@ class SimulatorAPI:
         case_ids: list[str] = []
 
         # ── 1. Recurring: CETAPHIL Moisturizing Lotion — Packaging/Broken Seal ──
-        c1, _ = self.create_case(CaseCreate(
-            product_brand="CETAPHIL",
-            product_name="Moisturizing Lotion",
-            complaint_text=(
-                "O lacre do meu CETAPHIL Moisturizing Lotion estava violado quando recebi. "
-                "O produto aparentava ter sido aberto anteriormente."
-            ),
-            customer_name="Maria Silva",
-            customer_email="maria.silva@example.com",
-            case_type=CaseType.COMPLAINT,
-            category=ComplaintCategory.PACKAGING,
-            lot_number="LOT-24871",
-        ))
+        c1, _ = self.create_case(
+            CaseCreate(
+                product_brand="CETAPHIL",
+                product_name="Moisturizing Lotion",
+                complaint_text=(
+                    "O lacre do meu CETAPHIL Moisturizing Lotion estava violado quando recebi. "
+                    "O produto aparentava ter sido aberto anteriormente."
+                ),
+                customer_name="Maria Silva",
+                customer_email="maria.silva@example.com",
+                case_type=CaseType.COMPLAINT,
+                category=ComplaintCategory.PACKAGING,
+                lot_number="LOT-24871",
+            )
+        )
         c1.recurring_pattern_id = "PKG-SEAL-001"
         c1.severity = CaseSeverity.LOW
         c1.ai_confidence = 0.94
@@ -530,19 +536,21 @@ class SimulatorAPI:
         case_ids.append(c1.case_id)
 
         # ── 2. Recurring: DIFFERIN Gel 0.3% — Quality/Texture Change ──
-        c2, _ = self.create_case(CaseCreate(
-            product_brand="DIFFERIN",
-            product_name="Adapalene Gel 0.3%",
-            complaint_text=(
-                "Meu DIFFERIN Adapalene Gel 0.3% tem uma textura estranha, diferente do que costumo receber. "
-                "O gel parece mais aquoso que o normal."
-            ),
-            customer_name="João Santos",
-            customer_email="joao.santos@example.com",
-            case_type=CaseType.COMPLAINT,
-            category=ComplaintCategory.QUALITY,
-            lot_number="LOT-31502",
-        ))
+        c2, _ = self.create_case(
+            CaseCreate(
+                product_brand="DIFFERIN",
+                product_name="Adapalene Gel 0.3%",
+                complaint_text=(
+                    "Meu DIFFERIN Adapalene Gel 0.3% tem uma textura estranha, diferente do que costumo receber. "
+                    "O gel parece mais aquoso que o normal."
+                ),
+                customer_name="João Santos",
+                customer_email="joao.santos@example.com",
+                case_type=CaseType.COMPLAINT,
+                category=ComplaintCategory.QUALITY,
+                lot_number="LOT-31502",
+            )
+        )
         c2.recurring_pattern_id = "QTY-TEXT-001"
         c2.severity = CaseSeverity.LOW
         c2.ai_confidence = 0.92
@@ -581,19 +589,21 @@ class SimulatorAPI:
         case_ids.append(c2.case_id)
 
         # ── 3. Recurring: BENZAC AC 5% Gel — Efficacy/No Improvement ──
-        c3, _ = self.create_case(CaseCreate(
-            product_brand="BENZAC",
-            product_name="Benzac AC Gel 5%",
-            complaint_text=(
-                "Estou usando BENZAC AC Gel 5% há 2 semanas sem melhora visível. "
-                "Minha condição de pele não apresentou nenhuma mudança."
-            ),
-            customer_name="Ana Oliveira",
-            customer_email="ana.oliveira@example.com",
-            case_type=CaseType.COMPLAINT,
-            category=ComplaintCategory.EFFICACY,
-            lot_number="LOT-18293",
-        ))
+        c3, _ = self.create_case(
+            CaseCreate(
+                product_brand="BENZAC",
+                product_name="Benzac AC Gel 5%",
+                complaint_text=(
+                    "Estou usando BENZAC AC Gel 5% há 2 semanas sem melhora visível. "
+                    "Minha condição de pele não apresentou nenhuma mudança."
+                ),
+                customer_name="Ana Oliveira",
+                customer_email="ana.oliveira@example.com",
+                case_type=CaseType.COMPLAINT,
+                category=ComplaintCategory.EFFICACY,
+                lot_number="LOT-18293",
+            )
+        )
         c3.recurring_pattern_id = "EFF-RESP-001"
         c3.severity = CaseSeverity.LOW
         c3.ai_confidence = 0.91
@@ -634,43 +644,50 @@ class SimulatorAPI:
         case_ids.append(c3.case_id)
 
         # ── 4. Non-recurring: RESTYLANE Kysse — Safety/Allergic Reaction (HIGH) ──
-        c4, _ = self.create_case(CaseCreate(
-            product_brand="RESTYLANE",
-            product_name="Restylane Kysse",
-            complaint_text=(
-                "Tive uma reação alérgica após aplicação do RESTYLANE Kysse. "
-                "Meus lábios ficaram muito inchados e com vermelhidão intensa 48h após o procedimento."
-            ),
-            customer_name="Carla Ferreira",
-            customer_email="carla.ferreira@example.com",
-            case_type=CaseType.COMPLAINT,
-            category=ComplaintCategory.SAFETY,
-            lot_number="LOT-55042",
-        ))
+        c4, _ = self.create_case(
+            CaseCreate(
+                product_brand="RESTYLANE",
+                product_name="Restylane Kysse",
+                complaint_text=(
+                    "Tive uma reação alérgica após aplicação do RESTYLANE Kysse. "
+                    "Meus lábios ficaram muito inchados e com vermelhidão intensa 48h após o procedimento."
+                ),
+                customer_name="Carla Ferreira",
+                customer_email="carla.ferreira@example.com",
+                case_type=CaseType.COMPLAINT,
+                category=ComplaintCategory.SAFETY,
+                lot_number="LOT-55042",
+            )
+        )
         # Escalate to PENDING_REVIEW — Human-in-the-Loop
-        self.update_case(c4.case_id, CaseUpdate(
-            status=CaseStatus.PENDING_REVIEW,
-            severity=CaseSeverity.HIGH,
-            ai_confidence=0.45,
-            ai_recommendation="HUMAN_REVIEW — Severidade HIGH, evento adverso potencial",
-        ))
+        self.update_case(
+            c4.case_id,
+            CaseUpdate(
+                status=CaseStatus.PENDING_REVIEW,
+                severity=CaseSeverity.HIGH,
+                ai_confidence=0.45,
+                ai_recommendation="HUMAN_REVIEW — Severidade HIGH, evento adverso potencial",
+            ),
+        )
         case_ids.append(c4.case_id)
 
         # ── 5+6. Linked Pair: CETAPHIL Gentle Cleanser (Complaint + Inquiry) ──
         # 5a. Complaint — factory concluded → CLOSED
-        c5, _ = self.create_case(CaseCreate(
-            product_brand="CETAPHIL",
-            product_name="Gentle Skin Cleanser",
-            complaint_text=(
-                "O meu CETAPHIL Gentle Skin Cleanser veio com a embalagem danificada. "
-                "O frasco estava amassado e o produto vazou durante o transporte."
-            ),
-            customer_name="Rafael Pereira",
-            customer_email="rafael.pereira@example.com",
-            case_type=CaseType.COMPLAINT,
-            category=ComplaintCategory.PACKAGING,
-            lot_number="LOT-37614",
-        ))
+        c5, _ = self.create_case(
+            CaseCreate(
+                product_brand="CETAPHIL",
+                product_name="Gentle Skin Cleanser",
+                complaint_text=(
+                    "O meu CETAPHIL Gentle Skin Cleanser veio com a embalagem danificada. "
+                    "O frasco estava amassado e o produto vazou durante o transporte."
+                ),
+                customer_name="Rafael Pereira",
+                customer_email="rafael.pereira@example.com",
+                case_type=CaseType.COMPLAINT,
+                category=ComplaintCategory.PACKAGING,
+                lot_number="LOT-37614",
+            )
+        )
         c5.recurring_pattern_id = "PKG-SEAL-001"
         c5.severity = CaseSeverity.LOW
         c5.ai_confidence = 0.93
@@ -708,22 +725,26 @@ class SimulatorAPI:
         case_ids.append(c5.case_id)
 
         # 5b. Linked Inquiry — auto-closed via Inquiry Bridge cascade
-        c6, _ = self.create_case(CaseCreate(
-            product_brand="CETAPHIL",
-            product_name="Gentle Skin Cleanser",
-            complaint_text=(
-                f"Consulta de acompanhamento referente à reclamação {c5.case_id}. "
-                "Cliente solicita atualização sobre o status da investigação."
-            ),
-            customer_name="Rafael Pereira",
-            customer_email="rafael.pereira@example.com",
-            case_type=CaseType.INQUIRY,
-            category=ComplaintCategory.PACKAGING,
-            linked_case_id=c5.case_id,
-        ))
+        c6, _ = self.create_case(
+            CaseCreate(
+                product_brand="CETAPHIL",
+                product_name="Gentle Skin Cleanser",
+                complaint_text=(
+                    f"Consulta de acompanhamento referente à reclamação {c5.case_id}. "
+                    "Cliente solicita atualização sobre o status da investigação."
+                ),
+                customer_name="Rafael Pereira",
+                customer_email="rafael.pereira@example.com",
+                case_type=CaseType.INQUIRY,
+                category=ComplaintCategory.PACKAGING,
+                linked_case_id=c5.case_id,
+            )
+        )
         c6.severity = CaseSeverity.LOW
         c6.ai_confidence = 0.98
-        c6.ai_recommendation = f"INQUIRY_CASCADE_CLOSED — Reclamação vinculada {c5.case_id} concluída"
+        c6.ai_recommendation = (
+            f"INQUIRY_CASCADE_CLOSED — Reclamação vinculada {c5.case_id} concluída"
+        )
         self.close_case(
             case_id=c6.case_id,
             resolution_text=f"Inquiry auto-closed. Linked complaint {c5.case_id} resolved by factory.",

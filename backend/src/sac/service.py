@@ -4,8 +4,8 @@
 # ============================================
 #
 # Follows the Sandwich Pattern: CODE -> LLM -> CODE
-# Currently uses template fallback only; Gemini
-# agent integration will be wired in a future task.
+# Uses Strands Agent (Gemini 3 Pro) when available,
+# falls back to deterministic templates otherwise.
 #
 # ============================================
 
@@ -13,6 +13,7 @@ import logging
 import time
 from datetime import UTC, datetime
 
+from src.sac import agent_client
 from src.sac.models import (
     SACConfigureRequest,
     SACGenerateRequest,
@@ -57,7 +58,7 @@ _sac_state: dict = {
     "total_generated": 0,
     "last_generation_at": None,
     "dynamo_enabled": False,
-    "agent_available": False,  # True when Gemini agent is wired
+    "agent_available": None,  # Dynamically resolved via agent_client
     "default_scenario": None,
     "gemini_temperature": 0.8,
 }
@@ -75,8 +76,12 @@ SCENARIO_CATALOG: list[ScenarioTemplate] = [
         demo_impact="Triggers auto-close via pattern matching (confidence >= 0.90)",
         typical_count=3,
         triggers_agents=[
-            "observer", "case_understanding", "recurring_detector",
-            "compliance_guardian", "resolution_composer", "writeback",
+            "observer",
+            "case_understanding",
+            "recurring_detector",
+            "compliance_guardian",
+            "resolution_composer",
+            "writeback",
         ],
     ),
     ScenarioTemplate(
@@ -88,7 +93,9 @@ SCENARIO_CATALOG: list[ScenarioTemplate] = [
         demo_impact="Triggers HIL escalation — agent halts with PENDING_REVIEW",
         typical_count=1,
         triggers_agents=[
-            "observer", "case_understanding", "compliance_guardian",
+            "observer",
+            "case_understanding",
+            "compliance_guardian",
         ],
     ),
     ScenarioTemplate(
@@ -100,8 +107,11 @@ SCENARIO_CATALOG: list[ScenarioTemplate] = [
         demo_impact="Demonstrates auto-cascade: closing complaint auto-closes inquiry",
         typical_count=2,
         triggers_agents=[
-            "observer", "case_understanding", "inquiry_bridge",
-            "resolution_composer", "writeback",
+            "observer",
+            "case_understanding",
+            "inquiry_bridge",
+            "resolution_composer",
+            "writeback",
         ],
     ),
     ScenarioTemplate(
@@ -113,7 +123,8 @@ SCENARIO_CATALOG: list[ScenarioTemplate] = [
         demo_impact="Triggers data enrichment flow and customer outreach",
         typical_count=1,
         triggers_agents=[
-            "observer", "case_understanding",
+            "observer",
+            "case_understanding",
         ],
     ),
     ScenarioTemplate(
@@ -125,8 +136,12 @@ SCENARIO_CATALOG: list[ScenarioTemplate] = [
         demo_impact="Tests parallel processing and agent throughput",
         typical_count=5,
         triggers_agents=[
-            "observer", "case_understanding", "recurring_detector",
-            "compliance_guardian", "resolution_composer", "writeback",
+            "observer",
+            "case_understanding",
+            "recurring_detector",
+            "compliance_guardian",
+            "resolution_composer",
+            "writeback",
         ],
     ),
     ScenarioTemplate(
@@ -138,7 +153,8 @@ SCENARIO_CATALOG: list[ScenarioTemplate] = [
         demo_impact="Unpredictable input — tests agent adaptability",
         typical_count=1,
         triggers_agents=[
-            "observer", "case_understanding",
+            "observer",
+            "case_understanding",
         ],
     ),
 ]
@@ -151,11 +167,11 @@ async def generate_cases(
     request: SACGenerateRequest,
     simulator_api: SimulatorAPI,
 ) -> SACGenerateResponse:
-    """Generate SAC cases using templates (agent integration later).
+    """Generate SAC cases using Strands Agent or template fallback.
 
     Follows Sandwich Pattern:
-    - CODE Layer 1: Generate structured data from templates
-    - (Future) LLM Layer: Gemini agent enrichment
+    - CODE Layer 1: Decide generation method (agent vs template)
+    - LLM Layer: Strands Agent (Gemini 3 Pro) orchestrates 7 tools
     - CODE Layer 2: Validate + persist via SimulatorAPI pipeline
 
     Args:
@@ -169,13 +185,41 @@ async def generate_cases(
     generated = []
     last_lang = "pt"
 
-    for _ in range(request.count):
-        # CODE Layer 1: Generate from template (random language per case)
-        case_create, lang = generate_from_template(
-            scenario_type=request.scenario_type.value,
-            product_brand=request.product_brand,
-        )
-        last_lang = lang
+    # Decide generation method
+    use_agent = request.use_agent and agent_client.is_agent_available()
+    generation_method = "gemini_agent" if use_agent else "template_fallback"
+
+    for i in range(request.count):
+        case_create = None
+
+        # Try agent generation first
+        if use_agent:
+            logger.info(
+                "Generating case %d/%d via Strands agent (scenario=%s, brand=%s)",
+                i + 1,
+                request.count,
+                request.scenario_type.value,
+                request.product_brand,
+            )
+            case_create = await agent_client.generate_case_via_agent(
+                scenario_type=request.scenario_type.value,
+                product_brand=request.product_brand,
+            )
+            if case_create is None:
+                logger.warning(
+                    "Agent failed for case %d/%d, falling back to template",
+                    i + 1,
+                    request.count,
+                )
+                generation_method = "gemini_agent_partial"
+
+        # Fallback to template if agent not used or failed
+        if case_create is None:
+            case_create, lang = generate_from_template(
+                scenario_type=request.scenario_type.value,
+                product_brand=request.product_brand,
+            )
+            last_lang = lang
 
         # CODE Layer 2: Create via existing pipeline (triggers WebSocket, events)
         case, _event = simulator_api.create_case(case_create)
@@ -207,7 +251,7 @@ async def generate_cases(
         generated_count=len(generated),
         case_ids=[c.case_id for c in generated],
         scenario_type=request.scenario_type.value,
-        generation_method="template_fallback",
+        generation_method=generation_method,
         generation_time_ms=elapsed_ms,
         cases=[c.model_dump(mode="json") for c in generated],
     )
@@ -216,14 +260,18 @@ async def generate_cases(
 def get_status() -> SACStatus:
     """Get current SAC module status.
 
+    Dynamically resolves agent availability by checking
+    GEMINI_API_KEY presence via agent_client.
+
     Returns:
         SACStatus with agent availability and generation stats.
     """
+    available = agent_client.is_agent_available()
     return SACStatus(
-        agent_available=_sac_state["agent_available"],
+        agent_available=available,
         total_generated=_sac_state["total_generated"],
         last_generation_at=_sac_state["last_generation_at"],
-        fallback_mode=not _sac_state["agent_available"],
+        fallback_mode=not available,
         dynamo_enabled=_sac_state["dynamo_enabled"],
     )
 
